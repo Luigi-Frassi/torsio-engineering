@@ -136,7 +136,7 @@
           <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] px-2.5 py-1.5 rounded-lg border border-[#e8b321] text-xs font-bold text-slate-950 transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
             <span aria-hidden="true">📄</span><span class="hidden sm:inline" data-i18n="reportBtn">Report</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
           </button>
-          <div id="reportMenu" class="hidden absolute right-0 top-full mt-2 z-50 w-64 bg-slate-950 border border-slate-700 rounded-xl shadow-2xl p-2 text-xs text-slate-200">
+          <div id="reportMenu" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 z-50 w-64 max-w-[calc(100vw-2rem)] bg-slate-950 border border-slate-700 rounded-xl shadow-2xl p-2 text-xs text-slate-200">
             <button type="button" id="reportMenuThis" onclick="document.getElementById('reportMenu').classList.add('hidden'); openReport()" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 font-semibold">Report of this module</button>
             <div class="border-t border-slate-800 my-1.5"></div>
             <div class="px-3 pt-1 font-semibold text-white" id="reportMenuTxTitle">Complete transmission report</div>

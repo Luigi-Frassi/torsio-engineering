@@ -215,7 +215,28 @@ function reportCSS() {
   table.chk td { border: 0; border-bottom: 1px solid #e2e8f0; }
   table.chk td:first-child { width: 22px; text-align: center; font-weight: 700; }
   table.chk td.ok { color: #047857; } table.chk td.ko { color: #b45309; } table.chk td.na { color: #94a3b8; }
-  @media print { [contenteditable] { background: none; padding: 0; } body { background: #fff; } .toolbar { display: none; } .page { padding: 0; max-width: none; } a { color: inherit; } }
+  .eq, .tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media screen and (max-width: 700px) {
+    body { font-size: 10pt; }
+    .page { padding: 18px 14px 24px; overflow-wrap: anywhere; }
+    .toolbar { padding: 8px 12px; }
+    .toolbar span { font-size: 12px; }
+    .rhead { grid-template-columns: 46px 1fr; }
+    .rlogo img, .rlogo svg { width: 46px; height: 36px; }
+    table.rmeta { grid-column: 1 / -1; width: 100%; margin: 4px 0 0; }
+    table.rmeta td { min-width: 0; }
+    header.rep h1 { font-size: 15pt; }
+    .meta { grid-template-columns: 1fr 1fr; }
+    table { font-size: 8.8pt; }
+    th, td { padding: 3px 4px; }
+    .katex { font-size: 1em; }
+    .eq { padding: 2px 8px; }
+    .gv { grid-template-columns: 1fr; }
+    .row .rep-svg { width: 100%; min-width: 0; }
+    .cart table { font-size: 8pt; }
+    .cart .clogo { width: 18%; }
+  }
+  @media print { .eq, .tscroll { overflow: visible; } [contenteditable] { background: none; padding: 0; } body { background: #fff; } .toolbar { display: none; } .page { padding: 0; max-width: none; } a { color: inherit; } }
   `;
 }
 
@@ -244,6 +265,11 @@ function reportTitleBlock(title, R) {
   return { head, cart };
 }
 
+// On a phone, wide tables scroll sideways inside their own box instead of widening the whole page
+function reportScrollTables(html) {
+  return String(html).replace(/<table\b/g, '<div class="tscroll"><table').replace(/<\/table>/g, '</table></div>');
+}
+
 function reportShell(title, subtitle, body, R, disclaimer = null) {
   if (reportCollect) { reportCollect.push({ title, subtitle, body, disclaimer: disclaimer || R.disclaimer }); return '__part__'; }
   let link = '';
@@ -258,7 +284,7 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
 <span>${R.printHint}</span></div>
 <div class="page">
 <header class="rep">${tbk.head}<h1>${reportEsc(title)}</h1><h2>${reportEsc(subtitle)}</h2></header>
-${body}
+${reportScrollTables(body)}
 ${tbk.cart}
 <footer class="rep"><p>${disclaimer || R.disclaimer}</p><p>${R.generated} · <a href="${reportEsc(link)}">${R.reopen} ↗</a> <span class="small">(${reportEsc(link.split('?')[0])})</span></p></footer>
 </div></body></html>`;
@@ -481,7 +507,7 @@ function openReport() {
   if (!build) return;
   // open the tab now (inside the click, so popup blockers allow it), fill it when the formula typesetter is ready
   const w = window.open('', '_blank');
-  if (w && w.document) w.document.write('<p style="font-family:sans-serif;padding:20px">…</p>');
+  if (w && w.document) w.document.write('<meta name="viewport" content="width=device-width, initial-scale=1"><p style="font-family:sans-serif;padding:20px">…</p>');
   reportLoadKatex().then(() => {
     const html = build();
     if (html) reportOpen(html, w);

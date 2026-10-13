@@ -263,7 +263,7 @@ function openTransmissionReport() {
   if (!mods.length) { document.getElementById('reportMenuMsg').textContent = X.none; return; }
   document.getElementById('reportMenu').classList.add('hidden');
   const w = window.open('', '_blank');
-  if (w && w.document) w.document.write('<p style="font-family:sans-serif;padding:20px">…</p>');
+  if (w && w.document) w.document.write('<meta name="viewport" content="width=device-width, initial-scale=1"><p style="font-family:sans-serif;padding:20px">…</p>');
   reportLoadKatex().then(() => {
     const html = buildTransmissionReportHtml(mods);
     // the builders redraw charts of the other modules: bring the visible one back to its own state
