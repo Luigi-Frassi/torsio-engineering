@@ -545,6 +545,23 @@ with sync_playwright() as p:
     meta = ph.evaluate("[document.querySelector('meta[property=\"og:image\"]')?.content, [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === 'metodo.html'), document.querySelector('.facts .n').innerText]")
     check('  anteprima per i social, link alla pagina metodo, 387 casi', meta[0].endswith('og-image.png') and meta[1] and meta[2] == '387', str(meta)); ph.close()
 
+    # --- phone (390 px): report menu inside the screen, report without sideways overflow
+    mctx = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
+    mctx.route('**/*', router)
+    mp = mctx.new_page(); mp.on('pageerror', lambda e: errors.append(str(e)))
+    mp.goto(BASE + '?demo=shaftExam&lang=it'); settle(mp)
+    mp.click('#reportBtn'); mp.wait_for_timeout(200)
+    mr = mp.evaluate("(() => { const r = document.getElementById('reportMenu').getBoundingClientRect(); return [r.left, r.right, innerWidth]; })()")
+    check('telefono: il menu della relazione resta dentro lo schermo', mr[0] >= 0 and mr[1] <= mr[2], str(mr))
+    with mctx.expect_page() as mrp:
+        mp.click('#reportMenuThis')
+    mrr = mrp.value; mrr.wait_for_load_state(); mrr.wait_for_function("document.querySelector('.page') !== null")
+    # offline the popup does not fetch the KaTeX stylesheet: inject it, as a real browser has it
+    mrr.add_style_tag(content=open(os.path.join(REPO, 'vendor/katex/katex.min.css')).read().replace('url(fonts/', 'url(' + HOME + 'vendor/katex/fonts/')); mrr.wait_for_timeout(300)
+    mov = mrr.evaluate("[document.documentElement.scrollWidth, document.documentElement.clientWidth, document.querySelectorAll('.tscroll').length, !!document.querySelector('meta[name=viewport]')]")
+    check('telefono: la relazione non sborda (tabelle con scorrimento proprio)', mov[0] <= mov[1] + 1 and mov[2] > 3 and mov[3], str(mov))
+    mctx.close()
+
     check('nessun errore JS in tutto il test', not errors, '; '.join(errors[:3]))
     browser.close()
 srv.shutdown()
