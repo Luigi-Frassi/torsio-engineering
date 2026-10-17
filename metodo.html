@@ -334,15 +334,13 @@
         document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
         document.querySelectorAll('[data-app]').forEach(function (a) { a.href = (a.getAttribute('data-app') === 'demo' ? 'app.html?demo=transmission&' : 'app.html?') + 'lang=' + lang; });
         draw();
+        try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
       }
-      document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () {
-        setLang(b.getAttribute('data-lang'));
-        try { localStorage.setItem('torsioLangChoice', lang); } catch (e) { /* private mode */ }
-      }); });
+      document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
       var saved = null;
-      try { saved = localStorage.getItem('torsioLangChoice'); } catch (e) { /* private mode */ }
+      try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
       var q = new URLSearchParams(location.search).get('lang');
-      setLang(q || saved || 'en');
+      setLang(q || saved || ((navigator.language || 'it').slice(0, 2) === 'it' ? 'it' : 'en'));
       var ks = document.createElement('script');
       ks.src = 'vendor/katex/katex.min.js'; ks.onload = draw; document.head.appendChild(ks);
     })();

@@ -562,22 +562,10 @@ with sync_playwright() as p:
     check('telefono: la relazione non sborda (tabelle con scorrimento proprio)', mov[0] <= mov[1] + 1 and mov[2] > 3 and mov[3], str(mov))
     mctx.close()
 
-    # --- English by default, a language chosen by hand is remembered; module views for Analytics
+    # --- module views for Analytics
     lctx = browser.new_context(); lctx.route('**/*', router)
     lp = lctx.new_page(); lp.on('pageerror', lambda e: errors.append(str(e)))
-    lp.goto(HOME); lp.wait_for_timeout(400)
-    check('lingua: la home si apre in inglese', lp.evaluate("document.documentElement.lang") == 'en' and 'preliminary sizing' in lp.title(), lp.title())
     lp.goto(BASE); settle(lp)
-    check('  il calcolatore si apre in inglese', lp.evaluate("currentLang") == 'en')
-    lp.goto(HOME + 'metodo.html'); lp.wait_for_timeout(300)
-    check('  la pagina metodo si apre in inglese', lp.evaluate("document.documentElement.lang") == 'en')
-    lp.click('.lang button[data-lang="it"]'); lp.wait_for_timeout(200)
-    lp.goto(HOME); lp.wait_for_timeout(300)
-    check('  la scelta fatta a mano viene ricordata (home in italiano)', lp.evaluate("document.documentElement.lang") == 'it')
-    lp.goto(BASE); settle(lp)
-    check('  e il calcolatore la segue', lp.evaluate("currentLang") == 'it')
-    lp.goto(BASE + '?lang=en'); settle(lp)
-    check('  il parametro ?lang ha la precedenza', lp.evaluate("currentLang") == 'en')
     lp.evaluate("switchModule('shafts'); switchModule('bolts'); switchModule('bolts')")
     pv = lp.evaluate("(window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path)")
     check('analytics: ogni modulo aperto conta come /app/<modulo>, senza doppioni', '/app/shafts' in pv and pv.count('/app/bolts') == 1, str(pv))

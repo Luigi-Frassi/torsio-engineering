@@ -205,7 +205,7 @@ function fallbackCopy(text, done) {
 
 // Called once from the boot sequence, after the default calculation
 function initShareLinks() {
-  shareDefaults = { lang: 'en', unit: currentUnit, mode: currentMode, bmode: currentBeltMode, ratio: currentRatioMethod, gop: currentGearOpMode,
+  shareDefaults = { lang: currentLang, unit: currentUnit, mode: currentMode, bmode: currentBeltMode, ratio: currentRatioMethod, gop: currentGearOpMode,
     smode: typeof currentShaftMode !== 'undefined' ? currentShaftMode : 'beam' };
   const saved = activeModule;
   for (const m of Object.keys(SHARE_FIELDS)) {

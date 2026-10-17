@@ -3333,10 +3333,8 @@
 
     document.getElementById('unitMetric').addEventListener('click', () => setUnit('metric'));
     document.getElementById('unitImperial').addEventListener('click', () => setUnit('imperial'));
-    // English by default; a language picked by hand is remembered (also by the home and method pages)
-    function rememberLang(l) { try { localStorage.setItem('torsioLangChoice', l); } catch (e) { /* private mode */ } }
-    document.getElementById('langEN').addEventListener('click', () => { updateLanguage('en'); rememberLang('en'); });
-    document.getElementById('langIT').addEventListener('click', () => { updateLanguage('it'); rememberLang('it'); });
+    document.getElementById('langEN').addEventListener('click', () => updateLanguage('en'));
+    document.getElementById('langIT').addEventListener('click', () => updateLanguage('it'));
 
    function updateDemoButtonsState(activeKey) {
       const btnHelical = document.getElementById('demoHelicalBtn');
@@ -3587,7 +3585,6 @@
     // Boot sequence
     try { if (typeof populateSelect === 'function') populateSelect(); } catch(e) { console.error(e); }
     try { populateServiceFactors(); } catch(e) { console.error(e); }
-    try { const c = localStorage.getItem('torsioLangChoice'); if (c === 'it' || c === 'en') currentLang = c; } catch (e) { /* private mode */ }
     try { updateLanguage(currentLang); } catch(e) { console.error(e); }
     try { if (typeof calculateFits === 'function') calculateFits(); } catch(e) { console.error(e); }
     try { if (typeof calculateBelts === 'function') calculateBelts(); } catch(e) { console.error(e); }
