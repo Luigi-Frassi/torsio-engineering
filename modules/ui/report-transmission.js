@@ -265,7 +265,9 @@ function openTransmissionReport() {
   const w = window.open('', '_blank');
   if (w && w.document) w.document.write('<meta name="viewport" content="width=device-width, initial-scale=1"><p style="font-family:sans-serif;padding:20px">…</p>');
   reportLoadKatex().then(() => {
-    const html = buildTransmissionReportHtml(mods);
+    reportKind = 'transmission';
+    let html;
+    try { html = buildTransmissionReportHtml(mods); } finally { reportKind = null; }
     // the builders redraw charts of the other modules: bring the visible one back to its own state
     try { ({ fits: calculateFits, belts: calculateBelts, gears: calculateGears, shafts: calculateShafts })[activeModule](); } catch (e) { /* view refresh only */ }
     if (html) reportOpen(html, w); else if (w) w.close();

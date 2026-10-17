@@ -573,6 +573,24 @@ with sync_playwright() as p:
     check('  il filtro privacy lascia passare /app/<modulo> e toglie i dati del calcolo', ev and ev[0].endswith('/app/shafts') and ev[1].endswith('/app.html?m=gears'), str(ev))
     lctx.close()
 
+    # --- feedback: 👍/👎 under the module and in the report toolbar (Tally form Gev5gZ)
+    fp = new_page(); fp.goto(BASE + '?demo=boltsExam&lang=it'); settle(fp)
+    check('riscontro: domanda sotto il modulo', 'Questo modulo ti è stato utile?' in fp.evaluate("document.getElementById('fbBar').innerText"))
+    fp.click('#fbBar button[data-fb="up"]'); fp.wait_for_timeout(6500)   # offline Tally cannot load: fallback link after the timeout
+    fb = fp.evaluate("[document.getElementById('fbBar').innerText, (window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path), document.querySelector('#fbBar a')?.href || '']")
+    check('  il voto conta in Analytics come /feedback/up/bolts e mostra il grazie', '/feedback/up/bolts' in fb[1] and 'Grazie' in fb[0], str(fb[:2]))
+    check('  senza Tally resta il link al modulo con voto, modulo e lingua', 'tally.so/r/Gev5gZ?vote=up&module=bolts&lang=it' in fb[2], fb[2])
+    ev2 = fp.evaluate("(() => { const f = (window.vaq || []).find(a => a[0] === 'beforeSend'); return f[1]({ url: location.origin + '/feedback/down/shafts?x=1' }).url; })()")
+    check('  il filtro privacy lascia passare /feedback/<voto>/<modulo>', ev2.endswith('/feedback/down/shafts'), ev2)
+    fp.evaluate("switchModule('gears')")
+    check('  cambiando modulo si può votare di nuovo', fp.evaluate("!!document.querySelector('#fbBar button[data-fb]')"))
+    fp.click('#reportBtn')
+    with ctx.expect_page() as frp:
+        fp.click('#reportMenuThis')
+    fr = frp.value; fr.wait_for_load_state(); fr.wait_for_function("document.querySelector('.page') !== null")
+    links = fr.evaluate("[...document.querySelectorAll('.toolbar a.fb')].map(a => a.href)")
+    check('  la relazione ha 👍/👎 nella barra, con il modulo', len(links) == 2 and 'vote=up&module=gears' in links[0] and 'vote=down' in links[1], str(links)); fr.close(); fp.close()
+
     check('nessun errore JS in tutto il test', not errors, '; '.join(errors[:3]))
     browser.close()
 srv.shutdown()
