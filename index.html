@@ -443,13 +443,18 @@
       document.querySelectorAll('[data-t-html]').forEach(function (el) { var k = el.getAttribute('data-t-html'); if (d[k] != null) el.innerHTML = d[k]; });
       document.querySelectorAll('[data-href]').forEach(function (el) { var h = HREF[el.getAttribute('data-href')]; el.href = h + (h.indexOf('?') < 0 ? '?' : '&') + 'lang=' + lang; });
       document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+      document.title = lang === 'en' ? 'Torsio Engineering — preliminary sizing of machine elements' : 'Torsio Engineering — dimensionamento di massima di organi di macchine';
       drawFormula();
-      try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
     }
-    document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
+    // English by default; a language picked by hand (here, in the calculator or on the method page) is remembered
+    document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () {
+      setLang(b.getAttribute('data-lang'));
+      try { localStorage.setItem('torsioLangChoice', lang); } catch (e) { /* private mode */ }
+    }); });
     var saved = null;
-    try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
-    setLang(saved || ((navigator.language || 'it').slice(0, 2) === 'it' ? 'it' : 'en'));
+    try { saved = localStorage.getItem('torsioLangChoice'); } catch (e) { /* private mode */ }
+    var qLang = new URLSearchParams(location.search).get('lang');
+    setLang(qLang || saved || 'en');
     var ks = document.createElement('script');
     ks.src = 'vendor/katex/katex.min.js'; ks.onload = drawFormula; document.head.appendChild(ks);
   </script>
