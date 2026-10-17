@@ -562,6 +562,17 @@ with sync_playwright() as p:
     check('telefono: la relazione non sborda (tabelle con scorrimento proprio)', mov[0] <= mov[1] + 1 and mov[2] > 3 and mov[3], str(mov))
     mctx.close()
 
+    # --- module views for Analytics
+    lctx = browser.new_context(); lctx.route('**/*', router)
+    lp = lctx.new_page(); lp.on('pageerror', lambda e: errors.append(str(e)))
+    lp.goto(BASE); settle(lp)
+    lp.evaluate("switchModule('shafts'); switchModule('bolts'); switchModule('bolts')")
+    pv = lp.evaluate("(window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path)")
+    check('analytics: ogni modulo aperto conta come /app/<modulo>, senza doppioni', '/app/shafts' in pv and pv.count('/app/bolts') == 1, str(pv))
+    ev = lp.evaluate("(() => { const f = (window.vaq || []).find(a => a[0] === 'beforeSend'); return f ? [f[1]({ url: location.origin + '/app/shafts?x=1' }).url, f[1]({ url: location.origin + '/app.html?m=gears&gearPower=5' }).url] : null; })()")
+    check('  il filtro privacy lascia passare /app/<modulo> e toglie i dati del calcolo', ev and ev[0].endswith('/app/shafts') and ev[1].endswith('/app.html?m=gears'), str(ev))
+    lctx.close()
+
     check('nessun errore JS in tutto il test', not errors, '; '.join(errors[:3]))
     browser.close()
 srv.shutdown()

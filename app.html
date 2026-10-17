@@ -38,6 +38,7 @@
     window.va('beforeSend', function (event) {
       try {
         var u = new URL(event.url);
+        if (/^\/app\/(fits|belts|gears|shafts|frames|bolts)$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
         var m = u.searchParams.get('m');
         u.search = (m === 'fits' || m === 'belts' || m === 'gears' || m === 'shafts' || m === 'frames' || m === 'bolts') ? '?m=' + m : '';
         u.hash = '';
@@ -2848,8 +2849,17 @@
       }
     }
 
+    // Analytics: each module opened counts as a view of /app/<module> (only the module name is sent, never the inputs)
+    let lastTrackedModule = null;
+    function trackModuleView(mod) {
+      if (mod === lastTrackedModule) return;
+      lastTrackedModule = mod;
+      try { if (typeof window.va === 'function') window.va('pageview', { route: '/app/' + mod, path: '/app/' + mod }); } catch (e) { /* analytics only */ }
+    }
+
     function switchModule(mod) {
       activeModule = mod;
+      trackModuleView(mod);
       if (typeof reportVisited !== 'undefined') reportVisited.add(mod);
       const repBtn = document.getElementById('reportBtn');
       if (repBtn) repBtn.classList.remove('hidden');
