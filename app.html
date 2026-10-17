@@ -38,7 +38,7 @@
     window.va('beforeSend', function (event) {
       try {
         var u = new URL(event.url);
-        if (/^\/app\/(fits|belts|gears|shafts|frames|bolts)$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
+        if (/^\/(app|feedback\/(up|down))\/(fits|belts|gears|shafts|frames|bolts|transmission)$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
         var m = u.searchParams.get('m');
         u.search = (m === 'fits' || m === 'belts' || m === 'gears' || m === 'shafts' || m === 'frames' || m === 'bolts') ? '?m=' + m : '';
         u.hash = '';
@@ -89,8 +89,8 @@
       </nav>
     </div>
     <div class="text-xs text-slate-500 border-t border-slate-800 pt-4 space-y-3">
-      <a href="https://github.com/Luigi-Frassi/torsio-engineering/issues/new" target="_blank" rel="noopener" class="flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-blue-500/50 transition-colors">
-        <span>💬</span><span data-i18n="feedbackLink">Suggest a feature or report a problem</span>
+      <a href="https://tally.so/r/Gev5gZ" id="fbSide" target="_blank" rel="noopener" class="flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-blue-500/50 transition-colors">
+        <span>💬</span><span id="fbSideText">Give feedback or report a problem</span>
       </a>
       <div>Mechanical Design Suite</div>
     </div>
@@ -1919,6 +1919,9 @@
     <!-- ==================== MODULE 6: BOLTED JOINTS (method of the Machine Elements notes) ==================== -->
     <div id="moduleBoltsSection" class="hidden"></div>
 
+    <!-- Feedback (modules/ui/feedback.js) -->
+    <div id="fbBar" class="bg-slate-800/40 rounded-xl border border-slate-700/60 p-4 mb-6"></div>
+
     <!-- Technical Footer -->
     <footer class="pt-6 border-t border-slate-800 text-xs text-slate-500 space-y-1">
       <p class="font-medium text-slate-400" data-i18n="disclaimerTitle">Technical note and disclaimer:</p>
@@ -3580,6 +3583,7 @@
   <script src="modules/core/dxf-core.js"></script>
   <script src="modules/ui/dxf-ui.js"></script>
   <script src="modules/ui/links.js"></script>
+  <script src="modules/ui/feedback.js"></script>
 
   <script>
     // Boot sequence

@@ -9,7 +9,7 @@ const REPORT_TXT = {
   it: {
     docTitle: 'Relazione di calcolo', shaftTitle: 'Albero di trasmissione — dimensionamento di massima',
     project: 'Progetto', author: 'Autore', date: 'Data', clickToEdit: 'clicca per modificare',
-    printBtn: 'Stampa / Salva PDF', htmlBtn: 'Scarica HTML', printHint: 'Nel dialogo di stampa scegli “Salva come PDF”. I campi in giallo si possono modificare prima di stampare.',
+    fbAsk: 'Ti è stata utile?', printBtn: 'Stampa / Salva PDF', htmlBtn: 'Scarica HTML', printHint: 'Nel dialogo di stampa scegli “Salva come PDF”. I campi in giallo si possono modificare prima di stampare.',
     reopen: 'Riapri questo calcolo', generated: 'Generata con Torsio Engineering',
     disclaimer: 'Dimensionamento di massima con il metodo del corso di Costruzione di Macchine (Goodman, coefficienti da diagrammi). I valori servono come prime quote per il CAD: la verifica finale va fatta con le norme (es. DIN 743 / ISO 6336), i cataloghi dei produttori o un\'analisi FEM.',
     s1: 'Dati di progetto', s2: 'Schema dell\'albero e carichi', s3: 'Reazioni vincolari e cuscinetti', s4: 'Diagrammi delle sollecitazioni',
@@ -43,7 +43,7 @@ const REPORT_TXT = {
   en: {
     docTitle: 'Calculation report', shaftTitle: 'Transmission shaft — preliminary sizing',
     project: 'Project', author: 'Author', date: 'Date', clickToEdit: 'click to edit',
-    printBtn: 'Print / Save as PDF', htmlBtn: 'Download HTML', printHint: 'In the print dialog choose “Save as PDF”. The yellow fields can be edited before printing.',
+    fbAsk: 'Was it useful?', printBtn: 'Print / Save as PDF', htmlBtn: 'Download HTML', printHint: 'In the print dialog choose “Save as PDF”. The yellow fields can be edited before printing.',
     reopen: 'Reopen this calculation', generated: 'Generated with Torsio Engineering',
     disclaimer: 'Preliminary sizing with the method of the Machine Design course (Goodman line, coefficients from charts). The values are first dimensions for CAD: the final check must follow the standards (e.g. DIN 743 / ISO 6336), the manufacturers\' catalogs or an FEM analysis.',
     s1: 'Design data', s2: 'Shaft layout and loads', s3: 'Support reactions and bearings', s4: 'Internal action diagrams',
@@ -158,6 +158,7 @@ function reportCSS() {
   .toolbar button { background: #2e5640; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
   .toolbar button.sec { background: #334155; }
   .toolbar span { color: #94a3b8; }
+  .toolbar .fbq { margin-left: auto; color: #e2e8f0; white-space: nowrap; } .toolbar a.fb { text-decoration: none; font-size: 16px; padding: 2px 6px; border: 1px solid #334155; border-radius: 6px; margin-left: 4px; } .toolbar a.fb:hover { border-color: #e8b321; }
   header.rep { border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 14px; }
   header.rep .brand { font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; color: #2e5640; font-weight: 700; }
   header.rep h1 { font-size: 17pt; margin: 2px 0 2px; }
@@ -270,6 +271,15 @@ function reportScrollTables(html) {
   return String(html).replace(/<table\b/g, '<div class="tscroll"><table').replace(/<\/table>/g, '</table></div>');
 }
 
+// 👍 / 👎 in the toolbar (screen only): open the feedback form with the vote and the report in its fields
+let reportKind = null;   // 'transmission' while the complete report is built, otherwise the active module
+function reportFeedbackLinks(R) {
+  if (typeof feedbackUrl !== 'function') return '';
+  const mod = reportKind || (typeof activeModule !== 'undefined' ? activeModule : '');
+  const a = (v, e) => `<a class="fb" href="${reportEsc(feedbackUrl(v, mod, currentLang))}" target="_blank" rel="noopener">${e}</a>`;
+  return `<span class="fbq">${R.fbAsk} ${a('up', '👍')} ${a('down', '👎')}</span>`;
+}
+
 function reportShell(title, subtitle, body, R, disclaimer = null) {
   if (reportCollect) { reportCollect.push({ title, subtitle, body, disclaimer: disclaimer || R.disclaimer }); return '__part__'; }
   let link = '';
@@ -281,7 +291,7 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"><link rel="stylesheet" href="${new URL('vendor/katex/katex.min.css', window.location.href).href}"><style>${reportCSS()}</style></head><body>
 <div class="toolbar"><button onclick="window.print()">🖨 ${R.printBtn}</button>
 <button class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()">⬇ ${R.htmlBtn}</button>
-<span>${R.printHint}</span></div>
+<span>${R.printHint}</span>${reportFeedbackLinks(R)}</div>
 <div class="page">
 <header class="rep">${tbk.head}<h1>${reportEsc(title)}</h1><h2>${reportEsc(subtitle)}</h2></header>
 ${reportScrollTables(body)}
