@@ -108,11 +108,11 @@ function shareProfileSync() { if (typeof syncShareUrl === 'function') syncShareU
 function shaftProfilePreviewSvg(p) {
   const segs = p.segs; if (!segs.length) return '';
   const L = segs[segs.length - 1].x1, dmax = Math.max(...segs.map(s => s.d)), W = 640, H = 150, k = Math.min((W - 40) / L, (H - 40) / dmax), x0 = 20, cy = H / 2;
-  let g = `<line x1="${x0 - 8}" y1="${cy}" x2="${x0 + L * k + 8}" y2="${cy}" stroke="#ef4444" stroke-dasharray="10 3 2 3" stroke-width="0.8"/>`;
+  let g = `<line x1="${x0 - 8}" y1="${cy}" x2="${x0 + L * k + 8}" y2="${cy}" stroke="#c0392b" stroke-dasharray="10 3 2 3" stroke-width="0.8"/>`;
   segs.forEach(s => {
-    g += `<rect x="${x0 + s.x0 * k}" y="${cy - s.d / 2 * k}" width="${Math.max(0.5, (s.x1 - s.x0) * k)}" height="${s.d * k}" fill="#475569" fill-opacity="0.55" stroke="#e2e8f0" stroke-width="1"/>`;
-    if (s.key) { const kk = dxfKeyFor(s.d), len = (s.x1 - s.x0) * 0.8; g += `<rect x="${x0 + ((s.x0 + s.x1) / 2 - len / 2) * k}" y="${cy - s.d / 2 * k}" width="${len * k}" height="${kk.t1 * k}" fill="#fbbf24" fill-opacity="0.8"/>`; }
-    if ((s.x1 - s.x0) * k > 26) g += `<text x="${x0 + (s.x0 + s.x1) / 2 * k}" y="${cy + 4}" text-anchor="middle" font-size="10.5" fill="#f8fafc" font-weight="600">Ø${dxfFmt(s.d)}</text>`;
+    g += `<rect x="${x0 + s.x0 * k}" y="${cy - s.d / 2 * k}" width="${Math.max(0.5, (s.x1 - s.x0) * k)}" height="${s.d * k}" fill="#b8b2a6" fill-opacity="0.55" stroke="#22211f" stroke-width="1"/>`;
+    if (s.key) { const kk = dxfKeyFor(s.d), len = (s.x1 - s.x0) * 0.8; g += `<rect x="${x0 + ((s.x0 + s.x1) / 2 - len / 2) * k}" y="${cy - s.d / 2 * k}" width="${len * k}" height="${kk.t1 * k}" fill="#b7791f" fill-opacity="0.8"/>`; }
+    if ((s.x1 - s.x0) * k > 26) g += `<text x="${x0 + (s.x0 + s.x1) / 2 * k}" y="${cy + 4}" text-anchor="middle" font-size="10.5" fill="#22211f" font-weight="600">Ø${dxfFmt(s.d)}</text>`;
   });
   return `<svg viewBox="0 0 ${W} ${H}" class="w-full h-auto" font-family="Archivo, Arial, sans-serif">${g}</svg>`;
 }
@@ -123,7 +123,7 @@ function shaftProfileRender() {
   c.innerHTML = `<div class="flex flex-wrap items-start justify-between gap-3 mb-2"><div><h3 class="text-sm font-semibold text-white">${t.card}</h3>
       <p class="text-[11px] text-slate-400 mt-0.5">${p.auto ? t.auto : t.manual}</p></div>
       <div class="flex flex-wrap gap-2"><button type="button" data-act="regen" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:bg-slate-800">${t.regen}</button>
-      <button type="button" data-act="dxf" id="shaftDxfBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#e8b321] text-slate-950 hover:bg-[#f0c241]">📐 ${t.download}</button></div></div>
+      <button type="button" data-act="dxf" id="shaftDxfBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#e8b321] text-[#22211f] hover:bg-[#f0c241]">📐 ${t.download}</button></div></div>
     <p class="text-xs text-slate-400 mb-3 max-w-3xl">${t.cardHint}</p>${p.info ? `<p class="text-xs text-amber-300 mb-2">${p.info}</p>` : ''}
     <div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2 mb-3">${shaftProfilePreviewSvg(p)}</div>
     <div class="overflow-x-auto"><table class="text-xs text-left" id="shaftProfileTbl"><thead><tr class="text-slate-400"><th class="pr-2 pb-1">#</th><th class="pr-2">${t.from}</th><th class="pr-2">${t.to}</th><th class="pr-2">${t.dia}</th><th class="pr-2">${t.key}</th><th></th></tr></thead><tbody>` +

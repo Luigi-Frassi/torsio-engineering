@@ -302,22 +302,22 @@ function drawShaftGoodman(res, inp, Xreq, t) {
   const X = v => x0 + (v / maxM) * w, Y = v => y0 - (v / maxA) * h;
   const f0 = n => Math.round(n);
   let s = '';
-  s += `<line x1="${x0}" y1="${y0}" x2="${x0 + w}" y2="${y0}" stroke="#64748b" stroke-width="1"/>`;
-  s += `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0 - h - 5}" stroke="#64748b" stroke-width="1"/>`;
-  s += `<text x="${x0 + w / 2}" y="${y0 + 26}" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="monospace">σm,eq [MPa]</text>`;
-  s += `<text x="${x0 - 4}" y="${y0 - h - 8}" fill="#94a3b8" font-size="9" text-anchor="start" font-family="monospace">σa,eq [MPa]</text>`;
+  s += `<line x1="${x0}" y1="${y0}" x2="${x0 + w}" y2="${y0}" stroke="#8a857c" stroke-width="1"/>`;
+  s += `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0 - h - 5}" stroke="#8a857c" stroke-width="1"/>`;
+  s += `<text x="${x0 + w / 2}" y="${y0 + 26}" fill="#6f6a62" font-size="9" text-anchor="middle" font-family="monospace">σm,eq [MPa]</text>`;
+  s += `<text x="${x0 - 4}" y="${y0 - h - 8}" fill="#6f6a62" font-size="9" text-anchor="start" font-family="monospace">σa,eq [MPa]</text>`;
   // limit line and safe line
-  s += `<line x1="${X(0)}" y1="${Y(aLim)}" x2="${X(mLim)}" y2="${Y(0)}" stroke="#f43f5e" stroke-width="1.8"/>`;
-  s += `<line x1="${X(0)}" y1="${Y(aLim / Xreq)}" x2="${X(mLim / Xreq)}" y2="${Y(0)}" stroke="#38bdf8" stroke-width="1.4" stroke-dasharray="5 3"/>`;
-  s += `<text x="${X(0) + 4}" y="${Y(aLim) - 4}" fill="#f43f5e" font-size="9" font-family="monospace">${f0(aLim)} = b₁b₂σN</text>`;
-  s += `<text x="${X(mLim)}" y="${y0 + 12}" fill="#f43f5e" font-size="9" text-anchor="end" font-family="monospace">σR = ${f0(mLim)}</text>`;
-  s += `<text x="${X(mLim / Xreq)}" y="${y0 + 12}" fill="#38bdf8" font-size="9" text-anchor="middle" font-family="monospace">${t.shaftSafeLine} ${shaftFmt(Xreq, 2)}</text>`;
+  s += `<line x1="${X(0)}" y1="${Y(aLim)}" x2="${X(mLim)}" y2="${Y(0)}" stroke="#c0392b" stroke-width="1.8"/>`;
+  s += `<line x1="${X(0)}" y1="${Y(aLim / Xreq)}" x2="${X(mLim / Xreq)}" y2="${Y(0)}" stroke="#2f66b3" stroke-width="1.4" stroke-dasharray="5 3"/>`;
+  s += `<text x="${X(0) + 4}" y="${Y(aLim) - 4}" fill="#c0392b" font-size="9" font-family="monospace">${f0(aLim)} = b₁b₂σN</text>`;
+  s += `<text x="${X(mLim)}" y="${y0 + 12}" fill="#c0392b" font-size="9" text-anchor="end" font-family="monospace">σR = ${f0(mLim)}</text>`;
+  s += `<text x="${X(mLim / Xreq)}" y="${y0 + 12}" fill="#2f66b3" font-size="9" text-anchor="middle" font-family="monospace">${t.shaftSafeLine} ${shaftFmt(Xreq, 2)}</text>`;
   // working point and load line from the origin
   const px = X(res.sigmaMeq), py = Y(res.sigmaAeq);
-  s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${px}" y2="${py}" stroke="#fbbf24" stroke-width="1" stroke-dasharray="2 2"/>`;
-  s += `<circle cx="${px}" cy="${py}" r="4" fill="#fbbf24"/>`;
+  s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${px}" y2="${py}" stroke="#b7791f" stroke-width="1" stroke-dasharray="2 2"/>`;
+  s += `<circle cx="${px}" cy="${py}" r="4" fill="#b7791f"/>`;
   const labelLeft = px > x0 + w * 0.6;
-  s += `<text x="${labelLeft ? px - 7 : px + 7}" y="${py + 13}" fill="#fbbf24" font-size="9" text-anchor="${labelLeft ? 'end' : 'start'}" font-family="monospace">${t.shaftWorkPoint} (${f0(res.sigmaMeq)}; ${f0(res.sigmaAeq)})</text>`;
+  s += `<text x="${labelLeft ? px - 7 : px + 7}" y="${py + 13}" fill="#b7791f" font-size="9" text-anchor="${labelLeft ? 'end' : 'start'}" font-family="monospace">${t.shaftWorkPoint} (${f0(res.sigmaMeq)}; ${f0(res.sigmaAeq)})</text>`;
   svg.innerHTML = s;
 }
 
@@ -332,28 +332,28 @@ function drawShaftSketch(d, D, r, notchType, t) {
   const xs = 150;                              // shoulder position
   const rPx = r ? Math.min(Math.max(r * k, 2), 18) : 0;
   let s = '';
-  s += `<line x1="20" y1="${cy}" x2="280" y2="${cy}" stroke="#334155" stroke-dasharray="8 3 2 3" stroke-width="1"/>`;
+  s += `<line x1="20" y1="${cy}" x2="280" y2="${cy}" stroke="#e1ddd4" stroke-dasharray="8 3 2 3" stroke-width="1"/>`;
   if ((notchType === 'shoulder' || notchType === 'combined') && D) {
     // small diameter on the left, shoulder on the right, fillet radius at the corner
     const path = `M 30 ${cy - hd} L ${xs - rPx} ${cy - hd} Q ${xs} ${cy - hd} ${xs} ${cy - hd - rPx} L ${xs} ${cy - hD} L 270 ${cy - hD}
       L 270 ${cy + hD} L ${xs} ${cy + hD} L ${xs} ${cy + hd + rPx} Q ${xs} ${cy + hd} ${xs - rPx} ${cy + hd} L 30 ${cy + hd} Z`;
-    s += `<path d="${path}" fill="rgba(56,189,248,0.10)" stroke="#38bdf8" stroke-width="1.6"/>`;
-    s += `<text x="${xs - 6}" y="${cy - hd - 6}" fill="#fbbf24" font-size="9" text-anchor="end" font-family="monospace">r ${shaftFmt(r, 1)}</text>`;
+    s += `<path d="${path}" fill="rgba(47,102,179,0.10)" stroke="#2f66b3" stroke-width="1.6"/>`;
+    s += `<text x="${xs - 6}" y="${cy - hd - 6}" fill="#b7791f" font-size="9" text-anchor="end" font-family="monospace">r ${shaftFmt(r, 1)}</text>`;
     if (notchType === 'combined') {
-      s += `<rect x="70" y="${cy - hd}" width="${xs - 90}" height="${Math.max(3, hd * 0.25)}" fill="#0f172a" stroke="#fbbf24" stroke-width="1"/>`;
+      s += `<rect x="70" y="${cy - hd}" width="${xs - 90}" height="${Math.max(3, hd * 0.25)}" fill="#fbfaf7" stroke="#b7791f" stroke-width="1"/>`;
     }
     // D dimension
-    s += `<line x1="250" y1="${cy - hD}" x2="250" y2="${cy + hD}" stroke="#a855f7" stroke-width="1"/>`;
-    s += `<text x="246" y="${cy - 5}" fill="#a855f7" font-size="11" font-weight="bold" text-anchor="end" font-family="monospace">Ø${shaftFmt(D, 0)}</text>`;
+    s += `<line x1="250" y1="${cy - hD}" x2="250" y2="${cy + hD}" stroke="#7a4fb3" stroke-width="1"/>`;
+    s += `<text x="246" y="${cy - 5}" fill="#7a4fb3" font-size="11" font-weight="bold" text-anchor="end" font-family="monospace">Ø${shaftFmt(D, 0)}</text>`;
   } else {
-    s += `<rect x="30" y="${cy - hd}" width="240" height="${2 * hd}" fill="rgba(56,189,248,0.10)" stroke="#38bdf8" stroke-width="1.6"/>`;
+    s += `<rect x="30" y="${cy - hd}" width="240" height="${2 * hd}" fill="rgba(47,102,179,0.10)" stroke="#2f66b3" stroke-width="1.6"/>`;
     if (notchType === 'keyway') {
-      s += `<rect x="110" y="${cy - hd}" width="80" height="${Math.max(3, hd * 0.25)}" fill="#0f172a" stroke="#fbbf24" stroke-width="1"/>`;
+      s += `<rect x="110" y="${cy - hd}" width="80" height="${Math.max(3, hd * 0.25)}" fill="#fbfaf7" stroke="#b7791f" stroke-width="1"/>`;
     }
   }
   // d dimension
-  s += `<line x1="60" y1="${cy - hd}" x2="60" y2="${cy + hd}" stroke="#38bdf8" stroke-width="1"/>`;
-  s += `<text x="66" y="${cy - 5}" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">Ø${shaftFmt(d, d % 1 ? 1 : 0)}</text>`;
+  s += `<line x1="60" y1="${cy - hd}" x2="60" y2="${cy + hd}" stroke="#2f66b3" stroke-width="1"/>`;
+  s += `<text x="66" y="${cy - 5}" fill="#2f66b3" font-size="11" font-weight="bold" font-family="monospace">Ø${shaftFmt(d, d % 1 ? 1 : 0)}</text>`;
   svg.innerHTML = s;
 }
 
@@ -439,37 +439,37 @@ function shaftGearIsoView(el, bi, labels, active, Mt, t) {
   let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="shrink-0 max-w-full h-auto bg-slate-950/60 rounded-lg border border-slate-800">`;
   // reference triad (bottom left)
   const o = [34, H - 30];
-  s += arrow(o, [o[0] + 26, o[1]], '#64748b', 1.4) + arrow(o, [o[0], o[1] - 26], '#38bdf8', 1.4) + arrow(o, [o[0] + hx * 30, o[1] + hy * 30], '#fbbf24', 1.4);
-  s += `<text x="${o[0] + 29}" y="${o[1] + 4}" fill="#64748b" font-size="9" font-family="monospace">x</text>`;
-  s += `<text x="${o[0] + 4}" y="${o[1] - 22}" fill="#38bdf8" font-size="9" font-family="monospace">+V</text>`;
-  s += `<text x="${o[0] + hx * 30 + 14}" y="${o[1] + hy * 30 + 6}" fill="#fbbf24" font-size="9" font-family="monospace">+H ⊙</text>`;
+  s += arrow(o, [o[0] + 26, o[1]], '#8a857c', 1.4) + arrow(o, [o[0], o[1] - 26], '#2f66b3', 1.4) + arrow(o, [o[0] + hx * 30, o[1] + hy * 30], '#b7791f', 1.4);
+  s += `<text x="${o[0] + 29}" y="${o[1] + 4}" fill="#8a857c" font-size="9" font-family="monospace">x</text>`;
+  s += `<text x="${o[0] + 4}" y="${o[1] - 22}" fill="#2f66b3" font-size="9" font-family="monospace">+V</text>`;
+  s += `<text x="${o[0] + hx * 30 + 14}" y="${o[1] + hy * 30 + 6}" fill="#b7791f" font-size="9" font-family="monospace">+H ⊙</text>`;
   // faded context: other gears and couplings
   for (const e of active) {
     if (e === el) continue;
-    if (e.type === 'gear') s += disc(e.x, Math.max(14, Math.min(40, e.d / 6)), 'rgba(168,85,247,0.35)', 'rgba(168,85,247,0.05)', 1);
-    else s += `<rect x="${X(e.x) - 6}" y="${ax - 8}" width="12" height="16" fill="none" stroke="rgba(148,163,184,0.4)"/>`;
+    if (e.type === 'gear') s += disc(e.x, Math.max(14, Math.min(40, e.d / 6)), 'rgba(122,79,179,0.35)', 'rgba(122,79,179,0.05)', 1);
+    else s += `<rect x="${X(e.x) - 6}" y="${ax - 8}" width="12" height="16" fill="none" stroke="rgba(111,106,98,0.4)"/>`;
   }
   // shaft and bearings
   const xa = x0, xb = x1;
-  s += `<line x1="${X(xa)}" y1="${ax}" x2="${X(xb)}" y2="${ax}" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round"/>`;
+  s += `<line x1="${X(xa)}" y1="${ax}" x2="${X(xb)}" y2="${ax}" stroke="#3a3732" stroke-width="6" stroke-linecap="round"/>`;
   for (const xbng of [bi.xA, bi.xB]) {
     const px = X(xbng);
-    s += `<polygon points="${px},${ax + 4} ${px - 7},${ax + 16} ${px + 7},${ax + 16}" fill="none" stroke="#94a3b8" stroke-width="1.4"/>`;
+    s += `<polygon points="${px},${ax + 4} ${px - 7},${ax + 16} ${px + 7},${ax + 16}" fill="none" stroke="#6f6a62" stroke-width="1.4"/>`;
   }
-  for (const p of labels.points) s += `<text x="${X(p.x)}" y="${ax + 46}" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">${p.name}</text>`;
+  for (const p of labels.points) s += `<text x="${X(p.x)}" y="${ax + 46}" fill="#8a857c" font-size="10" text-anchor="middle" font-family="monospace">${p.name}</text>`;
   // the selected gear and its forces on the shaft
   const R = Math.max(26, Math.min(46, el.d / 5));
-  s += disc(el.x, R, '#a855f7', 'rgba(168,85,247,0.10)', 1.6);
+  s += disc(el.x, R, '#7a4fb3', 'rgba(122,79,179,0.10)', 1.6);
   const loads = shaftElementLoads(el, Mt, bi.theta, bi.rotation);
   const [fv, fh] = loads.dirs.rU, [tv, th] = loads.dirs.tU, mu = loads.dirs.meshU;
   const m3 = [mu[0] * R, mu[1] * R];                      // mesh point (v, h)
   // mating gear (mesh mode), tangent at the mesh point
-  if (el.dirMode === 'mesh') s += disc(el.x, R * 0.55, 'rgba(148,163,184,0.55)', 'rgba(148,163,184,0.06)', 1, mu[0] * R * 1.55, mu[1] * R * 1.55);
+  if (el.dirMode === 'mesh') s += disc(el.x, R * 0.55, 'rgba(111,106,98,0.55)', 'rgba(111,106,98,0.06)', 1, mu[0] * R * 1.55, mu[1] * R * 1.55);
   const M = P(el.x, m3[0], m3[1]);
   const len = 38, lenH = 52;                              // H looks shorter in the oblique view: longer arrow
   const tip = (v, h) => P(el.x, m3[0] + v * len, m3[1] + h * lenH);
-  s += arrow(M, tip(fv, fh), '#f43f5e');
-  s += arrow(M, tip(tv, th), '#34d399');
+  s += arrow(M, tip(fv, fh), '#c0392b');
+  s += arrow(M, tip(tv, th), '#21497f');
   // label just beyond the arrow tip, on the side the arrow points to
   const lab = (b, txt, col) => {
     const dx = b[0] - M[0], dy = b[1] - M[1], n = Math.hypot(dx, dy) || 1, ux = dx / n, uy = dy / n;
@@ -477,15 +477,15 @@ function shaftGearIsoView(el, bi, labels, active, Mt, t) {
     const tx = b[0] + ux * 6, ty = b[1] + uy * 6 + (uy > 0.3 ? 10 : uy < -0.3 ? -2 : 4);
     return `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" fill="${col}" font-size="10.5" font-weight="bold" text-anchor="${anchor}" font-family="monospace">${txt}</text>`;
   };
-  s += lab(tip(fv, fh), `Fr ${shaftFmt(loads.Fr, 0)} N`, '#f43f5e');
-  s += lab(tip(tv, th), `Ft ${shaftFmt(loads.Ft, 0)} N`, '#34d399');
+  s += lab(tip(fv, fh), `Fr ${shaftFmt(loads.Fr, 0)} N`, '#c0392b');
+  s += lab(tip(tv, th), `Ft ${shaftFmt(loads.Ft, 0)} N`, '#21497f');
   if (loads.FaMag > 0) {
     const sa = el.FaDir === '-x' ? -1 : 1, aEnd = [M[0] + sa * 40, M[1]];
-    s += arrow(M, aEnd, '#fbbf24');
-    s += `<text x="${aEnd[0] + (sa > 0 ? 4 : -4)}" y="${aEnd[1] - 5}" fill="#fbbf24" font-size="10.5" font-weight="bold" text-anchor="${sa > 0 ? 'start' : 'end'}" font-family="monospace">Fa</text>`;
+    s += arrow(M, aEnd, '#b7791f');
+    s += `<text x="${aEnd[0] + (sa > 0 ? 4 : -4)}" y="${aEnd[1] - 5}" fill="#b7791f" font-size="10.5" font-weight="bold" text-anchor="${sa > 0 ? 'start' : 'end'}" font-family="monospace">Fa</text>`;
   }
-  s += `<circle cx="${M[0]}" cy="${M[1]}" r="3.5" fill="#e2e8f0"/>`;
-  s += `<text x="${W - 8}" y="16" fill="#94a3b8" font-size="9.5" text-anchor="end" font-family="monospace">${t.shaftIsoTitle}</text>`;
+  s += `<circle cx="${M[0]}" cy="${M[1]}" r="3.5" fill="#22211f"/>`;
+  s += `<text x="${W - 8}" y="16" fill="#6f6a62" font-size="9.5" text-anchor="end" font-family="monospace">${t.shaftIsoTitle}</text>`;
   return s + '</svg>';
 }
 
@@ -515,27 +515,27 @@ function shaftGearEndView(el, dirs, rotation, t, L) {
   if (el.dirMode === 'mesh') {
     // mating gear, tangent at the mesh point, and the rotation of the shaft as seen from B
     const r2 = 18, gx = c + ux * (R + r2), gy = cy + uy * (R + r2);
-    s += `<circle cx="${gx}" cy="${gy}" r="${r2}" fill="rgba(148,163,184,0.08)" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2"/>`;
+    s += `<circle cx="${gx}" cy="${gy}" r="${r2}" fill="rgba(111,106,98,0.08)" stroke="#6f6a62" stroke-width="1" stroke-dasharray="3 2"/>`;
     const ccw = rotation !== 'cw', rr = 20, a0 = -30 * Math.PI / 180, a1 = 210 * Math.PI / 180;
     const Pa = a => [c + rr * Math.cos(a), cy - rr * Math.sin(a)];
     const [sa, ea] = ccw ? [a0, a1] : [a1, a0], p0 = Pa(sa), p1 = Pa(ea);
-    s += `<path d="M ${p0[0]} ${p0[1]} A ${rr} ${rr} 0 1 ${ccw ? 0 : 1} ${p1[0]} ${p1[1]}" fill="none" stroke="#e2e8f0" stroke-width="1.6"/>`;
+    s += `<path d="M ${p0[0]} ${p0[1]} A ${rr} ${rr} 0 1 ${ccw ? 0 : 1} ${p1[0]} ${p1[1]}" fill="none" stroke="#22211f" stroke-width="1.6"/>`;
     const tdx = (ccw ? -1 : 1) * -Math.sin(ea), tdy = (ccw ? -1 : 1) * -Math.cos(ea), hh = 7, an = Math.atan2(tdy, tdx);
-    s += `<polygon points="${p1[0] + tdx * 3},${p1[1] + tdy * 3} ${p1[0] - hh * Math.cos(an - 0.5)},${p1[1] - hh * Math.sin(an - 0.5)} ${p1[0] - hh * Math.cos(an + 0.5)},${p1[1] - hh * Math.sin(an + 0.5)}" fill="#e2e8f0"/>`;
+    s += `<polygon points="${p1[0] + tdx * 3},${p1[1] + tdy * 3} ${p1[0] - hh * Math.cos(an - 0.5)},${p1[1] - hh * Math.sin(an - 0.5)} ${p1[0] - hh * Math.cos(an + 0.5)},${p1[1] - hh * Math.sin(an + 0.5)}" fill="#22211f"/>`;
   }
   // axes of the end view: V up, H to the right (seen from A, +H out of the side view = to the right here)
-  s += `<line x1="${c}" y1="${cy - 82}" x2="${c}" y2="${cy + 82}" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>`;
-  s += `<line x1="${c - 82}" y1="${cy}" x2="${c + 82}" y2="${cy}" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>`;
-  s += `<text x="${c - 5}" y="${cy - 76}" text-anchor="end" fill="#38bdf8" font-size="10" font-family="monospace">+V</text>`;
-  s += `<text x="${c - 86}" y="${cy + 4}" fill="#fbbf24" font-size="10" text-anchor="end" font-family="monospace">+H</text>`;
-  s += `<circle cx="${c}" cy="${cy}" r="${R}" fill="rgba(168,85,247,0.06)" stroke="#a855f7" stroke-width="1.4" stroke-dasharray="5 3"/>`;
-  s += `<circle cx="${c}" cy="${cy}" r="11" fill="rgba(203,213,225,0.25)" stroke="#cbd5e1" stroke-width="1.5"/>`;
-  s += arrow(mx, my, mx + fx * len, my + fy * len, '#f43f5e');
-  s += arrow(mx, my, mx + tx * len, my + ty * len, '#34d399');
-  s += `<circle cx="${mx}" cy="${my}" r="4" fill="#e2e8f0"/>`;
-  s += lab(mx, my, fx, fy, `Fr ${shaftDirWord(dirs.rU)}`, '#f43f5e', [-tx, -ty]);
-  s += lab(mx, my, tx, ty, `Ft ${shaftDirWord(dirs.tU)}`, '#34d399');
-  s += `<text x="${c}" y="222" fill="#94a3b8" font-size="9.5" text-anchor="middle" font-family="monospace">${t.shaftEndViewTitle}${L ? ' · ' + L : ''}</text>`;
+  s += `<line x1="${c}" y1="${cy - 82}" x2="${c}" y2="${cy + 82}" stroke="#e1ddd4" stroke-width="1" stroke-dasharray="4 3"/>`;
+  s += `<line x1="${c - 82}" y1="${cy}" x2="${c + 82}" y2="${cy}" stroke="#e1ddd4" stroke-width="1" stroke-dasharray="4 3"/>`;
+  s += `<text x="${c - 5}" y="${cy - 76}" text-anchor="end" fill="#2f66b3" font-size="10" font-family="monospace">+V</text>`;
+  s += `<text x="${c - 86}" y="${cy + 4}" fill="#b7791f" font-size="10" text-anchor="end" font-family="monospace">+H</text>`;
+  s += `<circle cx="${c}" cy="${cy}" r="${R}" fill="rgba(122,79,179,0.06)" stroke="#7a4fb3" stroke-width="1.4" stroke-dasharray="5 3"/>`;
+  s += `<circle cx="${c}" cy="${cy}" r="11" fill="rgba(58,55,50,0.25)" stroke="#3a3732" stroke-width="1.5"/>`;
+  s += arrow(mx, my, mx + fx * len, my + fy * len, '#c0392b');
+  s += arrow(mx, my, mx + tx * len, my + ty * len, '#21497f');
+  s += `<circle cx="${mx}" cy="${my}" r="4" fill="#22211f"/>`;
+  s += lab(mx, my, fx, fy, `Fr ${shaftDirWord(dirs.rU)}`, '#c0392b', [-tx, -ty]);
+  s += lab(mx, my, tx, ty, `Ft ${shaftDirWord(dirs.tU)}`, '#21497f');
+  s += `<text x="${c}" y="222" fill="#6f6a62" font-size="9.5" text-anchor="middle" font-family="monospace">${t.shaftEndViewTitle}${L ? ' · ' + L : ''}</text>`;
   return s + '</svg>';
 }
 
@@ -756,32 +756,32 @@ function drawShaftBeamChart(res, bi, xSel, t) {
   const f0 = v => Math.round(v);
   const kN = v => shaftFmt(v / 1000, 2);
   const points = res.labels.points;
-  const title = (y, txt, col = '#cbd5e1') => `<text x="8" y="${y}" fill="${col}" font-size="9" font-weight="bold" font-family="monospace">${txt}</text>`;
+  const title = (y, txt, col = '#3a3732') => `<text x="8" y="${y}" fill="${col}" font-size="9" font-weight="bold" font-family="monospace">${txt}</text>`;
   let s = '';
 
   // ---- 1. shaft with ends, bearings, elements and names (y 0..100)
   s += title(14, t.shaftChartShaft);
   const yS = 50;
-  s += `<line x1="${X(res.xmin)}" y1="${yS}" x2="${X(res.xmax)}" y2="${yS}" stroke="#cbd5e1" stroke-width="4"/>`;
+  s += `<line x1="${X(res.xmin)}" y1="${yS}" x2="${X(res.xmax)}" y2="${yS}" stroke="#3a3732" stroke-width="4"/>`;
   for (const x of [bi.xA, bi.xB]) {
     const px = X(x);
-    s += `<polygon points="${px},${yS + 3} ${px - 7},${yS + 15} ${px + 7},${yS + 15}" fill="none" stroke="#94a3b8" stroke-width="1.4"/>`;
+    s += `<polygon points="${px},${yS + 3} ${px - 7},${yS + 15} ${px + 7},${yS + 15}" fill="none" stroke="#6f6a62" stroke-width="1.4"/>`;
   }
   for (const l of res.loads) {
     const px = X(l.x), el = l.el;
     if (el.type === 'gear') {
       const h = Math.max(10, Math.min(30, el.d / 8));
-      s += `<rect x="${px - 4}" y="${yS - h}" width="8" height="${2 * h}" fill="rgba(168,85,247,0.25)" stroke="#a855f7" stroke-width="1.2"/>`;
+      s += `<rect x="${px - 4}" y="${yS - h}" width="8" height="${2 * h}" fill="rgba(122,79,179,0.25)" stroke="#7a4fb3" stroke-width="1.2"/>`;
     } else if (el.type === 'coupling') {
-      s += `<rect x="${px - 6}" y="${yS - 8}" width="12" height="16" fill="rgba(148,163,184,0.2)" stroke="#94a3b8" stroke-width="1.2"/>`;
+      s += `<rect x="${px - 6}" y="${yS - 8}" width="12" height="16" fill="rgba(111,106,98,0.2)" stroke="#6f6a62" stroke-width="1.2"/>`;
     } else {
-      s += `<circle cx="${px}" cy="${yS}" r="4" fill="#38bdf8"/>`;
+      s += `<circle cx="${px}" cy="${yS}" r="4" fill="#2f66b3"/>`;
     }
   }
   for (const p of points) {
     const px = X(p.x);
-    s += `<text x="${px}" y="${yS + 30}" fill="#e2e8f0" font-size="11" font-weight="bold" text-anchor="middle" font-family="monospace">${p.name}</text>`;
-    s += `<text x="${px}" y="${yS + 41}" fill="#64748b" font-size="7.5" text-anchor="middle" font-family="monospace">${shaftFmt(p.x, p.x % 1 ? 1 : 0)}</text>`;
+    s += `<text x="${px}" y="${yS + 30}" fill="#22211f" font-size="11" font-weight="bold" text-anchor="middle" font-family="monospace">${p.name}</text>`;
+    s += `<text x="${px}" y="${yS + 41}" fill="#8a857c" font-size="7.5" text-anchor="middle" font-family="monospace">${shaftFmt(p.x, p.x % 1 ? 1 : 0)}</text>`;
   }
 
   // common scale for the three bending moment diagrams, so they can be compared
@@ -797,23 +797,23 @@ function drawShaftBeamChart(res, bi, xSel, t) {
   // ---- 2./3. one block per plane
   const planeBlock = (y0, plane) => {
     const fKey = plane === 'V' ? 'Fv' : 'Fh', cKey = plane === 'V' ? 'Cv' : 'Ch', mKey = plane === 'V' ? 'Mv' : 'Mh';
-    const col = plane === 'V' ? '#38bdf8' : '#fbbf24';
+    const col = plane === 'V' ? '#2f66b3' : '#b7791f';
     let b = title(y0 + 12, plane === 'V' ? t.shaftChartPlaneV : t.shaftChartPlaneH, col);
-    b += `<text x="${X1}" y="${y0 + 12}" fill="#64748b" font-size="7.5" text-anchor="end" font-family="monospace">${plane === 'V' ? t.shaftChartUpV : t.shaftChartUpH}</text>`;
+    b += `<text x="${X1}" y="${y0 + 12}" fill="#8a857c" font-size="7.5" text-anchor="end" font-family="monospace">${plane === 'V' ? t.shaftChartUpV : t.shaftChartUpH}</text>`;
     // beam with the forces of this plane
     const yb = y0 + 48;
-    b += `<line x1="${X(res.xmin)}" y1="${yb}" x2="${X(res.xmax)}" y2="${yb}" stroke="#94a3b8" stroke-width="2"/>`;
+    b += `<line x1="${X(res.xmin)}" y1="${yb}" x2="${X(res.xmax)}" y2="${yb}" stroke="#6f6a62" stroke-width="2"/>`;
     const forces = [
       { x: bi.xA, F: res.RA[plane], react: true }, { x: bi.xB, F: res.RB[plane], react: true },
       ...res.loads.map(l => ({ x: l.x, F: l[fKey], C: l[cKey] }))
     ];
     for (const f of forces) {
       const px = X(f.x);
-      if (f.react) b += `<polygon points="${px},${yb + 2} ${px - 5},${yb + 10} ${px + 5},${yb + 10}" fill="none" stroke="#64748b" stroke-width="1"/>`;
+      if (f.react) b += `<polygon points="${px},${yb + 2} ${px - 5},${yb + 10} ${px + 5},${yb + 10}" fill="none" stroke="#8a857c" stroke-width="1"/>`;
       if (Math.abs(f.F) > 1e-9) {
         const up = f.F > 0;
         const ya = up ? yb + 30 : yb - 30, yh = up ? yb + 2 : yb - 2;
-        const c = f.react ? '#94a3b8' : col;
+        const c = f.react ? '#6f6a62' : col;
         b += `<line x1="${px}" y1="${ya}" x2="${px}" y2="${yh}" stroke="${c}" stroke-width="1.8"/>`;
         b += `<polygon points="${px},${yh} ${px - 4},${yh + (up ? 7 : -7)} ${px + 4},${yh + (up ? 7 : -7)}" fill="${c}"/>`;
         const right = px + 50 < X1;
@@ -829,8 +829,8 @@ function drawShaftBeamChart(res, bi, xSel, t) {
     const ym = y0 + 92 + r.hi * kM + (84 - (r.hi - r.lo) * kM) / 2, hM = r.hi * kM;
     const Y = m => ym - m * kM;
     const pts = smp.map(p => `${X(p.x).toFixed(1)},${Y(p[mKey]).toFixed(1)}`).join(' ');
-    b += `<line x1="${X(res.xmin)}" y1="${ym}" x2="${X(res.xmax)}" y2="${ym}" stroke="#475569" stroke-width="1"/>`;
-    b += `<polygon points="${X(res.xmin).toFixed(1)},${ym} ${pts} ${X(res.xmax).toFixed(1)},${ym}" fill="${plane === 'V' ? 'rgba(56,189,248,0.12)' : 'rgba(251,191,36,0.12)'}" stroke="none"/>`;
+    b += `<line x1="${X(res.xmin)}" y1="${ym}" x2="${X(res.xmax)}" y2="${ym}" stroke="#b8b2a6" stroke-width="1"/>`;
+    b += `<polygon points="${X(res.xmin).toFixed(1)},${ym} ${pts} ${X(res.xmax).toFixed(1)},${ym}" fill="${plane === 'V' ? 'rgba(47,102,179,0.12)' : 'rgba(183,121,31,0.12)'}" stroke="none"/>`;
     b += `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.8"/>`;
     b += `<text x="8" y="${y0 + 96}" fill="${col}" font-size="8" font-family="monospace">${mKey} [N·m]</text>`;
     for (const p of points) {
@@ -846,44 +846,44 @@ function drawShaftBeamChart(res, bi, xSel, t) {
 
   // ---- 4. resultant bending moment
   const yR0 = 478, ymR = 590, hR = mMax * kM;
-  s += title(yR0 + 12, t.shaftChartTotal, '#f43f5e');
+  s += title(yR0 + 12, t.shaftChartTotal, '#c0392b');
   const YR = m => ymR - m * kM;
   const ptsR = smp.map(p => `${X(p.x).toFixed(1)},${YR(p.Mf).toFixed(1)}`).join(' ');
-  s += `<line x1="${X(res.xmin)}" y1="${ymR}" x2="${X(res.xmax)}" y2="${ymR}" stroke="#475569" stroke-width="1"/>`;
-  s += `<polygon points="${X(res.xmin).toFixed(1)},${ymR} ${ptsR} ${X(res.xmax).toFixed(1)},${ymR}" fill="rgba(244,63,94,0.12)" stroke="none"/>`;
-  s += `<polyline points="${ptsR}" fill="none" stroke="#f43f5e" stroke-width="2.2"/>`;
-  s += `<text x="8" y="${yR0 + 26}" fill="#f43f5e" font-size="8" font-family="monospace">Mf [N·m]</text>`;
+  s += `<line x1="${X(res.xmin)}" y1="${ymR}" x2="${X(res.xmax)}" y2="${ymR}" stroke="#b8b2a6" stroke-width="1"/>`;
+  s += `<polygon points="${X(res.xmin).toFixed(1)},${ymR} ${ptsR} ${X(res.xmax).toFixed(1)},${ymR}" fill="rgba(192,57,43,0.12)" stroke="none"/>`;
+  s += `<polyline points="${ptsR}" fill="none" stroke="#c0392b" stroke-width="2.2"/>`;
+  s += `<text x="8" y="${yR0 + 26}" fill="#c0392b" font-size="8" font-family="monospace">Mf [N·m]</text>`;
   const cr = res.critical;
   for (const p of points) {
     const m = mAt(p.x, 'Mf');
     if (m < 0.5) continue;
     const isCrit = Math.abs(p.x - cr.x) < 1e-6;
-    s += `<circle cx="${X(p.x)}" cy="${YR(m)}" r="${isCrit ? 3.8 : 2.2}" fill="#f43f5e"/>`;
-    s += `<text x="${X(p.x)}" y="${YR(m) - 6}" fill="#f43f5e" font-size="${isCrit ? 9 : 8}" font-weight="${isCrit ? 'bold' : 'normal'}" text-anchor="middle" font-family="monospace">${p.name} ${f0(m)}</text>`;
+    s += `<circle cx="${X(p.x)}" cy="${YR(m)}" r="${isCrit ? 3.8 : 2.2}" fill="#c0392b"/>`;
+    s += `<text x="${X(p.x)}" y="${YR(m) - 6}" fill="#c0392b" font-size="${isCrit ? 9 : 8}" font-weight="${isCrit ? 'bold' : 'normal'}" text-anchor="middle" font-family="monospace">${p.name} ${f0(m)}</text>`;
   }
   if (!points.some(p => Math.abs(p.x - cr.x) < 1e-6)) {
-    s += `<circle cx="${X(cr.x)}" cy="${YR(cr.Mf)}" r="3.8" fill="#f43f5e"/>`;
-    s += `<text x="${X(cr.x)}" y="${YR(cr.Mf) - 6}" fill="#f43f5e" font-size="9" font-weight="bold" text-anchor="middle" font-family="monospace">${f0(cr.Mf)}</text>`;
+    s += `<circle cx="${X(cr.x)}" cy="${YR(cr.Mf)}" r="3.8" fill="#c0392b"/>`;
+    s += `<text x="${X(cr.x)}" y="${YR(cr.Mf) - 6}" fill="#c0392b" font-size="9" font-weight="bold" text-anchor="middle" font-family="monospace">${f0(cr.Mf)}</text>`;
   }
 
   // ---- 5. torque
   const yT = 650, hT = 30;
-  s += title(606, t.shaftChartTorque, '#a855f7');
+  s += title(606, t.shaftChartTorque, '#7a4fb3');
   const tMax = Math.max(1e-9, ...smp.map(p => Math.abs(p.T)));
-  s += `<line x1="${X(res.xmin)}" y1="${yT}" x2="${X(res.xmax)}" y2="${yT}" stroke="#475569" stroke-width="1"/>`;
+  s += `<line x1="${X(res.xmin)}" y1="${yT}" x2="${X(res.xmax)}" y2="${yT}" stroke="#b8b2a6" stroke-width="1"/>`;
   const tPts = smp.map(p => `${X(p.x).toFixed(1)},${(yT - Math.abs(p.T) / tMax * hT).toFixed(1)}`);
-  s += `<polygon points="${X(res.xmin).toFixed(1)},${yT} ${tPts.join(' ')} ${X(res.xmax).toFixed(1)},${yT}" fill="rgba(168,85,247,0.12)" stroke="none"/>`;
-  s += `<polyline points="${tPts.join(' ')}" fill="none" stroke="#a855f7" stroke-width="1.6"/>`;
-  if (tMax > 1e-6) s += `<text x="${X1}" y="${yT - hT - 3}" fill="#a855f7" font-size="8" text-anchor="end" font-family="monospace">Mt = ${f0(tMax)} N·m</text>`;
+  s += `<polygon points="${X(res.xmin).toFixed(1)},${yT} ${tPts.join(' ')} ${X(res.xmax).toFixed(1)},${yT}" fill="rgba(122,79,179,0.12)" stroke="none"/>`;
+  s += `<polyline points="${tPts.join(' ')}" fill="none" stroke="#7a4fb3" stroke-width="1.6"/>`;
+  if (tMax > 1e-6) s += `<text x="${X1}" y="${yT - hT - 3}" fill="#7a4fb3" font-size="8" text-anchor="end" font-family="monospace">Mt = ${f0(tMax)} N·m</text>`;
 
   // named points: thin guides through all the diagrams; selected section dashed
   for (const p of points) {
-    s += `<line x1="${X(p.x)}" y1="${yS + 44}" x2="${X(p.x)}" y2="${yT}" stroke="#334155" stroke-width="0.6" stroke-dasharray="1 3"/>`;
+    s += `<line x1="${X(p.x)}" y1="${yS + 44}" x2="${X(p.x)}" y2="${yT}" stroke="#e1ddd4" stroke-width="0.6" stroke-dasharray="1 3"/>`;
   }
   if (Number.isFinite(xSel) && xSel >= res.xmin - 1e-9 && xSel <= res.xmax + 1e-9) {
     const px = X(xSel);
-    s += `<line x1="${px}" y1="22" x2="${px}" y2="${yT}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>`;
-    s += `<text x="${px + 3}" y="28" fill="#e2e8f0" font-size="8" font-family="monospace">x=${shaftFmt(xSel, 1)}</text>`;
+    s += `<line x1="${px}" y1="22" x2="${px}" y2="${yT}" stroke="#22211f" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>`;
+    s += `<text x="${px + 3}" y="28" fill="#22211f" font-size="8" font-family="monospace">x=${shaftFmt(xSel, 1)}</text>`;
   }
   svg.innerHTML = s;
 }

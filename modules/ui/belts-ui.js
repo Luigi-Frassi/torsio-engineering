@@ -71,36 +71,36 @@ function drawBeltScheme(dp1, dp2, C) {
 
   // 1. Asse mediano tratteggiato
   svg.innerHTML += `
-    <line x1="${cx1 - R1 - 20}" y1="${cy}" x2="${cx2 + R2 + 20}" y2="${cy}" stroke="#334155" stroke-dasharray="6 4" stroke-width="1.2" />
+    <line x1="${cx1 - R1 - 20}" y1="${cy}" x2="${cx2 + R2 + 20}" y2="${cy}" stroke="#e1ddd4" stroke-dasharray="6 4" stroke-width="1.2" />
   `;
 
   // 2. Nastro Cinghia (tracciato azzurro con riempimento trasparente)
   svg.innerHTML += `
-    <path d="${beltPath}" fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="3" stroke-linejoin="round" />
+    <path d="${beltPath}" fill="rgba(47,102,179, 0.08)" stroke="#2f66b3" stroke-width="3" stroke-linejoin="round" />
   `;
 
   // 3. Puleggia 1 (Motrice z1)
   svg.innerHTML += `
-    <circle cx="${cx1}" cy="${cy}" r="${R1}" fill="rgba(251, 191, 36, 0.12)" stroke="#fbbf24" stroke-width="2" />
-    <circle cx="${cx1}" cy="${cy}" r="4" fill="#fbbf24" />
-    <text x="${cx1}" y="${cy - R1 - 8}" fill="#fbbf24" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₁</text>
+    <circle cx="${cx1}" cy="${cy}" r="${R1}" fill="rgba(183,121,31, 0.12)" stroke="#b7791f" stroke-width="2" />
+    <circle cx="${cx1}" cy="${cy}" r="4" fill="#b7791f" />
+    <text x="${cx1}" y="${cy - R1 - 8}" fill="#b7791f" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₁</text>
   `;
 
   // 4. Puleggia 2 (Condotta z2)
   svg.innerHTML += `
-    <circle cx="${cx2}" cy="${cy}" r="${R2}" fill="rgba(168, 85, 247, 0.12)" stroke="#a855f7" stroke-width="2" />
-    <circle cx="${cx2}" cy="${cy}" r="4" fill="#a855f7" />
-    <text x="${cx2}" y="${cy - R2 - 8}" fill="#a855f7" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₂</text>
+    <circle cx="${cx2}" cy="${cy}" r="${R2}" fill="rgba(122,79,179, 0.12)" stroke="#7a4fb3" stroke-width="2" />
+    <circle cx="${cx2}" cy="${cy}" r="4" fill="#7a4fb3" />
+    <text x="${cx2}" y="${cy - R2 - 8}" fill="#7a4fb3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₂</text>
   `;
 
   // 5. Linea di quota dell'interasse
   svg.innerHTML += `
-    <line x1="${cx1}" y1="${cy}" x2="${cx1}" y2="${dimY + 8}" stroke="#0284c7" stroke-width="0.8" stroke-dasharray="2 2" />
-    <line x1="${cx2}" y1="${cy}" x2="${cx2}" y2="${dimY + 8}" stroke="#0284c7" stroke-width="0.8" stroke-dasharray="2 2" />
-    <line x1="${cx1}" y1="${dimY}" x2="${cx2}" y2="${dimY}" stroke="#38bdf8" stroke-width="1.2" />
-    <polygon points="${cx1},${dimY} ${cx1+6},${dimY-3} ${cx1+6},${dimY+3}" fill="#38bdf8" />
-    <polygon points="${cx2},${dimY} ${cx2-6},${dimY-3} ${cx2-6},${dimY+3}" fill="#38bdf8" />
-    <text x="${(cx1 + cx2)/2}" y="${dimY + 16}" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">
+    <line x1="${cx1}" y1="${cy}" x2="${cx1}" y2="${dimY + 8}" stroke="#21497f" stroke-width="0.8" stroke-dasharray="2 2" />
+    <line x1="${cx2}" y1="${cy}" x2="${cx2}" y2="${dimY + 8}" stroke="#21497f" stroke-width="0.8" stroke-dasharray="2 2" />
+    <line x1="${cx1}" y1="${dimY}" x2="${cx2}" y2="${dimY}" stroke="#2f66b3" stroke-width="1.2" />
+    <polygon points="${cx1},${dimY} ${cx1+6},${dimY-3} ${cx1+6},${dimY+3}" fill="#2f66b3" />
+    <polygon points="${cx2},${dimY} ${cx2-6},${dimY-3} ${cx2-6},${dimY+3}" fill="#2f66b3" />
+    <text x="${(cx1 + cx2)/2}" y="${dimY + 16}" fill="#2f66b3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">
       C = ${currentUnit === 'metric' ? C.toFixed(2) + ' mm' : (C / 25.4).toFixed(3) + ' in'}
     </text>
   `;

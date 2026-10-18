@@ -128,13 +128,9 @@ function reportTexify(str) {
   return String(str).split(/\$([^$]+)\$/).map((part, i) => i % 2 ? reportTex(part, false) : part).join('');
 }
 
-// The app draws its SVGs for a dark background: map the light strokes/texts to dark ones for white paper
+// The app's SVGs are drawn for the paper theme (B3): only the panel paper becomes white for print
 function reportSvgForPrint(svgHtml) {
-  const map = {
-    '#cbd5e1': '#334155', '#e2e8f0': '#0f172a', '#94a3b8': '#475569', '#64748b': '#64748b', '#475569': '#94a3b8', '#334155': '#cbd5e1',
-    '#ffffff': '#0f172a', '#0284c7': '#0369a1',
-    '#38bdf8': '#0369a1', '#fbbf24': '#b45309', '#34d399': '#047857', '#f43f5e': '#be123c', '#a855f7': '#7e22ce'
-  };
+  const map = { '#fbfaf7': '#ffffff', '#f1efea': '#ffffff' };
   return svgHtml.replace(/#[0-9a-fA-F]{6}\b/g, c => map[c.toLowerCase()] || c)
     .replace(/class="[^"]*"/, 'class="rep-svg"');
 }
@@ -152,70 +148,70 @@ function reportCSS() {
   return `
   @page { size: A4; margin: 16mm 14mm 18mm 14mm; }
   * { box-sizing: border-box; }
-  body { font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; color: #0f172a; font-size: 10.5pt; line-height: 1.45; margin: 0; background: #f1f5f9; }
+  body { font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; color: #22211f; font-size: 10.5pt; line-height: 1.45; margin: 0; background: #f1efea; }
   .page { max-width: 190mm; margin: 0 auto; background: #fff; padding: 14mm 12mm; }
-  .toolbar { position: sticky; top: 0; z-index: 5; background: #0f172a; color: #e2e8f0; padding: 10px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; }
-  .toolbar button { background: #2e5640; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
-  .toolbar button.sec { background: #334155; }
-  .toolbar span { color: #94a3b8; }
-  .toolbar .fbq { margin-left: auto; color: #e2e8f0; white-space: nowrap; } .toolbar a.fb { text-decoration: none; font-size: 16px; padding: 2px 6px; border: 1px solid #334155; border-radius: 6px; margin-left: 4px; } .toolbar a.fb:hover { border-color: #e8b321; }
-  header.rep { border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 14px; }
-  header.rep .brand { font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; color: #2e5640; font-weight: 700; }
+  .toolbar { position: sticky; top: 0; z-index: 5; background: #22211f; color: #e6e2d9; padding: 10px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+  .toolbar button { background: #21497f; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .toolbar button.sec { background: #3a3732; }
+  .toolbar span { color: #a39d92; }
+  .toolbar .fbq { margin-left: auto; color: #e6e2d9; white-space: nowrap; } .toolbar a.fb { text-decoration: none; font-size: 16px; padding: 2px 6px; border: 1px solid #3a3732; border-radius: 6px; margin-left: 4px; } .toolbar a.fb:hover { border-color: #e8b321; }
+  header.rep { border-bottom: 2px solid #22211f; padding-bottom: 8px; margin-bottom: 14px; }
+  header.rep .brand { font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; color: #21497f; font-weight: 700; }
   header.rep h1 { font-size: 17pt; margin: 2px 0 2px; }
-  header.rep h2 { font-size: 11pt; margin: 0 0 8px; color: #475569; font-weight: 500; }
+  header.rep h2 { font-size: 11pt; margin: 0 0 8px; color: #5b5750; font-weight: 500; }
   .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 16px; font-size: 9.5pt; }
-  .meta b { color: #475569; font-weight: 600; margin-right: 4px; }
+  .meta b { color: #5b5750; font-weight: 600; margin-right: 4px; }
   [contenteditable] { background: #fef9c3; padding: 0 3px; border-radius: 2px; outline: none; }
-  h3 { font-size: 12pt; margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid #cbd5e1; break-after: avoid; }
-  h3 .n { color: #2e5640; margin-right: 6px; }
-  h4 { font-size: 10.5pt; margin: 10px 0 4px; color: #334155; break-after: avoid; }
+  h3 { font-size: 12pt; margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid #d6d1c6; break-after: avoid; }
+  h3 .n { color: #21497f; margin-right: 6px; }
+  h4 { font-size: 10.5pt; margin: 10px 0 4px; color: #3a3732; break-after: avoid; }
   table { border-collapse: collapse; width: 100%; margin: 4px 0 8px; font-size: 9.5pt; break-inside: avoid; }
-  th, td { border: 1px solid #cbd5e1; padding: 3px 6px; text-align: left; vertical-align: top; }
-  thead th { background: #f1f5f9; font-weight: 600; }
-  table.kv th { width: 42%; background: #f8fafc; font-weight: 500; color: #334155; }
+  th, td { border: 1px solid #d6d1c6; padding: 3px 6px; text-align: left; vertical-align: top; }
+  thead th { background: #f1efea; font-weight: 600; }
+  table.kv th { width: 42%; background: #f6f4ef; font-weight: 500; color: #3a3732; }
   tr.hl td { background: #fff1f2; font-weight: 600; }
-  .f { font-family: "JetBrains Mono", Consolas, monospace; font-size: 9.3pt; background: #f8fafc; border-left: 3px solid #2e5640; padding: 5px 8px; margin: 4px 0; white-space: pre-wrap; break-inside: avoid; }
-  .eq { border-left: 3px solid #2e5640; background: #f8fafc; padding: 2px 12px; margin: 4px 0 8px; break-inside: avoid; }
+  .f { font-family: "JetBrains Mono", Consolas, monospace; font-size: 9.3pt; background: #f6f4ef; border-left: 3px solid #21497f; padding: 5px 8px; margin: 4px 0; white-space: pre-wrap; break-inside: avoid; }
+  .eq { border-left: 3px solid #21497f; background: #f6f4ef; padding: 2px 12px; margin: 4px 0 8px; break-inside: avoid; }
   .eq .katex-display { text-align: left; margin: 6px 0; }
   .eq .katex-display > .katex { text-align: left; }
   .katex { font-size: 1.08em; }
-  .ok { color: #047857; font-weight: 700; } .ko { color: #b91c1c; font-weight: 700; }
-  .res { border: 1.5px solid #0f172a; border-radius: 6px; padding: 8px 10px; margin: 8px 0; break-inside: avoid; }
+  .ok { color: #21497f; font-weight: 700; } .ko { color: #b91c1c; font-weight: 700; }
+  .res { border: 1.5px solid #22211f; border-radius: 6px; padding: 8px 10px; margin: 8px 0; break-inside: avoid; }
   .res .big { font-size: 13pt; font-weight: 700; }
   .fig { break-inside: avoid; margin: 6px 0 10px; text-align: center; }
-  .fig .cap { font-size: 8.5pt; color: #64748b; margin-top: 2px; }
+  .fig .cap { font-size: 8.5pt; color: #6f6a62; margin-top: 2px; }
   .rep-svg { width: 100%; height: auto; max-height: 230mm; background: #fff; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .row .rep-svg { width: 48%; min-width: 220px; }
   .gv { display: grid; grid-template-columns: 62% 34%; gap: 4px 4%; align-items: center; break-inside: avoid; margin: 4px 0 8px; }
   .gv .rep-svg { width: 100%; }
-  .small { font-size: 8.8pt; color: #475569; }
-  footer.rep { margin-top: 18px; padding-top: 6px; border-top: 1px solid #cbd5e1; font-size: 8.5pt; color: #64748b; }
-  footer.rep a { color: #2e5640; word-break: break-all; }
+  .small { font-size: 8.8pt; color: #5b5750; }
+  footer.rep { margin-top: 18px; padding-top: 6px; border-top: 1px solid #d6d1c6; font-size: 8.5pt; color: #6f6a62; }
+  footer.rep a { color: #21497f; word-break: break-all; }
   ul { margin: 4px 0 8px 18px; padding: 0; }
   .rhead { display: grid; grid-template-columns: 54px auto 1fr; gap: 6px 12px; align-items: center; margin-bottom: 8px; }
   .rlogo img, .rlogo svg { width: 54px; height: 40px; object-fit: contain; display: block; }
-  .rco { font-weight: 700; font-size: 11pt; } .rco .rsub { font-size: 8.5pt; font-weight: 600; color: #2e5640; letter-spacing: .04em; }
-  table.rmeta { width: auto; margin: 0 0 0 auto; font-size: 8.8pt; } table.rmeta th { background: #f8fafc; font-weight: 500; color: #475569; } table.rmeta td { min-width: 80px; }
+  .rco { font-weight: 700; font-size: 11pt; } .rco .rsub { font-size: 8.5pt; font-weight: 600; color: #21497f; letter-spacing: .04em; }
+  table.rmeta { width: auto; margin: 0 0 0 auto; font-size: 8.8pt; } table.rmeta th { background: #f6f4ef; font-weight: 500; color: #5b5750; } table.rmeta td { min-width: 80px; }
   .cart { margin-top: 18px; break-inside: avoid; }
-  .cart table { border: 1.6px solid #0f172a; font-size: 8.8pt; margin: 0; }
-  .cart td { border: 1px solid #0f172a; padding: 3px 6px; vertical-align: top; }
-  .cart small { display: block; font-size: 7pt; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
+  .cart table { border: 1.6px solid #22211f; font-size: 8.8pt; margin: 0; }
+  .cart td { border: 1px solid #22211f; padding: 3px 6px; vertical-align: top; }
+  .cart small { display: block; font-size: 7pt; color: #6f6a62; text-transform: uppercase; letter-spacing: .04em; }
   .cart .ctitle { font-size: 11pt; font-weight: 700; }
   .cart .clogo { width: 23%; text-align: center; font-weight: 700; font-size: 9pt; } .cart .clogo img, .cart .clogo svg { max-width: 100%; height: 34px; object-fit: contain; display: block; margin: 0 auto 2px; }
-  .cart .sig { height: 46px; position: relative; } .cart .sig i { position: absolute; right: 6px; bottom: 3px; font-size: 7pt; color: #94a3b8; }
-  .cart table.revs { margin-top: 4px; border-width: 1px; } .cart table.revs th { font-size: 7.5pt; background: #f8fafc; } .cart table.revs td { padding: 2px 6px; }
-  .toc { border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; margin: 6px 0 12px; font-size: 9.8pt; background: #f8fafc; }
+  .cart .sig { height: 46px; position: relative; } .cart .sig i { position: absolute; right: 6px; bottom: 3px; font-size: 7pt; color: #a39d92; }
+  .cart table.revs { margin-top: 4px; border-width: 1px; } .cart table.revs th { font-size: 7.5pt; background: #f6f4ef; } .cart table.revs td { padding: 2px 6px; }
+  .toc { border: 1px solid #d6d1c6; border-radius: 6px; padding: 8px 12px; margin: 6px 0 12px; font-size: 9.8pt; background: #f6f4ef; }
   .toc ol { margin: 4px 0 0 18px; padding: 0; }
-  h2.ch { font-size: 14pt; margin: 4px 0 2px; padding: 6px 0 4px; border-bottom: 2px solid #0f172a; break-after: avoid; }
-  h2.ch .n { display: inline-block; min-width: 24px; color: #fff; background: #2e5640; border-radius: 4px; text-align: center; margin-right: 8px; padding: 0 6px; }
-  .chsub { margin: 2px 0 6px; color: #475569; font-size: 10pt; }
+  h2.ch { font-size: 14pt; margin: 4px 0 2px; padding: 6px 0 4px; border-bottom: 2px solid #22211f; break-after: avoid; }
+  h2.ch .n { display: inline-block; min-width: 24px; color: #fff; background: #21497f; border-radius: 4px; text-align: center; margin-right: 8px; padding: 0 6px; }
+  .chsub { margin: 2px 0 6px; color: #5b5750; font-size: 10pt; }
   section.chapter { break-before: page; padding-top: 4px; }
-  @media screen { section.chapter { margin-top: 26px; border-top: 6px solid #f1f5f9; padding-top: 14px; } }
-  .chnote { border-top: 1px dashed #cbd5e1; padding-top: 4px; margin-top: 10px; }
-  table.chk td { border: 0; border-bottom: 1px solid #e2e8f0; }
+  @media screen { section.chapter { margin-top: 26px; border-top: 6px solid #f1efea; padding-top: 14px; } }
+  .chnote { border-top: 1px dashed #d6d1c6; padding-top: 4px; margin-top: 10px; }
+  table.chk td { border: 0; border-bottom: 1px solid #e6e2d9; }
   table.chk td:first-child { width: 22px; text-align: center; font-weight: 700; }
-  table.chk td.ok { color: #047857; } table.chk td.ko { color: #b45309; } table.chk td.na { color: #94a3b8; }
+  table.chk td.ok { color: #21497f; } table.chk td.ko { color: #8a6408; } table.chk td.na { color: #a39d92; }
   .eq, .tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   @media screen and (max-width: 700px) {
     body { font-size: 10pt; }
@@ -245,7 +241,7 @@ function reportCSS() {
 let reportCollect = null;
 
 // Report header and title block from the project data (project.js); every field stays editable before printing
-const REPORT_MARK_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#2e5640" stroke-width="5"/><rect x="13" y="2" width="6" height="7" fill="#e8b321"/></svg>';
+const REPORT_MARK_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="#21497f" stroke-width="5"/><rect x="13" y="2" width="6" height="7" fill="#e8b321"/></svg>';
 
 function reportTitleBlock(title, R) {
   const P = typeof projectTitleData === 'function' ? projectTitleData(title) : { rev: '0', date: new Date().toLocaleDateString(), revisions: [] };

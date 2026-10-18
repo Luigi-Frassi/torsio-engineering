@@ -90,7 +90,7 @@ function prjBuildPanel() {
           <button type="button" id="prjLogoRemove" class="${PRJ_BTN}"></button></div></div>
         <p class="text-[11px] text-slate-500 mt-1" id="prjLogoHint"></p></div>
       <div><div class="${PRJ_LBL}" id="prjFileLbl"></div>
-        <div class="flex flex-wrap gap-2"><button type="button" id="prjSave" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#e8b321] text-slate-950 hover:bg-[#f0c241]"></button>
+        <div class="flex flex-wrap gap-2"><button type="button" id="prjSave" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#e8b321] text-[#22211f] hover:bg-[#f0c241]"></button>
           <label class="${PRJ_BTN} cursor-pointer"><span id="prjOpen"></span><input type="file" id="prjFile" accept=".json,application/json" class="hidden"></label></div>
         <p class="text-[11px] text-slate-500 mt-1" id="prjFileHint"></p>
         <button type="button" id="prjClear" class="mt-2 text-[11px] text-slate-400 hover:text-rose-300 underline"></button></div>

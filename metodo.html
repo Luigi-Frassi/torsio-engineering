@@ -21,11 +21,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <style>
-    :root { --paper: #eef1ec; --sheet: #f8faf7; --ink: #1c2120; --ink-2: #4f5b55; --line: #c9d1cb; --green: #2e5a42; --green-2: #4c8c66; --signal: #e8b321; --measure: 40rem; }
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
-    a { color: var(--green); }
+    a { color: var(--blue); }
     a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
     .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
     html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
@@ -69,12 +69,12 @@
     .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
     .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
     .mod h3 { margin: 0 0 4px; }
-    .mod .src { font-size: 13.5px; color: var(--green); font-weight: 600; margin: 0 0 12px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
     .mod p, .mod li { font-size: 15.5px; }
     .mod ul { padding-left: 18px; margin: 8px 0 0; }
     .mod li { margin-bottom: 4px; }
     .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
-    .eq { border-left: 3px solid var(--green); background: #f1f4f0; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
     .eq .katex-display { margin: 8px 0; text-align: left; }
     .eq .katex { font-size: 1em; }
     .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
