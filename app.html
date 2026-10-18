@@ -66,6 +66,7 @@
     .sum-bar div { position: absolute; left: 0; top: 0; bottom: 0; }
     .sum-bar i { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #22211f; }
     @media (max-width: 900px) { .sum-bar-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; } .sum-val { font-size: 24px; } }
+    .demo-list button { width: 100%; justify-content: flex-start; text-align: left; }
     .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     .ico { flex: none; display: inline-block; vertical-align: -3px; }
     .st-head { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .12em; color: #6f6a62; margin: 0 0 6px 12px; text-transform: uppercase; }
@@ -182,6 +183,44 @@
         <p class="text-sm text-slate-400 leading-snug" id="moduleSubtitle">H7 Hole-Basis System. Interactive matrix, reverse lookup, and unit conversion.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 shrink-0 pt-0.5">
+        <div class="relative" id="demoWrap">
+          <button type="button" id="demoBtn" aria-haspopup="true" aria-expanded="false" class="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-200 transition-colors">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg><span data-i18n="demoBtn">Demo</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
+          </button>
+          <div id="demoMenu" class="hidden absolute left-0 top-full mt-2 z-50 w-72 max-w-[calc(100vw-2rem)] bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-2">
+            <p class="px-2 pt-1 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400" data-i18n="demoBarTitle">Quick demos (1 click):</p>
+            <div class="flex flex-col gap-1 text-xs demo-list">
+        <button id="demoHelicalBtn" onclick="loadDemoPreset('helical50kw')"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M9 3.5l2 3M13 3.5l2 3M5.5 9l2.5 1.5M16 13.5l2.5 1.5M9 17.5l2 3M13 17.5l2 3"/></svg> <span data-i18n="demoHelical">Riduttore Elicoidale (50 kW)</span>
+        </button>
+        <button id="demoSpurBtn" onclick="loadDemoPreset('spur5kw')" 
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.5" cy="13" r="5"/><circle cx="8.5" cy="13" r="1.5"/><circle cx="17.5" cy="7.5" r="3.5"/><circle cx="17.5" cy="7.5" r="1"/></svg> <span data-i18n="demoSpur">Ingranaggi Diritti (5.5 kW)</span>
+        </button>
+        <button id="demoFitBtn" onclick="loadDemoPreset('bearingFit')" 
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="5.5" r="1.3"/><circle cx="12" cy="18.5" r="1.3"/><circle cx="5.5" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg> <span data-i18n="demoBearing">Cuscinetto Ø30 (H7/k6)</span>
+        </button>
+        <button id="demoTxBtn" onclick="loadDemoPreset('transmission')"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="14" r="3"/><circle cx="17" cy="11" r="5"/><path d="M6 11l11-5M6 17l11-1"/></svg> <span data-i18n="demoTx">Complete drive (7.5 kW)</span>
+        </button>
+        <button id="demoFramesBtn" onclick="loadDemoPreset('frames')"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21L11 3h2l3 18"/><path d="M9.5 14h5M10.3 9h3.4M8.8 18.5l6-4.5M15.2 18.5l-6-4.5"/></svg> <span data-i18n="demoFrames">Radio tower (FEM)</span>
+        </button>
+        <button id="demoBoltsBtn" onclick="loadDemoPreset('boltsExam')"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4H8z"/><path d="M10 8v12h4V8"/><path d="M10 11l4 1.5M10 14l4 1.5M10 17l4 1.5"/></svg> <span data-i18n="demoBolts">Flanged coupling (bolts)</span>
+        </button>
+        <button id="demoShaftBtn" onclick="loadDemoPreset('shaftExam')" 
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10h4v4H2zM6 8h6v8H6zM12 9h7v6h-7zM19 10.5h3v3h-3z"/><path d="M1 12h22" stroke-dasharray="3 1.5 1 1.5"/></svg> <span data-i18n="demoShaft">Reducer Shaft (Ø65, exam)</span>
+        </button>
+      </div>
+          </div>
+        </div>
         <div class="relative">
           <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] px-2.5 py-1.5 rounded-lg border border-[#e8b321] text-xs font-bold text-[#22211f] transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
             <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 11h6M9 14h6M12 17h3v4"/></svg><span class="hidden sm:inline" data-i18n="reportBtn">Report</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
@@ -221,44 +260,6 @@
 
     <!-- Summary band (modules/ui/summary.js) -->
     <section id="sumBar" class="sum-bar-wrap hidden" aria-label="Results"></section>
-
-<!-- Demo Quick-Presets Bar -->
-    <div class="mb-6 bg-slate-950/70 border border-slate-800 p-3 rounded-xl flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider" data-i18n="demoBarTitle">Demo rapida (1-Click):</span>
-      </div>
-      <div class="flex flex-wrap gap-2 text-xs">
-        <button id="demoHelicalBtn" onclick="loadDemoPreset('helical50kw')"
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M9 3.5l2 3M13 3.5l2 3M5.5 9l2.5 1.5M16 13.5l2.5 1.5M9 17.5l2 3M13 17.5l2 3"/></svg> <span data-i18n="demoHelical">Riduttore Elicoidale (50 kW)</span>
-        </button>
-        <button id="demoSpurBtn" onclick="loadDemoPreset('spur5kw')" 
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.5" cy="13" r="5"/><circle cx="8.5" cy="13" r="1.5"/><circle cx="17.5" cy="7.5" r="3.5"/><circle cx="17.5" cy="7.5" r="1"/></svg> <span data-i18n="demoSpur">Ingranaggi Diritti (5.5 kW)</span>
-        </button>
-        <button id="demoFitBtn" onclick="loadDemoPreset('bearingFit')" 
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="5.5" r="1.3"/><circle cx="12" cy="18.5" r="1.3"/><circle cx="5.5" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg> <span data-i18n="demoBearing">Cuscinetto Ø30 (H7/k6)</span>
-        </button>
-        <button id="demoTxBtn" onclick="loadDemoPreset('transmission')"
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="14" r="3"/><circle cx="17" cy="11" r="5"/><path d="M6 11l11-5M6 17l11-1"/></svg> <span data-i18n="demoTx">Complete drive (7.5 kW)</span>
-        </button>
-        <button id="demoFramesBtn" onclick="loadDemoPreset('frames')"
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21L11 3h2l3 18"/><path d="M9.5 14h5M10.3 9h3.4M8.8 18.5l6-4.5M15.2 18.5l-6-4.5"/></svg> <span data-i18n="demoFrames">Radio tower (FEM)</span>
-        </button>
-        <button id="demoBoltsBtn" onclick="loadDemoPreset('boltsExam')"
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4H8z"/><path d="M10 8v12h4V8"/><path d="M10 11l4 1.5M10 14l4 1.5M10 17l4 1.5"/></svg> <span data-i18n="demoBolts">Flanged coupling (bolts)</span>
-        </button>
-        <button id="demoShaftBtn" onclick="loadDemoPreset('shaftExam')" 
-          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10h4v4H2zM6 8h6v8H6zM12 9h7v6h-7zM19 10.5h3v3h-3z"/><path d="M1 12h22" stroke-dasharray="3 1.5 1 1.5"/></svg> <span data-i18n="demoShaft">Reducer Shaft (Ø65, exam)</span>
-        </button>
-      </div>
-    </div>
 
     <!-- ==================== MODULE 1: TOLERANCES & FITS ==================== -->
     <div id="moduleFitsSection">
@@ -2054,7 +2055,7 @@
         shaftMachiningLabel: "Recommended Shaft Machining:",
         holeMachiningLabel: "Recommended Hole Machining:",
         roughnessLabel: "Surface roughness:",
-        navStations: "Stations",
+        navStations: "Stations", demoBtn: "Demo",
         meshOptimal: "Enough teeth in mesh (≥ 6)", meshWarning: "Few teeth in mesh: capacity reduced",
         disclaimerTitle: "Technical note and disclaimer:",
         disclaimerText: "Calculations follow standard analytical machine design equations (ISO 286-2 for fits, ISO 5296 / DIN 7721 for synchronous belts, Hertz/Lewis for gears). Sizing values are preliminary guides for mechanical engineering and CAD design.",
@@ -2501,7 +2502,7 @@
         shaftMachiningLabel: "Lavorazione Albero consigliata:",
         holeMachiningLabel: "Lavorazione Foro consigliata:",
         roughnessLabel: "Rugosità consigliata:",
-        navStations: "Stazioni",
+        navStations: "Stazioni", demoBtn: "Demo",
         meshOptimal: "Denti in presa sufficienti (≥ 6)", meshWarning: "Pochi denti in presa: capacità ridotta",
         disclaimerTitle: "Nota tecnica e limitazione di responsabilità:",
         disclaimerText: "I calcoli utilizzano le formulazioni analitiche di costruzione di macchine (ISO 286 per gli accoppiamenti, ISO 5296 / DIN 7721 per le cinghie, Hertz/Lewis per le ruote dentate). Valori di pre-dimensionamento per disegni e CAD 3D.",
@@ -3641,6 +3642,18 @@
   <script src="modules/ui/links.js"></script>
   <script src="modules/ui/feedback.js"></script>
   <script src="modules/ui/summary.js"></script>
+  <script>
+    // Demo menu in the toolbar: opens on click, closes on a choice, outside click or Escape
+    (function () {
+      const btn = document.getElementById('demoBtn'), menu = document.getElementById('demoMenu');
+      if (!btn || !menu) return;
+      const close = () => { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); };
+      btn.addEventListener('click', ev => { ev.stopPropagation(); const open = menu.classList.toggle('hidden') === false; btn.setAttribute('aria-expanded', String(open)); });
+      menu.addEventListener('click', ev => { if (ev.target.closest('button')) close(); });
+      document.addEventListener('click', ev => { if (!ev.target.closest('#demoWrap')) close(); });
+      document.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); });
+    })();
+  </script>
 
   <script>
     // Boot sequence

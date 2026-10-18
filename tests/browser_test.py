@@ -134,7 +134,7 @@ with sync_playwright() as p:
 
     # --- 7. demo presets
     for btn in ['#demoHelicalBtn', '#demoSpurBtn', '#demoFitBtn']:
-        roundtrip('preset ' + btn, lambda pg, b=btn: pg.click(b))
+        roundtrip('preset ' + btn, lambda pg, b=btn: (pg.click('#demoBtn'), pg.click(b)))
 
     # --- 8. duplicate-id fix: gear geometry switcher must not touch the belt τ column
     pg = new_page(); pg.goto(BASE); settle(pg)
@@ -203,7 +203,8 @@ with sync_playwright() as p:
     pg.click('#shaftModeBeam'); set_val(pg, 'shaftSecX', 30); settle(pg); pg.click('#shaftUseSection'); settle(pg)
     check('alberi: sezione fra A e B -> niente torsione', not pg.is_checked('#shaftSecTorque'))
     # the page shows exactly what the core computes
-    pg.click('#demoShaftBtn'); settle(pg)
+    pg.click('#demoBtn'); pg.click('#demoShaftBtn'); settle(pg)
+    check('  il menu Demo si chiude dopo la scelta', pg.evaluate("document.getElementById('demoMenu').classList.contains('hidden')"))
     check('alberi, preset: apre la trave con la sezione C', vis('shaftBeamPanel') and pg.input_value('#shaftSecX') == '240')
     pg.click('#shaftUseSection'); settle(pg)
     core = pg.evaluate('''() => { const { inp, Xreq } = readShaftInputs(); const r = shaftDesign(inp, Xreq); return { d: r.d, D: r.D, dMin: r.dMin, X: r.final.Xfatigue }; }''')
