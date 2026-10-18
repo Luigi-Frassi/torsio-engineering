@@ -13,7 +13,7 @@ const SUM_TXT = {
     req: 'richiesto', margin: 'margine', min: 'min', none: '—',
     sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R' },
     ge: { m: 'Modulo', L: 'Larghezza di fascia', lewis: 'Lewis σL', a: 'Interasse', P: 'Potenza trasmissibile', M1: 'Momento al pignone', lim: { hertz: 'limita Hertz', lewis: 'limita Lewis' }, und: 'sottotaglio' },
-    be: { C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
+    be: { indic: 'indicativa, da confermare sul catalogo', C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
     fi: { hole: 'Foro', shaft: 'Albero', fit: 'Accoppiamento', d: 'Diametro nominale', kinds: { clearance: 'GIOCO', interference: 'INTERFERENZA', transition: 'INCERTO' }, play: 'gioco', inter: 'interferenza' },
     fr: { sec: 'Sezione scelta', mass: 'Peso', util: 'Utilizzo massimo', defl: 'Freccia massima', empty: 'Disegna la struttura', bars: 'aste' },
     bo: { bolts: 'Viti', Ms: 'Coppia di serraggio', X: 'X vite', N: 'Precarico per vite', Fmax: 'Carico trasmissibile', screw: 'Vite di manovra', eta: 'Rendimento', lock: 'autobloccante', nolock: 'non autobloccante', perBolt: 'per vite', sep: 'il giunto si apre' }
@@ -23,7 +23,7 @@ const SUM_TXT = {
     req: 'required', margin: 'margin', min: 'min', none: '—',
     sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', govF: 'fatigue governs', govY: 'yield governs', reac: 'R' },
     ge: { m: 'Module', L: 'Face width', lewis: 'Lewis σL', a: 'Centre distance', P: 'Power capacity', M1: 'Pinion torque', lim: { hertz: 'Hertz limits', lewis: 'Lewis limits' }, und: 'undercut' },
-    be: { C: 'Exact centre distance', zb: 'Belt', w: 'Width', mesh: 'Teeth in mesh', teeth: 'teeth', geom: 'geometry only' },
+    be: { indic: 'indicative, confirm in the catalog', C: 'Exact centre distance', zb: 'Belt', w: 'Width', mesh: 'Teeth in mesh', teeth: 'teeth', geom: 'geometry only' },
     fi: { hole: 'Hole', shaft: 'Shaft', fit: 'Fit', d: 'Nominal diameter', kinds: { clearance: 'CLEARANCE', interference: 'INTERFERENCE', transition: 'TRANSITION' }, play: 'clearance', inter: 'interference' },
     fr: { sec: 'Chosen section', mass: 'Weight', util: 'Maximum utilisation', defl: 'Maximum deflection', empty: 'Draw the structure', bars: 'members' },
     bo: { bolts: 'Bolts', Ms: 'Tightening torque', X: 'Bolt X', N: 'Preload per bolt', Fmax: 'Transmissible load', screw: 'Power screw', eta: 'Efficiency', lock: 'self-locking', nolock: 'not self-locking', perBolt: 'per bolt', sep: 'the joint opens' }
@@ -83,7 +83,7 @@ function sumGears(t) {
   if (g.mode === 'design') {
     const ok = r.lewisOk && r.phiOk && r.undercutOk;
     return { status: ok ? 'ok' : 'ko', cards: [
-      { k: t.ge.m, v: sumNum(r.mn, 2), u: 'mm', sub: `z ${g.z1}/${g.z2} · τ ${sumNum(g.tau, 3)}`, tone: 'y' },
+      { k: t.ge.m, v: sumNum(r.mn, 2), u: 'mm', sub: `z ${g.z1}/${g.z2} · τ ${sumNum(g.tau, 3)}` + ((document.getElementById('gearModuleCategory') || {}).textContent ? ` · ${document.getElementById('gearModuleCategory').textContent}` : ''), tone: 'y' },
       { k: t.ge.L, v: sumNum(r.L_face, 1), u: 'mm', sub: `φ = L/dp₁ = ${sumNum(r.phi, 2)}`, tone: r.phiOk ? 'b' : 'r' },
       { k: t.ge.lewis, v: sumNum(r.sigma_L, 0), u: 'MPa', sub: `≤ 800 MPa${r.undercutOk ? '' : ' · ' + t.ge.und}`, tone: r.lewisOk ? 'b' : 'r', bar: { x: 800 / Math.max(r.sigma_L, 1), req: 1 } },
       { k: t.ge.a, v: sumNum(r.a_center, 1), u: 'mm', sub: `dp₁ ${sumNum(r.dp1, 1)} · dp₂ ${sumNum(r.dp2, 1)}`, tone: 'k' }
@@ -105,7 +105,7 @@ function sumBelts(t) {
   return { status: ok ? 'ok' : 'ko', cards: [
     { k: t.be.C, v: sumNum(r.exactC_mm, 1), u: 'mm', sub: `Δ ${r.cDiff >= 0 ? '+' : ''}${sumNum(r.cDiff, 2)} mm`, tone: 'y' },
     { k: t.be.zb, v: String(r.zb), u: t.be.teeth, sub: `Lp ${sumNum(r.Lp, 0)} mm · z ${s.z1}/${s.z2}`, tone: 'k' },
-    s.power ? { k: t.be.w, v: String(r.chosenWidth), u: 'mm', sub: `${t.min} ${sumNum(r.reqWidthMm, 1)} mm`, tone: r.widthOk ? 'b' : 'r', bar: { x: r.chosenWidth / Math.max(r.reqWidthMm, 0.1), req: 1 } }
+    s.power ? { k: t.be.w, v: String(r.chosenWidth), u: 'mm', sub: `${t.min} ${sumNum(r.reqWidthMm, 1)} mm · ${t.be.indic}`, tone: r.widthOk ? 'b' : 'r', bar: { x: r.chosenWidth / Math.max(r.reqWidthMm, 0.1), req: 1 } }
             : { k: t.be.w, v: t.none, sub: t.be.geom, tone: 'k' },
     { k: t.be.mesh, v: sumNum(r.z_mesh, 1), sub: '≥ 6', tone: r.meshOk ? 'b' : 'r', bar: { x: r.z_mesh / 6, req: 1 } }
   ] };

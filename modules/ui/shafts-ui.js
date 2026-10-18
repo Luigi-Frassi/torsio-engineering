@@ -156,7 +156,7 @@ function calculateShafts() {
     const des = badMaterial ? { ok: false } : shaftDesign(inp, Xreq);
     if (!des.ok) {
       if (!badMaterial) warnings.push(t.shaftWarnTooLarge);
-      renderShaftEmpty(t, warnings);
+      lastShaftSection = null; renderShaftEmpty(t, warnings);
       return;
     }
     res = des.final; d = des.d; D = des.D; dMin = des.dMin; governing = des.governing;
