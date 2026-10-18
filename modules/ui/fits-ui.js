@@ -130,6 +130,7 @@ function updateComparisonTable(dMm, step, activeFit) {
   });
 }
 
+let lastFitState = null;   // last fit shown ({ dMm, fit, a }), read by the summary band (summary.js)
 function calculateFits() {
   const inputEl = document.getElementById('nominalDiameter');
   if (!inputEl) return;
@@ -153,6 +154,7 @@ function calculateFits() {
     document.getElementById('fitCategory').innerText = t.invalidInput;
     document.getElementById('toleranceChart').innerHTML = '';
     document.getElementById('comparisonTableBody').innerHTML = '';
+    lastFitState = null;
     return;
   }
 
@@ -182,6 +184,7 @@ function calculateFits() {
   }
 
   const a = analyzeFit(step, fit);
+  lastFitState = { dMm, fit, a };
   const ES_H = a.ES_H;
   const EI_H = a.EI_H;
   const devs_s = a.devs;
