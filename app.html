@@ -47,6 +47,25 @@
     button:focus-visible, a:focus-visible { outline: 3px solid #e8b321; outline-offset: 2px; }
     aside { border-color: #d6d1c6 !important; }
     /* station rail */
+    /* summary band (B3) */
+    .sum-status { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: .08em; color: #6f6a62; min-height: 18px; }
+    .sum-status-ok { color: #21497f; } .sum-status-ko { color: #b42318; } .sum-status-info { color: #21497f; }
+    .sum-lamp { width: 10px; height: 10px; border-radius: 50%; background: #a39d92; box-shadow: 0 0 0 3px rgba(163,157,146,.25); flex: none; }
+    .sum-lamp-ok, .sum-lamp-info { background: #2f66b3; box-shadow: 0 0 0 3px rgba(47,102,179,.18); }
+    .sum-lamp-ko { background: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+    .sum-bar-wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: -8px 0 28px; }
+    .sum-bar-wrap.hidden { display: none; }
+    .sum-card { background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; padding: 12px 14px; min-width: 0; }
+    .sum-k { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6f6a62; }
+    .sum-val { margin: 4px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 600; line-height: 1.05; color: #22211f; overflow-wrap: anywhere; }
+    .sum-val-s { font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 700; padding-top: 6px; }
+    .sum-u { font-size: 14px; font-weight: 500; color: #6f6a62; margin-left: 6px; }
+    .sum-line { margin: 4px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: #22211f; }
+    .sum-sub { margin: 6px 0 0; font-size: 12px; color: #5b5750; }
+    .sum-bar { position: relative; height: 6px; background: #e6e2d9; margin-top: 10px; }
+    .sum-bar div { position: absolute; left: 0; top: 0; bottom: 0; }
+    .sum-bar i { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #22211f; }
+    @media (max-width: 900px) { .sum-bar-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; } .sum-val { font-size: 24px; } }
     .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     .ico { flex: none; display: inline-block; vertical-align: -3px; }
     .st-head { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .12em; color: #6f6a62; margin: 0 0 6px 12px; text-transform: uppercase; }
@@ -158,6 +177,7 @@
     <!-- Top Header -->
     <header class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8 min-h-[72px]">
       <div class="flex-1 pr-2 min-w-[260px]">
+        <p id="sumStatus" class="sum-status" aria-live="polite"></p>
         <h1 class="text-2xl font-extrabold tracking-tight text-white mb-1 leading-tight" style="font-stretch:108%" id="moduleTitle">ISO Fit & Tolerance Selector</h1>
         <p class="text-sm text-slate-400 leading-snug" id="moduleSubtitle">H7 Hole-Basis System. Interactive matrix, reverse lookup, and unit conversion.</p>
       </div>
@@ -198,6 +218,9 @@
         </div>
       </div>
     </header>
+
+    <!-- Summary band (modules/ui/summary.js) -->
+    <section id="sumBar" class="sum-bar-wrap hidden" aria-label="Results"></section>
 
 <!-- Demo Quick-Presets Bar -->
     <div class="mb-6 bg-slate-950/70 border border-slate-800 p-3 rounded-xl flex flex-wrap items-center justify-between gap-3">
@@ -3617,6 +3640,7 @@
   <script src="modules/ui/dxf-ui.js"></script>
   <script src="modules/ui/links.js"></script>
   <script src="modules/ui/feedback.js"></script>
+  <script src="modules/ui/summary.js"></script>
 
   <script>
     // Boot sequence

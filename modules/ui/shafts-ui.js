@@ -110,7 +110,16 @@ function calculateShafts() {
   shaftShow('shaftBeamPanel', currentShaftMode === 'beam');
   shaftShow('shaftSectionPanel', currentShaftMode !== 'beam');
   calculateShaftBeam(t, MtShaft);          // always kept up to date, also while hidden
-  if (currentShaftMode === 'beam') return;
+  if (currentShaftMode === 'beam') {
+    // the summary band shows the section result also while the beam is being edited: design it silently
+    try {
+      const sIn = readShaftInputs();
+      const des = shaftDesign(sIn.inp, sIn.Xreq);
+      const sh = sIn.notchType === 'shoulder' || sIn.notchType === 'combined';
+      lastShaftSection = des.ok ? { mode: 'design', d: des.d, D: sh ? des.D : null, r: sh ? sIn.inp.notch.r : null, res: des.final, Xreq: sIn.Xreq, dMin: des.dMin, governing: des.governing } : null;
+    } catch (e) { lastShaftSection = null; }
+    return;
+  }
 
   const { inp, Xreq, mode, notchType, Mt } = readShaftInputs();
 
@@ -163,7 +172,7 @@ function calculateShafts() {
     res = shaftCheck({ ...inp, notch }, d);
   }
 
-  lastShaftSection = { mode, d, D: shoulder ? D : null };
+  lastShaftSection = { mode, d, D: shoulder ? D : null, r: shoulder ? inp.notch.r : null, res, Xreq, dMin: mode === 'design' ? dMin : null, governing: mode === 'design' ? governing : null };
   shaftMaterialHint(d, t);
   if (shoulder && inp.notch.r > 5) warnings.push(shaftText(t, 'shaftWarnQr', { r: shaftFmt(inp.notch.r, 1), q: shaftFmt(res.qB, 3) }));
   if (shoulder && res.rdOutOfRange) warnings.push(shaftText(t, 'shaftWarnRd', { rd: shaftFmt(res.rd, 3) }));

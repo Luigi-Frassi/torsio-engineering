@@ -106,6 +106,7 @@ function drawBeltScheme(dp1, dp2, C) {
   `;
 }
 
+let lastBeltState = null;   // last belt calculation, read by the summary band (summary.js)
 function calculateBelts() {
   const profKey = document.getElementById('beltProfile').value;
   const z1 = parseInt(document.getElementById('pulleyZ1').value) || 20;
@@ -139,6 +140,7 @@ function calculateBelts() {
   const C0_mm = currentUnit === 'metric' ? c0Input : c0Input * 25.4;
 
   const r = computeBelts({ profKey, z1, z2, C0_mm, P_kW, n1_rpm, c0 });
+  lastBeltState = { r, z1, z2, P_kW, n1_rpm, power: currentBeltMode !== 'geom' };
 
   const dp1Str = currentUnit === 'metric' ? `${r.dp1.toFixed(2)} mm` : `${(r.dp1 / 25.4).toFixed(3)} in`;
   const dp2Str = currentUnit === 'metric' ? `${r.dp2.toFixed(2)} mm` : `${(r.dp2 / 25.4).toFixed(3)} in`;
