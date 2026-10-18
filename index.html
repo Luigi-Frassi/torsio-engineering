@@ -29,12 +29,12 @@
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <style>
     :root {
-      --paper: #edf0f3;        /* drafting film, cool grey-blue */
-      --sheet: #f8fafc;
-      --ink: #1b2027;          /* graphite */
-      --ink-2: #4d5866;
-      --line: #c8d0da;
-      --blue: #1f4f8a;        /* steel blue */
+      --paper: #f1efea;        /* warm drafting paper */
+      --sheet: #fbfaf7;
+      --ink: #22211f;          /* graphite */
+      --ink-2: #5b5750;
+      --line: #d6d1c6;
+      --blue: #21497f;        /* Prussian blue ink */
       --blue-2: #3f7fd0;
       --signal: #e8b321;       /* safety yellow: dimensions and the one action that matters */
       --measure: 34rem;
@@ -75,7 +75,7 @@
     .note { font-size: 14px; color: var(--ink-2); margin-top: 18px; }
 
     /* the drawing sheet */
-    .sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(27, 32, 39, .35); padding: 10px; }
+    .sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(34, 33, 31, .30); padding: 10px; }
     .sheet svg { display: block; width: 100%; height: auto; }
 
     /* sections */
@@ -109,13 +109,13 @@
     .page .sub { color: var(--ink-2); margin: 0 0 16px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
     .page h5 { font-size: 14px; margin: 14px 0 6px; }
     .page h5 i { font-style: normal; color: var(--blue); margin-right: 6px; }
-    .page .eq { border-left: 3px solid var(--blue); background: #f5f7fa; padding: 4px 12px; overflow-x: auto; }
+    .page .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 4px 12px; overflow-x: auto; }
     .page .eq .katex-display { margin: 6px 0; text-align: left; }
     .page .eq .katex { font-size: 0.98em; }
     .page .res { border: 1.5px solid var(--ink); border-radius: 5px; padding: 8px 10px; margin-top: 12px; }
     .page .ok { color: #1f5fa8; font-weight: 700; }
     .page .chk { margin: 0; padding: 0; list-style: none; }
-    .page .chk li { padding: 4px 0; border-bottom: 1px solid #e2e7ee; }
+    .page .chk li { padding: 4px 0; border-bottom: 1px solid #e6e2d9; }
     .page .chk .w { color: #a3720a; font-weight: 700; margin-right: 6px; }
     .page .chk .v { color: #1f5fa8; font-weight: 700; margin-right: 6px; }
 
@@ -187,14 +187,14 @@
           <svg viewBox="18 40 624 358" role="img" aria-labelledby="sheetCap" font-family="Archivo, Helvetica Neue, Arial, sans-serif">
             <title id="sheetCap">Albero-pignone della trasmissione di esempio: Ø35 sui cuscinetti, Ø42 sugli spallamenti, pignone z = 20, m = 2,25 di pezzo con l'albero.</title>
             <defs>
-              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#1b2027" stroke-width="0.9"/></pattern>
-              <marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 Z" fill="#1b2027"/></marker>
+              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#22211f" stroke-width="0.9"/></pattern>
+              <marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 Z" fill="#22211f"/></marker>
               <marker id="ary" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 Z" fill="#b8860b"/></marker>
             </defs>
             <!-- frame -->
-            <rect x="24" y="46" width="612" height="346" fill="none" stroke="#1b2027" stroke-width="1.6"/>
+            <rect x="24" y="46" width="612" height="346" fill="none" stroke="#22211f" stroke-width="1.6"/>
             <!-- shaft, scale 2.3 px/mm, axis at y = 170, x0 = 46 -->
-            <g stroke="#1b2027" stroke-width="1.8" fill="#fff">
+            <g stroke="#22211f" stroke-width="1.8" fill="#fff">
               <rect x="46" y="135.5" width="92" height="69"/>            <!-- Ø30, 0-40: pulley seat -->
               <rect x="138" y="132" width="23" height="76"/>             <!-- Ø33 -->
               <rect x="161" y="129.75" width="46" height="80.5"/>        <!-- Ø35 bearing, 50-70 -->
@@ -205,36 +205,36 @@
               <rect x="575" y="132" width="23" height="76"/>             <!-- Ø33 end -->
             </g>
             <!-- teeth: root lines and partial section -->
-            <line x1="310.5" y1="124.7" x2="425.5" y2="124.7" stroke="#1b2027" stroke-width="0.9" stroke-dasharray="5 3"/>
-            <line x1="310.5" y1="215.3" x2="425.5" y2="215.3" stroke="#1b2027" stroke-width="0.9" stroke-dasharray="5 3"/>
-            <line x1="310.5" y1="118.9" x2="425.5" y2="118.9" stroke="#1b2027" stroke-width="0.6" stroke-dasharray="12 3 2 3"/>
+            <line x1="310.5" y1="124.7" x2="425.5" y2="124.7" stroke="#22211f" stroke-width="0.9" stroke-dasharray="5 3"/>
+            <line x1="310.5" y1="215.3" x2="425.5" y2="215.3" stroke="#22211f" stroke-width="0.9" stroke-dasharray="5 3"/>
+            <line x1="310.5" y1="118.9" x2="425.5" y2="118.9" stroke="#22211f" stroke-width="0.6" stroke-dasharray="12 3 2 3"/>
             <!-- keyway on the pulley seat -->
-            <rect x="58" y="135.5" width="64" height="9" fill="url(#hatch)" stroke="#1b2027" stroke-width="1.2"/>
+            <rect x="58" y="135.5" width="64" height="9" fill="url(#hatch)" stroke="#22211f" stroke-width="1.2"/>
             <!-- bearings (symbol) -->
-            <g stroke="#1b2027" stroke-width="1.2" fill="none">
+            <g stroke="#22211f" stroke-width="1.2" fill="none">
               <rect x="166" y="104" width="36" height="22"/><circle cx="184" cy="115" r="6"/>
               <rect x="166" y="214" width="36" height="22"/><circle cx="184" cy="225" r="6"/>
               <rect x="534" y="104" width="36" height="22"/><circle cx="552" cy="115" r="6"/>
               <rect x="534" y="214" width="36" height="22"/><circle cx="552" cy="225" r="6"/>
             </g>
             <!-- centre line -->
-            <line x1="30" y1="170" x2="614" y2="170" stroke="#1b2027" stroke-width="0.7" stroke-dasharray="18 4 3 4"/>
+            <line x1="30" y1="170" x2="614" y2="170" stroke="#22211f" stroke-width="0.7" stroke-dasharray="18 4 3 4"/>
             <!-- critical section at x = 140 mm -->
             <line x1="368" y1="96" x2="368" y2="244" stroke="#b8860b" stroke-width="1.4" stroke-dasharray="6 4"/>
-            <g font-size="12.5" fill="#1b2027">
-              <rect x="374" y="74" width="168" height="38" fill="#e8b321" stroke="#1b2027" stroke-width="1.2"/>
+            <g font-size="12.5" fill="#22211f">
+              <rect x="374" y="74" width="168" height="38" fill="#e8b321" stroke="#22211f" stroke-width="1.2"/>
               <text x="382" y="89" font-weight="700" data-t-svg="crit">Sezione critica E</text>
               <text x="382" y="104" data-t-svg="critX">X fatica 2,16 · snerv. 4,51</text>
             </g>
             <!-- dimensions -->
-            <g stroke="#1b2027" stroke-width="0.8" fill="none">
+            <g stroke="#22211f" stroke-width="0.8" fill="none">
               <line x1="46" y1="214" x2="46" y2="270"/><line x1="598" y1="214" x2="598" y2="270"/>
               <line x1="46" y1="262" x2="598" y2="262" marker-start="url(#ar)" marker-end="url(#ar)"/>
               <line x1="184" y1="129.75" x2="184" y2="210.25" marker-start="url(#ar)" marker-end="url(#ar)" stroke="#b8860b" stroke-width="1.2"/>
               <line x1="258" y1="121.7" x2="258" y2="218.3" marker-start="url(#ar)" marker-end="url(#ar)"/>
               <line x1="92" y1="135.5" x2="92" y2="204.5" marker-start="url(#ar)" marker-end="url(#ar)"/>
             </g>
-            <g font-size="13" fill="#1b2027">
+            <g font-size="13" fill="#22211f">
               <text x="322" y="257" text-anchor="middle">240</text>
               <text x="189" y="160" font-weight="700" fill="#8a6408">Ø35 k6</text>
               <text x="263" y="160">Ø42</text>
@@ -243,12 +243,12 @@
               <text x="60" y="128" font-size="12" data-t-svg="key">linguetta</text>
             </g>
             <!-- title block -->
-            <g font-size="11" fill="#1b2027">
-              <rect x="360" y="296" width="272" height="96" fill="#fff" stroke="#1b2027" stroke-width="1.4"/>
-              <line x1="360" y1="322" x2="632" y2="322" stroke="#1b2027"/><line x1="360" y1="346" x2="632" y2="346" stroke="#1b2027"/><line x1="360" y1="370" x2="632" y2="370" stroke="#1b2027"/>
-              <line x1="490" y1="322" x2="490" y2="392" stroke="#1b2027"/>
+            <g font-size="11" fill="#22211f">
+              <rect x="360" y="296" width="272" height="96" fill="#fff" stroke="#22211f" stroke-width="1.4"/>
+              <line x1="360" y1="322" x2="632" y2="322" stroke="#22211f"/><line x1="360" y1="346" x2="632" y2="346" stroke="#22211f"/><line x1="360" y1="370" x2="632" y2="370" stroke="#22211f"/>
+              <line x1="490" y1="322" x2="490" y2="392" stroke="#22211f"/>
               <text x="368" y="314" font-size="15" font-weight="800" data-t-svg="tbTitle">Albero-pignone</text>
-              <text x="624" y="314" font-size="10.5" text-anchor="end" fill="#4d5866">Torsio Engineering</text>
+              <text x="624" y="314" font-size="10.5" text-anchor="end" fill="#5b5750">Torsio Engineering</text>
               <text x="368" y="338" data-t-svg="tbMat">39NiCrMo3 bonificato</text>
               <text x="498" y="338">σR 900 · σs 700 MPa</text>
               <text x="368" y="362">7,5 kW · 725 rpm</text>
@@ -257,11 +257,11 @@
               <text x="498" y="386" data-t-svg="tbSheet">Foglio 1 di 1</text>
             </g>
             <!-- loads -->
-            <g stroke="#1f4f8a" stroke-width="2" fill="none">
+            <g stroke="#21497f" stroke-width="2" fill="none">
               <line x1="92" y1="58" x2="92" y2="100" marker-end="url(#ar)"/>
               <line x1="368" y1="290" x2="368" y2="248" marker-end="url(#ar)"/>
             </g>
-            <g font-size="12" fill="#1f4f8a" font-weight="600">
+            <g font-size="12" fill="#21497f" font-weight="600">
               <text x="100" y="62" data-t-svg="pull">tiro cinghia 1660 N</text>
               <text x="360" y="286" text-anchor="end" data-t-svg="ft">Ft 4390 N · Fr 1598 N</text>
             </g>
@@ -320,11 +320,11 @@
           <a href="app.html?demo=boltsExam" data-href="boltDemo" data-t="boltA">Prova il giunto a flange</a>
         </div>
         <svg viewBox="0 0 220 165" aria-hidden="true">
-          <g stroke="#1b2027" stroke-width="2.4" stroke-linecap="round" fill="none">
+          <g stroke="#22211f" stroke-width="2.4" stroke-linecap="round" fill="none">
             <path d="M30 130 L60 30 L90 130 L120 30 L150 130 L180 30 L210 130"/><path d="M60 30 L180 30"/><path d="M30 130 L210 130"/>
           </g>
-          <g stroke="#1f4f8a" stroke-width="1.6" fill="#1f4f8a" fill-opacity=".14"><path d="M30 130 Q120 168 210 130 Z"/></g>
-          <g fill="#e8b321" stroke="#1b2027" stroke-width="1"><path d="M30 130 l-8 13 h16 z"/><path d="M210 130 l-8 13 h16 z"/></g>
+          <g stroke="#21497f" stroke-width="1.6" fill="#21497f" fill-opacity=".14"><path d="M30 130 Q120 168 210 130 Z"/></g>
+          <g fill="#e8b321" stroke="#22211f" stroke-width="1"><path d="M30 130 l-8 13 h16 z"/><path d="M210 130 l-8 13 h16 z"/></g>
           <g stroke="#b8860b" stroke-width="1.6"><path d="M120 6 v18"/><path d="M115 18 l5 7 l5 -7" fill="#b8860b"/></g>
         </svg>
       </div>
