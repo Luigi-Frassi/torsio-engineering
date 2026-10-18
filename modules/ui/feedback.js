@@ -70,7 +70,7 @@ function fbRender() {
   const html = fbDone.has(module)
     ? `<p class="text-sm text-emerald-400 font-semibold">${t.thanks}</p>` + (fbFallback ? `<p class="text-xs mt-1"><a class="text-blue-400 underline" href="${fbFallback}" target="_blank" rel="noopener">${t.open}</a></p>` : '')
     : `<div class="flex flex-wrap items-center gap-3"><span class="text-sm font-semibold text-white">${t.ask}</span>
-        <button type="button" class="${btn}" data-fb="up">👍 ${t.up}</button><button type="button" class="${btn}" data-fb="down">👎 ${t.down}</button></div>
+        <button type="button" class="${btn}" data-fb="up"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> ${t.up}</button><button type="button" class="${btn}" data-fb="down"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> ${t.down}</button></div>
         <p class="text-[11px] text-slate-500 mt-2">${t.sub}</p>`;
   if (box.dataset.html !== html) { box.innerHTML = html; box.dataset.html = html; }
   const side = document.getElementById('fbSideText');

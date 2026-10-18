@@ -153,6 +153,7 @@ function reportCSS() {
   .toolbar { position: sticky; top: 0; z-index: 5; background: #22211f; color: #e6e2d9; padding: 10px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 13px; }
   .toolbar button { background: #21497f; color: #fff; border: 0; border-radius: 6px; padding: 7px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
   .toolbar button.sec { background: #3a3732; }
+  .toolbar button, .toolbar a.fb { display: inline-flex; align-items: center; gap: 6px; } .toolbar a.fb { color: #e6e2d9; padding: 4px 6px; }
   .toolbar span { color: #a39d92; }
   .toolbar .fbq { margin-left: auto; color: #e6e2d9; white-space: nowrap; } .toolbar a.fb { text-decoration: none; font-size: 16px; padding: 2px 6px; border: 1px solid #3a3732; border-radius: 6px; margin-left: 4px; } .toolbar a.fb:hover { border-color: #e8b321; }
   header.rep { border-bottom: 2px solid #22211f; padding-bottom: 8px; margin-bottom: 14px; }
@@ -273,7 +274,7 @@ function reportFeedbackLinks(R) {
   if (typeof feedbackUrl !== 'function') return '';
   const mod = reportKind || (typeof activeModule !== 'undefined' ? activeModule : '');
   const a = (v, e) => `<a class="fb" href="${reportEsc(feedbackUrl(v, mod, currentLang))}" target="_blank" rel="noopener">${e}</a>`;
-  return `<span class="fbq">${R.fbAsk} ${a('up', '👍')} ${a('down', '👎')}</span>`;
+  return `<span class="fbq">${R.fbAsk} ${a('up', '<svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>')} ${a('down', '<svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>')}</span>`;
 }
 
 function reportShell(title, subtitle, body, R, disclaimer = null) {
@@ -285,8 +286,8 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
   return `<!doctype html><html lang="${currentLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${reportEsc(R.docTitle)} — ${reportEsc(subtitle)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"><link rel="stylesheet" href="${new URL('vendor/katex/katex.min.css', window.location.href).href}"><style>${reportCSS()}</style></head><body>
-<div class="toolbar"><button onclick="window.print()">🖨 ${R.printBtn}</button>
-<button class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()">⬇ ${R.htmlBtn}</button>
+<div class="toolbar"><button onclick="window.print()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><path d="M5 17H3V9h18v8h-2"/><path d="M7 14h10v7H7z"/></svg> ${R.printBtn}</button>
+<button class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg> ${R.htmlBtn}</button>
 <span>${R.printHint}</span>${reportFeedbackLinks(R)}</div>
 <div class="page">
 <header class="rep">${tbk.head}<h1>${reportEsc(title)}</h1><h2>${reportEsc(subtitle)}</h2></header>

@@ -123,7 +123,7 @@ function shaftProfileRender() {
   c.innerHTML = `<div class="flex flex-wrap items-start justify-between gap-3 mb-2"><div><h3 class="text-sm font-semibold text-white">${t.card}</h3>
       <p class="text-[11px] text-slate-400 mt-0.5">${p.auto ? t.auto : t.manual}</p></div>
       <div class="flex flex-wrap gap-2"><button type="button" data-act="regen" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:bg-slate-800">${t.regen}</button>
-      <button type="button" data-act="dxf" id="shaftDxfBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#e8b321] text-[#22211f] hover:bg-[#f0c241]">📐 ${t.download}</button></div></div>
+      <button type="button" data-act="dxf" id="shaftDxfBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#e8b321] text-[#22211f] hover:bg-[#f0c241] inline-flex items-center gap-1.5"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4l16 16z"/><path d="M8 16V12l4 4z"/></svg> ${t.download}</button></div></div>
     <p class="text-xs text-slate-400 mb-3 max-w-3xl">${t.cardHint}</p>${p.info ? `<p class="text-xs text-amber-300 mb-2">${p.info}</p>` : ''}
     <div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2 mb-3">${shaftProfilePreviewSvg(p)}</div>
     <div class="overflow-x-auto"><table class="text-xs text-left" id="shaftProfileTbl"><thead><tr class="text-slate-400"><th class="pr-2 pb-1">#</th><th class="pr-2">${t.from}</th><th class="pr-2">${t.to}</th><th class="pr-2">${t.dia}</th><th class="pr-2">${t.key}</th><th></th></tr></thead><tbody>` +
