@@ -235,27 +235,27 @@ function btDrawDiagram(N, ex, Pe, t) {
   const Fmax = Math.max(N, ex.bolt, ex.clamp) * 1.3 || 1;
   const X0 = 40, X1 = 400, Y0 = 225, Y1 = 30, sx = (X1 - X0) / (dTot * 1.08), sy = (Y0 - Y1) / Fmax;
   const P = (d, F) => `${(X0 + d * sx).toFixed(1)},${(Y0 - F * sy).toFixed(1)}`;
-  let g = `<line x1="${X0}" y1="${Y0}" x2="${X1}" y2="${Y0}" stroke="#64748b"/><line x1="${X0}" y1="${Y0}" x2="${X0}" y2="${Y1 - 8}" stroke="#64748b"/>`;
-  g += `<text x="${X1}" y="${Y0 + 16}" text-anchor="end" font-size="11" fill="#94a3b8">δ</text><text x="${X0 - 8}" y="${Y1}" text-anchor="end" font-size="11" fill="#94a3b8">F</text>`;
+  let g = `<line x1="${X0}" y1="${Y0}" x2="${X1}" y2="${Y0}" stroke="#8a857c"/><line x1="${X0}" y1="${Y0}" x2="${X0}" y2="${Y1 - 8}" stroke="#8a857c"/>`;
+  g += `<text x="${X1}" y="${Y0 + 16}" text-anchor="end" font-size="11" fill="#6f6a62">δ</text><text x="${X0 - 8}" y="${Y1}" text-anchor="end" font-size="11" fill="#6f6a62">F</text>`;
   const Ftop = Fmax * 0.97, ext = Math.min(Ftop / ex.Kv, dTot * 1.05);
-  g += `<polyline points="${P(0, 0)} ${P(ext, ext * ex.Kv)}" fill="none" stroke="#38bdf8" stroke-width="2"/>`;
+  g += `<polyline points="${P(0, 0)} ${P(ext, ext * ex.Kv)}" fill="none" stroke="#2f66b3" stroke-width="2"/>`;
   const fx = Math.min(Ftop / ex.Kf, dTot);
-  g += `<polyline points="${P(dTot, 0)} ${P(dTot - fx, fx * ex.Kf)}" fill="none" stroke="#f43f5e" stroke-width="2"/>`;
-  g += `<text x="${X0 + dv * 0.45 * sx}" y="${Y0 - dv * 0.45 * ex.Kv * sy - 8}" font-size="11" fill="#38bdf8" font-weight="600" text-anchor="end">Kv</text>`;
-  g += `<text x="${X0 + (dTot - df * 0.35) * sx + 6}" y="${Y0 - N * 0.35 * sy}" font-size="11" fill="#f43f5e" font-weight="600">Kf</text>`;
-  g += `<circle cx="${X0 + dv * sx}" cy="${Y0 - N * sy}" r="4" fill="#fbbf24"/><text x="${X0 + dv * sx - 8}" y="${Y0 - N * sy - (Pe ? 22 : 8)}" text-anchor="end" font-size="11" fill="#fbbf24">N = ${btNum(N / 1000, 1)} kN</text>`;
-  g += `<line x1="${X0 + dv * sx}" y1="${Y0 - N * sy}" x2="${X0 + dv * sx}" y2="${Y0}" stroke="#fbbf24" stroke-dasharray="3 3"/>`;
+  g += `<polyline points="${P(dTot, 0)} ${P(dTot - fx, fx * ex.Kf)}" fill="none" stroke="#c0392b" stroke-width="2"/>`;
+  g += `<text x="${X0 + dv * 0.45 * sx}" y="${Y0 - dv * 0.45 * ex.Kv * sy - 8}" font-size="11" fill="#2f66b3" font-weight="600" text-anchor="end">Kv</text>`;
+  g += `<text x="${X0 + (dTot - df * 0.35) * sx + 6}" y="${Y0 - N * 0.35 * sy}" font-size="11" fill="#c0392b" font-weight="600">Kf</text>`;
+  g += `<circle cx="${X0 + dv * sx}" cy="${Y0 - N * sy}" r="4" fill="#b7791f"/><text x="${X0 + dv * sx - 8}" y="${Y0 - N * sy - (Pe ? 22 : 8)}" text-anchor="end" font-size="11" fill="#b7791f">N = ${btNum(N / 1000, 1)} kN</text>`;
+  g += `<line x1="${X0 + dv * sx}" y1="${Y0 - N * sy}" x2="${X0 + dv * sx}" y2="${Y0}" stroke="#b7791f" stroke-dasharray="3 3"/>`;
   if (Pe) {
     // with Pe the bolt moves along Kv and the flanges along Kf, by the same δ: vertical distance between the two = Pe
     const dd = ex.dFv / ex.Kv, xb = dv + dd;
-    g += `<line x1="${X0 + xb * sx}" y1="${Y0 - ex.bolt * sy}" x2="${X0 + xb * sx}" y2="${Y0 - Math.max(0, ex.clamp) * sy}" stroke="#a855f7" stroke-width="2.5"/>`;
-    g += `<circle cx="${X0 + xb * sx}" cy="${Y0 - ex.bolt * sy}" r="3.5" fill="#38bdf8"/><circle cx="${X0 + xb * sx}" cy="${Y0 - Math.max(0, ex.clamp) * sy}" r="3.5" fill="#f43f5e"/>`;
-    g += `<text x="${X0 + xb * sx + 10}" y="${Y0 - (ex.bolt + Math.max(0, ex.clamp)) / 2 * sy + 4}" font-size="11" fill="#a855f7" font-weight="600">Pe = ${btNum(Pe / 1000, 1)} kN</text>`;
+    g += `<line x1="${X0 + xb * sx}" y1="${Y0 - ex.bolt * sy}" x2="${X0 + xb * sx}" y2="${Y0 - Math.max(0, ex.clamp) * sy}" stroke="#7a4fb3" stroke-width="2.5"/>`;
+    g += `<circle cx="${X0 + xb * sx}" cy="${Y0 - ex.bolt * sy}" r="3.5" fill="#2f66b3"/><circle cx="${X0 + xb * sx}" cy="${Y0 - Math.max(0, ex.clamp) * sy}" r="3.5" fill="#c0392b"/>`;
+    g += `<text x="${X0 + xb * sx + 10}" y="${Y0 - (ex.bolt + Math.max(0, ex.clamp)) / 2 * sy + 4}" font-size="11" fill="#7a4fb3" font-weight="600">Pe = ${btNum(Pe / 1000, 1)} kN</text>`;
     const hi = Math.max(ex.bolt, ex.clamp), lo = Math.min(ex.bolt, Math.max(0, ex.clamp));
-    g += `<text x="${X0 + xb * sx - 8}" y="${Y0 - hi * sy - 6}" text-anchor="end" font-size="10.5" fill="${ex.bolt >= ex.clamp ? '#38bdf8' : '#f43f5e'}">${btNum(hi / 1000, 1)} kN</text>`;
-    g += `<text x="${X0 + xb * sx - 8}" y="${Y0 - lo * sy + 15}" text-anchor="end" font-size="10.5" fill="${ex.bolt >= ex.clamp ? '#f43f5e' : '#38bdf8'}">${btNum(lo / 1000, 1)} kN</text>`;
+    g += `<text x="${X0 + xb * sx - 8}" y="${Y0 - hi * sy - 6}" text-anchor="end" font-size="10.5" fill="${ex.bolt >= ex.clamp ? '#2f66b3' : '#c0392b'}">${btNum(hi / 1000, 1)} kN</text>`;
+    g += `<text x="${X0 + xb * sx - 8}" y="${Y0 - lo * sy + 15}" text-anchor="end" font-size="10.5" fill="${ex.bolt >= ex.clamp ? '#c0392b' : '#2f66b3'}">${btNum(lo / 1000, 1)} kN</text>`;
   }
-  g += `<text x="${X0 + 6}" y="${Y1 + 4}" font-size="11.5" fill="#e2e8f0" font-weight="600">${t.diagram}</text>`;
+  g += `<text x="${X0 + 6}" y="${Y1 + 4}" font-size="11.5" fill="#22211f" font-weight="600">${t.diagram}</text>`;
   svg.innerHTML = g;
 }
 

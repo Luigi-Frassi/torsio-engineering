@@ -145,30 +145,30 @@ function transmissionDiagram(st, X) {
   if (!boxes.length) return '';
   const W = 680, bw = Math.min(150, (W - 20 - (boxes.length - 1) * 26) / boxes.length), gap = boxes.length > 1 ? (W - 20 - boxes.length * bw) / (boxes.length - 1) : 0;
   const icon = (k, cx, cy) => {
-    if (k === 'motor') return `<rect x="${cx - 16}" y="${cy - 10}" width="26" height="20" rx="3" fill="none" stroke="#0f172a" stroke-width="1.6"/><line x1="${cx + 10}" y1="${cy}" x2="${cx + 18}" y2="${cy}" stroke="#0f172a" stroke-width="2.4"/><line x1="${cx - 12}" y1="${cy - 4}" x2="${cx + 6}" y2="${cy - 4}" stroke="#0f172a"/><line x1="${cx - 12}" y1="${cy + 4}" x2="${cx + 6}" y2="${cy + 4}" stroke="#0f172a"/>`;
-    if (k === 'belt') return `<circle cx="${cx - 10}" cy="${cy}" r="6" fill="none" stroke="#0f172a" stroke-width="1.6"/><circle cx="${cx + 10}" cy="${cy}" r="10" fill="none" stroke="#0f172a" stroke-width="1.6"/><line x1="${cx - 10}" y1="${cy - 6}" x2="${cx + 10}" y2="${cy - 10}" stroke="#0369a1" stroke-width="1.6"/><line x1="${cx - 10}" y1="${cy + 6}" x2="${cx + 10}" y2="${cy + 10}" stroke="#0369a1" stroke-width="1.6"/>`;
+    if (k === 'motor') return `<rect x="${cx - 16}" y="${cy - 10}" width="26" height="20" rx="3" fill="none" stroke="#22211f" stroke-width="1.6"/><line x1="${cx + 10}" y1="${cy}" x2="${cx + 18}" y2="${cy}" stroke="#22211f" stroke-width="2.4"/><line x1="${cx - 12}" y1="${cy - 4}" x2="${cx + 6}" y2="${cy - 4}" stroke="#22211f"/><line x1="${cx - 12}" y1="${cy + 4}" x2="${cx + 6}" y2="${cy + 4}" stroke="#22211f"/>`;
+    if (k === 'belt') return `<circle cx="${cx - 10}" cy="${cy}" r="6" fill="none" stroke="#22211f" stroke-width="1.6"/><circle cx="${cx + 10}" cy="${cy}" r="10" fill="none" stroke="#22211f" stroke-width="1.6"/><line x1="${cx - 10}" y1="${cy - 6}" x2="${cx + 10}" y2="${cy - 10}" stroke="#2f66b3" stroke-width="1.6"/><line x1="${cx - 10}" y1="${cy + 6}" x2="${cx + 10}" y2="${cy + 10}" stroke="#2f66b3" stroke-width="1.6"/>`;
     if (k === 'gear') {
       let t = '';
       for (const [gx, r, nT] of [[cx - 8, 7, 8], [cx + 9, 11, 12]]) {
-        t += `<circle cx="${gx}" cy="${cy}" r="${r}" fill="none" stroke="#0f172a" stroke-width="1.6"/>`;
-        for (let i = 0; i < nT; i++) { const a = i * 2 * Math.PI / nT; t += `<line x1="${gx + r * Math.cos(a)}" y1="${cy + r * Math.sin(a)}" x2="${gx + (r + 3) * Math.cos(a)}" y2="${cy + (r + 3) * Math.sin(a)}" stroke="#0f172a" stroke-width="2"/>`; }
+        t += `<circle cx="${gx}" cy="${cy}" r="${r}" fill="none" stroke="#22211f" stroke-width="1.6"/>`;
+        for (let i = 0; i < nT; i++) { const a = i * 2 * Math.PI / nT; t += `<line x1="${gx + r * Math.cos(a)}" y1="${cy + r * Math.sin(a)}" x2="${gx + (r + 3) * Math.cos(a)}" y2="${cy + (r + 3) * Math.sin(a)}" stroke="#22211f" stroke-width="2"/>`; }
       }
       return t;
     }
-    if (k === 'shaft') return `<rect x="${cx - 20}" y="${cy - 4}" width="40" height="8" fill="none" stroke="#0f172a" stroke-width="1.6"/><rect x="${cx - 6}" y="${cy - 9}" width="12" height="18" fill="none" stroke="#0f172a" stroke-width="1.4"/><circle cx="${cx - 15}" cy="${cy + 10}" r="2.5" fill="#0f172a"/><circle cx="${cx + 15}" cy="${cy + 10}" r="2.5" fill="#0f172a"/>`;
-    return `<rect x="${cx - 16}" y="${cy - 10}" width="32" height="20" fill="none" stroke="#0f172a" stroke-width="1.6"/><rect x="${cx - 16}" y="${cy - 4}" width="32" height="8" fill="#e2e8f0" stroke="#0f172a" stroke-width="1"/>`;
+    if (k === 'shaft') return `<rect x="${cx - 20}" y="${cy - 4}" width="40" height="8" fill="none" stroke="#22211f" stroke-width="1.6"/><rect x="${cx - 6}" y="${cy - 9}" width="12" height="18" fill="none" stroke="#22211f" stroke-width="1.4"/><circle cx="${cx - 15}" cy="${cy + 10}" r="2.5" fill="#22211f"/><circle cx="${cx + 15}" cy="${cy + 10}" r="2.5" fill="#22211f"/>`;
+    return `<rect x="${cx - 16}" y="${cy - 10}" width="32" height="20" fill="none" stroke="#22211f" stroke-width="1.6"/><rect x="${cx - 16}" y="${cy - 4}" width="32" height="8" fill="#e6e2d9" stroke="#22211f" stroke-width="1"/>`;
   };
   let svg = `<svg class="rep-svg" viewBox="0 0 ${W} 120" xmlns="http://www.w3.org/2000/svg" font-family="Inter, Arial, sans-serif">`;
   boxes.forEach((b, i) => {
     const x = 10 + i * (bw + gap), cx = x + bw / 2;
-    svg += `<rect x="${x}" y="8" width="${bw}" height="104" rx="8" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>`;
+    svg += `<rect x="${x}" y="8" width="${bw}" height="104" rx="8" fill="#f6f4ef" stroke="#3a3732" stroke-width="1.2"/>`;
     svg += icon(b.icon, cx, 34);
-    svg += `<text x="${cx}" y="66" text-anchor="middle" font-size="${b.name.length > 15 ? 10.5 : 11.5}" font-weight="700" fill="#0f172a">${reportEsc(b.name)}</text>`;
-    svg += `<text x="${cx}" y="84" text-anchor="middle" font-size="10" fill="#334155">${reportEsc(b.l1)}</text>`;
-    if (b.l2) svg += `<text x="${cx}" y="100" text-anchor="middle" font-size="10" fill="#0369a1" font-weight="600">${reportEsc(b.l2)}</text>`;
+    svg += `<text x="${cx}" y="66" text-anchor="middle" font-size="${b.name.length > 15 ? 10.5 : 11.5}" font-weight="700" fill="#22211f">${reportEsc(b.name)}</text>`;
+    svg += `<text x="${cx}" y="84" text-anchor="middle" font-size="10" fill="#3a3732">${reportEsc(b.l1)}</text>`;
+    if (b.l2) svg += `<text x="${cx}" y="100" text-anchor="middle" font-size="10" fill="#2f66b3" font-weight="600">${reportEsc(b.l2)}</text>`;
     if (i < boxes.length - 1) {
       const x1 = x + bw + 3, x2 = x + bw + gap - 3;
-      svg += `<line x1="${x1}" y1="60" x2="${x2 - 6}" y2="60" stroke="#0f172a" stroke-width="1.6"/><path d="M ${x2} 60 L ${x2 - 8} 55 L ${x2 - 8} 65 Z" fill="#0f172a"/>`;
+      svg += `<line x1="${x1}" y1="60" x2="${x2 - 6}" y2="60" stroke="#22211f" stroke-width="1.6"/><path d="M ${x2} 60 L ${x2 - 8} 55 L ${x2 - 8} 65 Z" fill="#22211f"/>`;
     }
   });
   return svg + '</svg>';

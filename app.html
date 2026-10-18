@@ -17,19 +17,47 @@
   <meta name="twitter:card" content="summary_large_image">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Torsio Engineering palette: graphite with a green cast (slate) and machine-tool green (blue) replace the Tailwind defaults
+    // Torsio Engineering palette, "B3 · Banco di comando su carta" (18/10): warm drafting paper and graphite, Prussian blue accent.
+    // The calculator was written for a dark theme, so the scales are inverted: slate-900 is the paper, slate-50 the ink,
+    // "white" is the ink; blue is the accent, emerald (verified) is blue too; the other accents are darkened for paper.
     if (typeof tailwind !== "undefined") tailwind.config = { theme: { extend: {
-      fontFamily: { sans: ['Archivo', 'Helvetica Neue', 'Arial', 'sans-serif'] },
+      fontFamily: { sans: ['Archivo', 'Helvetica Neue', 'Arial', 'sans-serif'], mono: ['IBM Plex Mono', 'ui-monospace', 'Consolas', 'monospace'] },
       colors: {
-        slate: { 50: '#f3f5f3', 100: '#e6eae7', 200: '#cdd4cf', 300: '#aab5ae', 400: '#8e9a93', 500: '#6c7972', 600: '#4f5b55', 700: '#3b4540', 800: '#29302d', 900: '#1c2120', 950: '#141817' },
-        blue: { 50: '#eef5f0', 100: '#d6e8dc', 200: '#b0d2bc', 300: '#8cc0a0', 400: '#6aab84', 500: '#4c8c66', 600: '#3a7052', 700: '#2e5a42', 800: '#284836', 900: '#213a2d', 950: '#11201a' }
+        white: '#22211f',
+        slate: { 50: '#22211f', 100: '#2c2a27', 200: '#3a3732', 300: '#4a463f', 400: '#5b5750', 500: '#6f6a62', 600: '#a39d92', 700: '#d6d1c6', 800: '#fbfaf7', 900: '#f1efea', 950: '#e9e6df' },
+        blue: { 50: '#16304f', 100: '#1b3a63', 200: '#21497f', 300: '#21497f', 400: '#21497f', 500: '#9bb7dc', 600: '#dce6f3', 700: '#e7eef7', 800: '#eef3f9', 900: '#f3f6fa', 950: '#f7f9fc' },
+        sky: { 300: '#21497f', 400: '#2f66b3', 500: '#2f66b3', 600: '#21497f' },
+        emerald: { 300: '#21497f', 400: '#21497f', 500: '#2f66b3', 600: '#2f66b3' },
+        amber: { 300: '#7a5806', 400: '#8a6408', 500: '#c99613', 600: '#8a6408' },
+        rose: { 300: '#9b2317', 400: '#b42318', 500: '#c0392b', 600: '#c0392b', 900: '#f6dcd8', 950: '#fbecea' },
+        purple: { 300: '#5e3591', 400: '#6b3fa0', 500: '#7a4fb3' }
       } } } };
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="icon" href="vendor/brand/torsio-mark.svg" type="image/svg+xml">
-  <style>input[type=checkbox], input[type=radio] { accent-color: #4c8c66; } body { font-feature-settings: "tnum" 1; }</style>
+  <style>
+    input[type=checkbox], input[type=radio] { accent-color: #21497f; } body { font-feature-settings: "tnum" 1; }
+    /* B3: square corners, no glass, white fields, yellow focus */
+    .rounded-xl, .rounded-2xl { border-radius: 4px !important; } .rounded-lg { border-radius: 3px !important; }
+    .backdrop-blur, .backdrop-blur-sm { backdrop-filter: none !important; }
+    input[type=number], input[type=text], input:not([type]), select, textarea { background-color: #fff !important; border-color: #cfc9bd !important; color: #22211f !important; }
+    input:focus, select:focus, textarea:focus { outline: 3px solid #e8b321 !important; outline-offset: 0; box-shadow: none !important; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #e8b321; outline-offset: 2px; }
+    aside { border-color: #d6d1c6 !important; }
+    /* station rail */
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .ico { flex: none; display: inline-block; vertical-align: -3px; }
+    .st-head { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .12em; color: #6f6a62; margin: 0 0 6px 12px; text-transform: uppercase; }
+    .station { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; font-stretch: 92%; color: #4a463f; border-top: 1px solid transparent; border-bottom: 1px solid transparent; transition: background-color .15s; }
+    .station:hover { color: #22211f; background: #e1ddd4; }
+    .station-on, .station-on:hover { background: #e8b321; color: #22211f; font-weight: 700; border-color: #22211f; }
+    .st-code { white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6f6a62; letter-spacing: .04em; }
+    .station-on .st-code { color: #22211f; }
+    .m-station { text-align: center; padding: 8px 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #4a463f; background: #fbfaf7; border: 1px solid #d6d1c6; border-radius: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .m-station-on { background: #e8b321; color: #22211f; border-color: #22211f; font-weight: 700; }
+  </style>
   
   <!-- Vercel Web Analytics: anonymous, cookie-free page views.
        Privacy filter: only the page and the open module (?m=...) are sent, never the calculation inputs in the URL. -->
@@ -57,40 +85,41 @@
       <div class="flex items-center gap-2 mb-8">
         <a href="./" class="flex items-center gap-2.5" title="Torsio Engineering">
           <img src="vendor/brand/torsio-mark.svg" alt="" class="w-8 h-8">
-          <span class="leading-none"><span class="block text-lg font-extrabold tracking-tight text-white" style="font-stretch:115%">Torsio</span><span class="block text-[11px] text-slate-400 tracking-wide">Engineering</span></span>
+          <span class="leading-none"><span class="block text-lg font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></span><span class="block text-[11px] text-slate-400 tracking-wide">Engineering</span></span>
         </a>
         <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v0.9</span>
       </div>
-      <nav class="space-y-2">
-        <button id="navBtnFits" class="w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors">
+      <p class="st-head" data-i18n="navStations">Stations</p>
+      <nav class="space-y-0">
+        <button id="navBtnFits" class="station station-on">
           <span data-i18n="navFits">Tolerances & Fits</span>
-          <span id="dotFits" class="w-2 h-2 rounded-full bg-blue-300"></span>
+          <span id="dotFits" class="st-code">F-01</span>
         </button>
-        <button id="navBtnBelts" class="w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors">
+        <button id="navBtnBelts" class="station">
           <span data-i18n="navBelts">Synchronous Belts</span>
-          <span id="dotBelts" class="w-2 h-2 rounded-full bg-transparent"></span>
+          <span id="dotBelts" class="st-code">B-02</span>
         </button>
-        <button id="navBtnGears" class="w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors">
+        <button id="navBtnGears" class="station">
           <span data-i18n="navGears">Gears & Reducers</span>
-          <span id="dotGears" class="w-2 h-2 rounded-full bg-transparent"></span>
+          <span id="dotGears" class="st-code">G-03</span>
         </button>
-        <button id="navBtnShafts" class="w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors">
+        <button id="navBtnShafts" class="station">
           <span data-i18n="navShafts">Shafts & Keys</span>
-          <span id="dotShafts" class="w-2 h-2 rounded-full bg-transparent"></span>
+          <span id="dotShafts" class="st-code">S-04</span>
         </button>
-        <button id="navBtnFrames" class="w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors">
+        <button id="navBtnFrames" class="station">
           <span data-i18n="navFrames">Structures (FEM)</span>
-          <span id="dotFrames" class="w-2 h-2 rounded-full bg-transparent"></span>
+          <span id="dotFrames" class="st-code">T-05</span>
         </button>
-        <button id="navBtnBolts" class="w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors">
+        <button id="navBtnBolts" class="station">
           <span data-i18n="navBolts">Bolted Joints</span>
-          <span id="dotBolts" class="w-2 h-2 rounded-full bg-transparent"></span>
+          <span id="dotBolts" class="st-code">J-06</span>
         </button>
       </nav>
     </div>
     <div class="text-xs text-slate-500 border-t border-slate-800 pt-4 space-y-3">
       <a href="https://tally.so/r/Gev5gZ" id="fbSide" target="_blank" rel="noopener" class="flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-blue-500/50 transition-colors">
-        <span>💬</span><span id="fbSideText">Give feedback or report a problem</span>
+        <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span id="fbSideText">Give feedback or report a problem</span>
       </a>
       <div>Mechanical Design Suite</div>
     </div>
@@ -99,43 +128,43 @@
   <!-- Mobile Navigation Bar -->
   <div class="md:hidden bg-slate-950 border-b border-slate-800 p-3 sticky top-0 z-50">
     <div class="flex items-center justify-between mb-2.5 px-1">
-      <a href="./" class="flex items-center gap-2"><img src="vendor/brand/torsio-mark.svg" alt="" class="w-6 h-6"><span class="text-base font-extrabold tracking-tight text-white" style="font-stretch:115%">Torsio <span class="font-medium text-slate-400" style="font-stretch:100%">Engineering</span></span></a>
+      <a href="./" class="flex items-center gap-2"><img src="vendor/brand/torsio-mark.svg" alt="" class="w-6 h-6"><span class="text-base font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span> <span class="font-medium text-slate-400" style="font-stretch:100%">Engineering</span></span></a>
       <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v0.9</span>
     </div>
     <div class="grid grid-cols-6 gap-1">
-      <button id="navBtnFitsMobile" class="text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate">
+      <button id="navBtnFitsMobile" class="m-station m-station-on">
         <span data-i18n="navFits">Tolerances</span>
       </button>
-      <button id="navBtnBeltsMobile" class="text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate">
+      <button id="navBtnBeltsMobile" class="m-station">
         <span data-i18n="navBelts">Belts</span>
       </button>
-      <button id="navBtnGearsMobile" class="text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate">
+      <button id="navBtnGearsMobile" class="m-station">
         <span data-i18n="navGears">Gears</span>
       </button>
-      <button id="navBtnShaftsMobile" class="text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate">
+      <button id="navBtnShaftsMobile" class="m-station">
         <span data-i18n="navShafts">Shafts</span>
       </button>
-      <button id="navBtnFramesMobile" class="text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate">
+      <button id="navBtnFramesMobile" class="m-station">
         <span data-i18n="navFramesShort">FEM</span>
       </button>
-      <button id="navBtnBoltsMobile" class="text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate">
+      <button id="navBtnBoltsMobile" class="m-station">
         <span data-i18n="navBoltsShort">Bolts</span>
       </button>
     </div>
   </div>
 
   <!-- Main Content Area -->
-  <main class="flex-1 p-4 md:p-10 max-w-4xl overflow-y-auto">
+  <main class="flex-1 p-4 md:p-10 max-w-6xl overflow-y-auto">
     <!-- Top Header -->
     <header class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8 min-h-[72px]">
-      <div class="flex-1 pr-2">
-        <h1 class="text-2xl font-bold tracking-tight text-white mb-1 leading-tight" id="moduleTitle">ISO Fit & Tolerance Selector</h1>
+      <div class="flex-1 pr-2 min-w-[260px]">
+        <h1 class="text-2xl font-extrabold tracking-tight text-white mb-1 leading-tight" style="font-stretch:108%" id="moduleTitle">ISO Fit & Tolerance Selector</h1>
         <p class="text-sm text-slate-400 leading-snug" id="moduleSubtitle">H7 Hole-Basis System. Interactive matrix, reverse lookup, and unit conversion.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 shrink-0 pt-0.5">
         <div class="relative">
-          <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] px-2.5 py-1.5 rounded-lg border border-[#e8b321] text-xs font-bold text-slate-950 transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
-            <span aria-hidden="true">📄</span><span class="hidden sm:inline" data-i18n="reportBtn">Report</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
+          <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] px-2.5 py-1.5 rounded-lg border border-[#e8b321] text-xs font-bold text-[#22211f] transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 11h6M9 14h6M12 17h3v4"/></svg><span class="hidden sm:inline" data-i18n="reportBtn">Report</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
           </button>
           <div id="reportMenu" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 z-50 w-64 max-w-[calc(100vw-2rem)] bg-slate-950 border border-slate-700 rounded-xl shadow-2xl p-2 text-xs text-slate-200">
             <button type="button" id="reportMenuThis" onclick="document.getElementById('reportMenu').classList.add('hidden'); openReport()" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 font-semibold">Report of this module</button>
@@ -148,13 +177,13 @@
           </div>
         </div>
         <button type="button" id="projectBtn" class="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-colors" data-i18n-title="projectTitle" title="Project data, save and open">
-          <span aria-hidden="true">📁</span><span class="hidden sm:inline" data-i18n="projectBtn">Project</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/><path d="M3 7V5h6l2 2"/></svg><span class="hidden sm:inline" data-i18n="projectBtn">Project</span>
         </button>
         <button type="button" id="dxfBtn" onclick="exportDxf()" class="hidden flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-colors" data-i18n-title="dxfTitle" title="Download the drawing for CAD (DXF)">
-          <span aria-hidden="true">📐</span><span class="hidden sm:inline">DXF</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4l16 16z"/><path d="M8 16V12l4 4z"/></svg><span class="hidden sm:inline">DXF</span>
         </button>
         <button type="button" class="js-share-btn flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-colors" data-i18n-title="shareTitle" title="Copy a link to this calculation">
-          <span aria-hidden="true">🔗</span><span class="hidden sm:inline" data-i18n="shareBtn">Share</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg><span class="hidden sm:inline" data-i18n="shareBtn">Share</span>
         </button>
         <div id="unitToggleContainer" class="flex items-center bg-slate-800/80 p-1 rounded-lg border border-slate-700 text-xs font-semibold">
           <button id="unitMetric" class="px-2.5 py-1 rounded bg-blue-600 text-white transition-colors">mm</button>
@@ -179,31 +208,31 @@
       <div class="flex flex-wrap gap-2 text-xs">
         <button id="demoHelicalBtn" onclick="loadDemoPreset('helical50kw')"
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>⚙️</span> <span data-i18n="demoHelical">Riduttore Elicoidale (50 kW)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M9 3.5l2 3M13 3.5l2 3M5.5 9l2.5 1.5M16 13.5l2.5 1.5M9 17.5l2 3M13 17.5l2 3"/></svg> <span data-i18n="demoHelical">Riduttore Elicoidale (50 kW)</span>
         </button>
         <button id="demoSpurBtn" onclick="loadDemoPreset('spur5kw')" 
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>⚙️</span> <span data-i18n="demoSpur">Ingranaggi Diritti (5.5 kW)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.5" cy="13" r="5"/><circle cx="8.5" cy="13" r="1.5"/><circle cx="17.5" cy="7.5" r="3.5"/><circle cx="17.5" cy="7.5" r="1"/></svg> <span data-i18n="demoSpur">Ingranaggi Diritti (5.5 kW)</span>
         </button>
         <button id="demoFitBtn" onclick="loadDemoPreset('bearingFit')" 
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>🎯</span> <span data-i18n="demoBearing">Cuscinetto Ø30 (H7/k6)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="5.5" r="1.3"/><circle cx="12" cy="18.5" r="1.3"/><circle cx="5.5" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg> <span data-i18n="demoBearing">Cuscinetto Ø30 (H7/k6)</span>
         </button>
         <button id="demoTxBtn" onclick="loadDemoPreset('transmission')"
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>🏭</span> <span data-i18n="demoTx">Complete drive (7.5 kW)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="14" r="3"/><circle cx="17" cy="11" r="5"/><path d="M6 11l11-5M6 17l11-1"/></svg> <span data-i18n="demoTx">Complete drive (7.5 kW)</span>
         </button>
         <button id="demoFramesBtn" onclick="loadDemoPreset('frames')"
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>📡</span> <span data-i18n="demoFrames">Radio tower (FEM)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21L11 3h2l3 18"/><path d="M9.5 14h5M10.3 9h3.4M8.8 18.5l6-4.5M15.2 18.5l-6-4.5"/></svg> <span data-i18n="demoFrames">Radio tower (FEM)</span>
         </button>
         <button id="demoBoltsBtn" onclick="loadDemoPreset('boltsExam')"
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>🔧</span> <span data-i18n="demoBolts">Flanged coupling (bolts)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4H8z"/><path d="M10 8v12h4V8"/><path d="M10 11l4 1.5M10 14l4 1.5M10 17l4 1.5"/></svg> <span data-i18n="demoBolts">Flanged coupling (bolts)</span>
         </button>
         <button id="demoShaftBtn" onclick="loadDemoPreset('shaftExam')" 
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
-          <span>🔩</span> <span data-i18n="demoShaft">Reducer Shaft (Ø65, exam)</span>
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10h4v4H2zM6 8h6v8H6zM12 9h7v6h-7zM19 10.5h3v3h-3z"/><path d="M1 12h22" stroke-dasharray="3 1.5 1 1.5"/></svg> <span data-i18n="demoShaft">Reducer Shaft (Ø65, exam)</span>
         </button>
       </div>
     </div>
@@ -2002,6 +2031,8 @@
         shaftMachiningLabel: "Recommended Shaft Machining:",
         holeMachiningLabel: "Recommended Hole Machining:",
         roughnessLabel: "Surface roughness:",
+        navStations: "Stations",
+        meshOptimal: "Enough teeth in mesh (≥ 6)", meshWarning: "Few teeth in mesh: capacity reduced",
         disclaimerTitle: "Technical note and disclaimer:",
         disclaimerText: "Calculations follow standard analytical machine design equations (ISO 286-2 for fits, ISO 5296 / DIN 7721 for synchronous belts, Hertz/Lewis for gears). Sizing values are preliminary guides for mechanical engineering and CAD design.",
         clearanceFit: "Clearance fit",
@@ -2447,6 +2478,8 @@
         shaftMachiningLabel: "Lavorazione Albero consigliata:",
         holeMachiningLabel: "Lavorazione Foro consigliata:",
         roughnessLabel: "Rugosità consigliata:",
+        navStations: "Stazioni",
+        meshOptimal: "Denti in presa sufficienti (≥ 6)", meshWarning: "Pochi denti in presa: capacità ridotta",
         disclaimerTitle: "Nota tecnica e limitazione di responsabilità:",
         disclaimerText: "I calcoli utilizzano le formulazioni analitiche di costruzione di macchine (ISO 286 per gli accoppiamenti, ISO 5296 / DIN 7721 per le cinghie, Hertz/Lewis per le ruote dentate). Valori di pre-dimensionamento per disegni e CAD 3D.",
         clearanceFit: "Accoppiamento con gioco",
@@ -2901,12 +2934,12 @@
       const t = translations[currentLang];
 
       [bFits, bBelts, bGears, bShafts, bFrames, bBolts].forEach(b => {
-        if (b) b.className = "w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:text-white font-medium text-sm flex items-center justify-between transition-colors";
+        if (b) b.className = "station";
       });
       [bFitsM, bBeltsM, bGearsM, bShaftsM, bFramesM, bBoltsM].forEach(b => {
-        if (b) b.className = "text-center py-2 px-1.5 rounded-lg bg-slate-800/80 text-slate-300 font-medium text-xs transition-colors truncate";
+        if (b) b.className = "m-station";
       });
-      [dFits, dBelts, dGears, dShafts, dFrames, dBolts].forEach(d => { if (d) d.className = "w-2 h-2 rounded-full bg-transparent"; });
+      [dFits, dBelts, dGears, dShafts, dFrames, dBolts].forEach(d => { if (d) d.className = "st-code"; });
       [sFits, sBelts, sGears, sShafts, sFrames, sBolts].forEach(s => { if (s) s.classList.add('hidden'); });
 
       const unitBox = document.getElementById('unitToggleContainer');
@@ -2921,49 +2954,49 @@
       }
 
       if (mod === 'fits') {
-        bFits.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bFitsM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dFits.className = "w-2 h-2 rounded-full bg-blue-300";
+        bFits.className = "station station-on";
+        bFitsM.className = "m-station m-station-on";
+        dFits.className = "st-code";
         sFits.classList.remove('hidden');
         titleEl.innerText = t.pageTitleFits;
         subEl.innerText = t.pageSubtitleFits;
         if (typeof calculateFits === 'function') calculateFits();
       } else if (mod === 'belts') {
-        bBelts.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bBeltsM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dBelts.className = "w-2 h-2 rounded-full bg-blue-300";
+        bBelts.className = "station station-on";
+        bBeltsM.className = "m-station m-station-on";
+        dBelts.className = "st-code";
         sBelts.classList.remove('hidden');
         titleEl.innerText = t.pageTitleBelts;
         subEl.innerText = t.pageSubtitleBelts;
         if (typeof calculateBelts === 'function') calculateBelts();
       } else if (mod === 'gears') {
-        bGears.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bGearsM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dGears.className = "w-2 h-2 rounded-full bg-blue-300";
+        bGears.className = "station station-on";
+        bGearsM.className = "m-station m-station-on";
+        dGears.className = "st-code";
         sGears.classList.remove('hidden');
         titleEl.innerText = t.pageTitleGears;
         subEl.innerText = t.pageSubtitleGears;
         if (typeof calculateGears === 'function') calculateGears();
       } else if (mod === 'shafts') {
-        bShafts.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bShaftsM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dShafts.className = "w-2 h-2 rounded-full bg-blue-300";
+        bShafts.className = "station station-on";
+        bShaftsM.className = "m-station m-station-on";
+        dShafts.className = "st-code";
         sShafts.classList.remove('hidden');
         titleEl.innerText = t.pageTitleShafts;
         subEl.innerText = t.pageSubtitleShafts;
         if (typeof calculateShafts === 'function') calculateShafts();
       } else if (mod === 'frames') {
-        bFrames.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bFramesM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dFrames.className = "w-2 h-2 rounded-full bg-blue-300";
+        bFrames.className = "station station-on";
+        bFramesM.className = "m-station m-station-on";
+        dFrames.className = "st-code";
         sFrames.classList.remove('hidden');
         titleEl.innerText = t.pageTitleFrames;
         subEl.innerText = t.pageSubtitleFrames;
         if (typeof calculateFrames === 'function') calculateFrames();
       } else if (mod === 'bolts') {
-        bBolts.className = "w-full text-left px-3 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm flex items-center justify-between transition-colors";
-        bBoltsM.className = "text-center py-2 px-1.5 rounded-lg bg-blue-600 text-white font-medium text-xs transition-colors truncate";
-        dBolts.className = "w-2 h-2 rounded-full bg-blue-300";
+        bBolts.className = "station station-on";
+        bBoltsM.className = "m-station m-station-on";
+        dBolts.className = "st-code";
         sBolts.classList.remove('hidden');
         titleEl.innerText = t.pageTitleBolts;
         subEl.innerText = t.pageSubtitleBolts;

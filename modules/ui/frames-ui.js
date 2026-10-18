@@ -465,7 +465,7 @@ function frInitCanvas() {
 }
 
 // ---- drawing ------------------------------------------------------------------------------------------
-const FRC = { grid: '#334155', grid2: '#475569', str: '#e2e8f0', node: '#cbd5e1', sup: '#94a3b8', load: '#fbbf24', N: '#38bdf8', V: '#34d399', M: '#f43f5e', def: '#a855f7', ok: '#34d399', mid: '#fbbf24', bad: '#f43f5e' };
+const FRC = { grid: '#e1ddd4', grid2: '#b8b2a6', str: '#22211f', node: '#3a3732', sup: '#6f6a62', load: '#b7791f', N: '#2f66b3', V: '#21497f', M: '#c0392b', def: '#7a4fb3', ok: '#21497f', mid: '#b7791f', bad: '#c0392b' };
 
 function frSupportSvg(p, type) {
   const { X, Y } = p, c = FRC.sup;
@@ -565,8 +565,8 @@ function frDraw(target = null, opts = {}) {
     if (ev && frShow === 'util' && ev.rows[i]) { const u = ev.rows[i].chk.util; col = u > 1 + 1e-9 ? FRC.bad : u > 0.7 ? FRC.mid : FRC.ok; w = 4; }
     g += `<line x1="${a.X}" y1="${a.Y}" x2="${b.X}" y2="${b.Y}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
     const L = Math.hypot(b.X - a.X, b.Y - a.Y) || 1, ux = (b.X - a.X) / L, uy = (b.Y - a.Y) / L;
-    if (mm.relStart) g += `<circle cx="${a.X + ux * 9}" cy="${a.Y + uy * 9}" r="4" fill="${opts.print ? 'white' : '#0b1210'}" stroke="${col}" stroke-width="1.6"/>`;
-    if (mm.relEnd) g += `<circle cx="${b.X - ux * 9}" cy="${b.Y - uy * 9}" r="4" fill="${opts.print ? 'white' : '#0b1210'}" stroke="${col}" stroke-width="1.6"/>`;
+    if (mm.relStart) g += `<circle cx="${a.X + ux * 9}" cy="${a.Y + uy * 9}" r="4" fill="${opts.print ? 'white' : '#fbfaf7'}" stroke="${col}" stroke-width="1.6"/>`;
+    if (mm.relEnd) g += `<circle cx="${b.X - ux * 9}" cy="${b.Y - uy * 9}" r="4" fill="${opts.print ? 'white' : '#fbfaf7'}" stroke="${col}" stroke-width="1.6"/>`;
     const lbl = ev && frShow === 'util' && ev.rows[i] ? `${Math.round(ev.rows[i].chk.util * 100)}%` : (sel && sel.secs ? sel.secs[i].name : `${i + 1}`);
     if (!opts.print || frShow === 'util' || sel) g += `<text x="${(a.X + b.X) / 2 - uy * 11}" y="${(a.Y + b.Y) / 2 + ux * 11 + 4}" text-anchor="middle" font-size="10.5" fill="${FRC.sup}">${reportEscSafe(lbl)}</text>`;
   });
@@ -611,14 +611,14 @@ function frDraw(target = null, opts = {}) {
 function reportEscSafe(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 // ---- section drawings with the main dimensions ---------------------------------------------------------
-function frSectionSvg(sec, bg = '#0f172a') {
-  const W = 220, H = 200, d = sec.dims, c = '#e2e8f0', f = '#475569', q = '#fbbf24';
+function frSectionSvg(sec, bg = '#fbfaf7') {
+  const W = 220, H = 200, d = sec.dims, c = '#22211f', f = '#b8b2a6', q = '#b7791f';
   let ext = 0;
   if (sec.family === 'round') ext = d.d; else if (sec.family === 'tube') ext = d.D; else if (sec.family === 'rect') ext = Math.max(d.b, d.h);
   else if (sec.family === 'box') ext = d.B; else ext = Math.max(d.h, d.b);
   const k = 120 / ext, cx = 105, cy = 95;
   const dim = (x1, y1, x2, y2, txt, tx, ty, anchor = 'middle') => frArrow(x1, y1, x2, y2, q, 0.9) + frArrow(x2, y2, x1, y1, q, 0.9) + `<text x="${tx}" y="${ty}" text-anchor="${anchor}" font-size="11" fill="${q}" font-weight="600">${txt}</text>`;
-  let g = `<line x1="${cx - 75}" y1="${cy}" x2="${cx + 75}" y2="${cy}" stroke="#64748b" stroke-dasharray="8 3 2 3" stroke-width="0.6"/><line x1="${cx}" y1="${cy - 75}" x2="${cx}" y2="${cy + 75}" stroke="#64748b" stroke-dasharray="8 3 2 3" stroke-width="0.6"/>`;
+  let g = `<line x1="${cx - 75}" y1="${cy}" x2="${cx + 75}" y2="${cy}" stroke="#8a857c" stroke-dasharray="8 3 2 3" stroke-width="0.6"/><line x1="${cx}" y1="${cy - 75}" x2="${cx}" y2="${cy + 75}" stroke="#8a857c" stroke-dasharray="8 3 2 3" stroke-width="0.6"/>`;
   const fmt = v => (Math.round(v * 10) / 10).toString().replace('.', currentLang === 'it' ? ',' : '.');
   if (sec.family === 'round' || sec.family === 'tube') {
     const R = (sec.family === 'round' ? d.d : d.D) / 2 * k;

@@ -165,7 +165,7 @@ function buildFrameReportHtml() {
   body += H(F.s10) + '<ul>' + F.hyp.map(h => `<li>${reportTexify(h)}</li>`).join('') + '</ul>';
   frDraw();
   const sub = best ? `${t.fam[Rs.best]} · ${N(best.mass, 1)} kg · ${m.members.length} ${t.members.toLowerCase()}` : `${m.members.length} ${t.members.toLowerCase()}`;
-  return reportShell(F.title, sub, `<style>.secs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.secc{border:1px solid #cbd5e1;border-radius:6px;padding:6px;break-inside:avoid;font-size:9pt}.secc svg{width:100%;height:auto}</style>` + body, R,
+  return reportShell(F.title, sub, `<style>.secs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.secc{border:1px solid #d6d1c6;border-radius:6px;padding:6px;break-inside:avoid;font-size:9pt}.secc svg{width:100%;height:auto}</style>` + body, R,
     currentLang === 'it' ? 'Analisi elastica lineare a elementi finiti di una struttura piana e dimensionamento di massima delle sezioni da catalogo. I risultati servono come prime quote: il progetto esecutivo va verificato con le norme (Eurocodice 3) e con un modello completo.'
       : 'Linear elastic finite element analysis of a plane structure and preliminary sizing with catalog sections. The results are first dimensions: the final design must be checked with the standards (Eurocode 3) and a complete model.');
 }

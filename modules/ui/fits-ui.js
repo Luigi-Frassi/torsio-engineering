@@ -52,8 +52,8 @@ function drawToleranceChart(es_h, ei_h, es_s, ei_s) {
   const yForVal = (v) => zeroY - (v * scale);
 
   svg.innerHTML += `
-    <line x1="50" y1="${zeroY}" x2="550" y2="${zeroY}" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 4" />
-    <text x="555" y="${zeroY + 4}" fill="#94a3b8" font-size="11" font-family="monospace">0</text>
+    <line x1="50" y1="${zeroY}" x2="550" y2="${zeroY}" stroke="#8a857c" stroke-width="1.5" stroke-dasharray="4 4" />
+    <text x="555" y="${zeroY + 4}" fill="#6f6a62" font-size="11" font-family="monospace">0</text>
   `;
 
   const hTop = yForVal(es_h);
@@ -61,10 +61,10 @@ function drawToleranceChart(es_h, ei_h, es_s, ei_s) {
   const hHeight = Math.max(Math.abs(hBottom - hTop), 2);
   const holeText = currentLang === 'it' ? 'FORO' : 'HOLE';
   svg.innerHTML += `
-    <rect x="180" y="${hTop}" width="100" height="${hHeight}" fill="rgba(56, 189, 248, 0.25)" stroke="#38bdf8" stroke-width="2" rx="4" />
-    <text x="230" y="${hTop - 8}" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">${formatDeviation(es_h)}</text>
-    <text x="230" y="${hBottom + 16}" fill="#38bdf8" font-size="11" text-anchor="middle">${formatDeviation(0)}</text>
-    <text x="230" y="${hTop + (hHeight / 2) + 4}" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">${holeText} (H7)</text>
+    <rect x="180" y="${hTop}" width="100" height="${hHeight}" fill="rgba(47,102,179, 0.25)" stroke="#2f66b3" stroke-width="2" rx="4" />
+    <text x="230" y="${hTop - 8}" fill="#2f66b3" font-size="11" font-weight="bold" text-anchor="middle">${formatDeviation(es_h)}</text>
+    <text x="230" y="${hBottom + 16}" fill="#2f66b3" font-size="11" text-anchor="middle">${formatDeviation(0)}</text>
+    <text x="230" y="${hTop + (hHeight / 2) + 4}" fill="#22211f" font-size="12" font-weight="bold" text-anchor="middle">${holeText} (H7)</text>
   `;
 
   const sTop = yForVal(es_s);
@@ -73,10 +73,10 @@ function drawToleranceChart(es_h, ei_h, es_s, ei_s) {
   const shaftClass = document.getElementById('shaftClassLabel').innerText.toUpperCase();
   const shaftText = currentLang === 'it' ? 'ALBERO' : 'SHAFT';
   svg.innerHTML += `
-    <rect x="320" y="${sTop}" width="100" height="${sHeight}" fill="rgba(251, 191, 36, 0.25)" stroke="#fbbf24" stroke-width="2" rx="4" />
-    <text x="370" y="${sTop - 8}" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">${formatDeviation(es_s)}</text>
-    <text x="370" y="${sBottom + 16}" fill="#fbbf24" font-size="11" text-anchor="middle">${formatDeviation(ei_s)}</text>
-    <text x="370" y="${sTop + (sHeight / 2) + 4}" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">${shaftText} (${shaftClass})</text>
+    <rect x="320" y="${sTop}" width="100" height="${sHeight}" fill="rgba(183,121,31, 0.25)" stroke="#b7791f" stroke-width="2" rx="4" />
+    <text x="370" y="${sTop - 8}" fill="#b7791f" font-size="11" font-weight="bold" text-anchor="middle">${formatDeviation(es_s)}</text>
+    <text x="370" y="${sBottom + 16}" fill="#b7791f" font-size="11" text-anchor="middle">${formatDeviation(ei_s)}</text>
+    <text x="370" y="${sTop + (sHeight / 2) + 4}" fill="#22211f" font-size="12" font-weight="bold" text-anchor="middle">${shaftText} (${shaftClass})</text>
   `;
 }
 

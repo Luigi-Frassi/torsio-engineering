@@ -21,11 +21,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <style>
-    :root { --paper: #eef1ec; --sheet: #f8faf7; --ink: #1c2120; --ink-2: #4f5b55; --line: #c9d1cb; --green: #2e5a42; --green-2: #4c8c66; --signal: #e8b321; --measure: 40rem; }
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
-    a { color: var(--green); }
+    a { color: var(--blue); }
     a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
     .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
     html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
@@ -69,12 +69,12 @@
     .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
     .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
     .mod h3 { margin: 0 0 4px; }
-    .mod .src { font-size: 13.5px; color: var(--green); font-weight: 600; margin: 0 0 12px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
     .mod p, .mod li { font-size: 15.5px; }
     .mod ul { padding-left: 18px; margin: 8px 0 0; }
     .mod li { margin-bottom: 4px; }
     .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
-    .eq { border-left: 3px solid var(--green); background: #f1f4f0; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
     .eq .katex-display { margin: 8px 0; text-align: left; }
     .eq .katex { font-size: 1em; }
     .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
@@ -102,12 +102,13 @@
       .tbl th, .tbl td { padding: 8px; }
       section { padding: 44px 0; }
     }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
-      <a class="brand" href="./"><img src="vendor/brand/torsio-mark.svg" alt=""><b>Torsio</b><span>Engineering</span></a>
+      <a class="brand" href="./"><img src="vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
       <nav class="nav" aria-label="Navigazione">
         <span class="links">
           <a href="./"><span data-l="it">Home</span><span data-l="en">Home</span></a>

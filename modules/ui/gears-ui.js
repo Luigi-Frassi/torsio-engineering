@@ -27,26 +27,26 @@ function drawGearScheme(d1, d2, a) {
   const cx2 = cx1 + a * scale;
   const dimY = cy + Math.max(R1, R2) + 24;
 
-  svg.innerHTML += `<line x1="${cx1 - R1 - 20}" y1="${cy}" x2="${cx2 + R2 + 20}" y2="${cy}" stroke="#334155" stroke-dasharray="6 4" stroke-width="1.2" />`;
+  svg.innerHTML += `<line x1="${cx1 - R1 - 20}" y1="${cy}" x2="${cx2 + R2 + 20}" y2="${cy}" stroke="#e1ddd4" stroke-dasharray="6 4" stroke-width="1.2" />`;
   svg.innerHTML += `
-    <circle cx="${cx1}" cy="${cy}" r="${R1}" fill="rgba(251, 191, 36, 0.12)" stroke="#fbbf24" stroke-width="2" />
-    <circle cx="${cx1}" cy="${cy}" r="4" fill="#fbbf24" />
-    <text x="${cx1}" y="${cy - R1 - 8}" fill="#fbbf24" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₁ (dp=${d1.toFixed(1)})</text>
+    <circle cx="${cx1}" cy="${cy}" r="${R1}" fill="rgba(183,121,31, 0.12)" stroke="#b7791f" stroke-width="2" />
+    <circle cx="${cx1}" cy="${cy}" r="4" fill="#b7791f" />
+    <text x="${cx1}" y="${cy - R1 - 8}" fill="#b7791f" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₁ (dp=${d1.toFixed(1)})</text>
   `;
   svg.innerHTML += `
-    <circle cx="${cx2}" cy="${cy}" r="${R2}" fill="rgba(168, 85, 247, 0.12)" stroke="#a855f7" stroke-width="2" />
-    <circle cx="${cx2}" cy="${cy}" r="4" fill="#a855f7" />
-    <text x="${cx2}" y="${cy - R2 - 8}" fill="#a855f7" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₂ (dp=${d2.toFixed(1)})</text>
+    <circle cx="${cx2}" cy="${cy}" r="${R2}" fill="rgba(122,79,179, 0.12)" stroke="#7a4fb3" stroke-width="2" />
+    <circle cx="${cx2}" cy="${cy}" r="4" fill="#7a4fb3" />
+    <text x="${cx2}" y="${cy - R2 - 8}" fill="#7a4fb3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">z₂ (dp=${d2.toFixed(1)})</text>
   `;
   const contactX = cx1 + R1;
-  svg.innerHTML += `<circle cx="${contactX}" cy="${cy}" r="3.5" fill="#38bdf8" />`;
+  svg.innerHTML += `<circle cx="${contactX}" cy="${cy}" r="3.5" fill="#2f66b3" />`;
   svg.innerHTML += `
-    <line x1="${cx1}" y1="${cy}" x2="${cx1}" y2="${dimY + 8}" stroke="#0284c7" stroke-width="0.8" stroke-dasharray="2 2" />
-    <line x1="${cx2}" y1="${cy}" x2="${cx2}" y2="${dimY + 8}" stroke="#0284c7" stroke-width="0.8" stroke-dasharray="2 2" />
-    <line x1="${cx1}" y1="${dimY}" x2="${cx2}" y2="${dimY}" stroke="#38bdf8" stroke-width="1.2" />
-    <polygon points="${cx1},${dimY} ${cx1+6},${dimY-3} ${cx1+6},${dimY+3}" fill="#38bdf8" />
-    <polygon points="${cx2},${dimY} ${cx2-6},${dimY-3} ${cx2-6},${dimY+3}" fill="#38bdf8" />
-    <text x="${(cx1 + cx2)/2}" y="${dimY + 16}" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">
+    <line x1="${cx1}" y1="${cy}" x2="${cx1}" y2="${dimY + 8}" stroke="#21497f" stroke-width="0.8" stroke-dasharray="2 2" />
+    <line x1="${cx2}" y1="${cy}" x2="${cx2}" y2="${dimY + 8}" stroke="#21497f" stroke-width="0.8" stroke-dasharray="2 2" />
+    <line x1="${cx1}" y1="${dimY}" x2="${cx2}" y2="${dimY}" stroke="#2f66b3" stroke-width="1.2" />
+    <polygon points="${cx1},${dimY} ${cx1+6},${dimY-3} ${cx1+6},${dimY+3}" fill="#2f66b3" />
+    <polygon points="${cx2},${dimY} ${cx2-6},${dimY-3} ${cx2-6},${dimY+3}" fill="#2f66b3" />
+    <text x="${(cx1 + cx2)/2}" y="${dimY + 16}" fill="#2f66b3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">
       i = ${a.toFixed(2)} mm
     </text>
   `;
