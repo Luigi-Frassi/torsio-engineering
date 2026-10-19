@@ -39,6 +39,7 @@ def settle(page): page.wait_for_timeout(400)   # URL sync is debounced (250 ms)
 with sync_playwright() as p:
     browser = p.chromium.launch()
     ctx = browser.new_context()
+    ctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
     TW_STUB = "document.head.insertAdjacentHTML('beforeend','<style>.hidden{display:none}@media(min-width:768px){.md\\\\:flex{display:flex}.md\\\\:hidden{display:none}}@media(min-width:640px){.sm\\\\:inline{display:inline}}</style>')"
     def router(r):
         u = r.request.url
@@ -548,6 +549,7 @@ with sync_playwright() as p:
 
     # --- phone (390 px): report menu inside the screen, report without sideways overflow
     mctx = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
+    mctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
     mctx.route('**/*', router)
     mp = mctx.new_page(); mp.on('pageerror', lambda e: errors.append(str(e)))
     mp.goto(BASE + '?demo=shaftExam&lang=it'); settle(mp)
@@ -565,6 +567,7 @@ with sync_playwright() as p:
 
     # --- module views for Analytics
     lctx = browser.new_context(); lctx.route('**/*', router)
+    lctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
     lp = lctx.new_page(); lp.on('pageerror', lambda e: errors.append(str(e)))
     lp.goto(BASE); settle(lp)
     lp.evaluate("switchModule('shafts'); switchModule('bolts'); switchModule('bolts')")
@@ -655,6 +658,20 @@ with sync_playwright() as p:
         detail = str(e)[:200]
     check('relazione → "Scarica PDF": file PDF A4 a più pagine, scaricato', pdf_ok, detail)
     pr.close(); pp.close()
+
+    # --- start screen: only for a bare calculator link, closed by any choice
+    sctx = browser.new_context(); sctx.route('**/*', router)
+    sp = sctx.new_page(); sp.on('pageerror', lambda e: errors.append(str(e)))
+    sp.goto(BASE + '?lang=it'); settle(sp)
+    st = sp.evaluate("[document.body.classList.contains('start-on'), document.querySelectorAll('#startView [data-start]').length, document.getElementById('moduleTitle').textContent, getComputedStyle(document.getElementById('moduleFitsSection')).display]")
+    check('schermata iniziale: sei stazioni, titolo, moduli nascosti', st[0] and st[1] == 6 and 'stazione' in st[2] and st[3] == 'none', str(st))
+    sp.click('#startView [data-start="shafts"]'); settle(sp)
+    check('  scegliendo una stazione si apre il modulo', sp.evaluate("!document.body.classList.contains('start-on') && activeModule === 'shafts' && !document.getElementById('startView')"))
+    sp.goto(BASE + '?lang=it'); settle(sp); sp.click('#startView [data-start-demo="transmission"]'); settle(sp)
+    check('  "Apri la demo" carica la trasmissione', sp.evaluate("!document.body.classList.contains('start-on') && activeModule === 'shafts' && document.getElementById('motorPower').value === '7.5'"))
+    sp.goto(BASE + '?m=gears'); settle(sp)
+    check('  un link con il modulo apre subito il modulo', sp.evaluate("!document.body.classList.contains('start-on') && activeModule === 'gears'"))
+    sctx.close()
 
     # --- transfers between modules only on request, and undoable
     lu = new_page(); lu.goto(BASE + '?m=shafts&lang=it'); settle(lu)

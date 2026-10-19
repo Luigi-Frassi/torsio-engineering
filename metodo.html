@@ -16,9 +16,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="vendor/brand/torsio-mark.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="vendor/fonts/fonts.css">
   <link rel="stylesheet" href="vendor/katex/katex.min.css">
   <style>
     :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
@@ -313,7 +311,7 @@
   <div class="wrap">
     <footer>
       <span>Torsio Engineering</span>
-      <span><a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener"><span data-l="it">Codice sorgente</span><span data-l="en">Source code</span></a></span>
+      <span><a href="novita.html"><span data-l="it">Novità</span><span data-l="en">What's new</span></a> · <a href="privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact" target="_blank" rel="noopener" data-contact><span data-l="it">Contatti</span><span data-l="en">Contact</span></a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener"><span data-l="it">Codice sorgente</span><span data-l="en">Source code</span></a></span>
     </footer>
   </div>
 
@@ -334,6 +332,7 @@
         document.title = lang === 'en' ? 'Method and validation — Torsio Engineering' : 'Metodo e validazione — Torsio Engineering';
         document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
         document.querySelectorAll('[data-app]').forEach(function (a) { a.href = (a.getAttribute('data-app') === 'demo' ? 'app.html?demo=transmission&' : 'app.html?') + 'lang=' + lang; });
+        document.querySelectorAll('[data-contact]').forEach(function (a) { a.href = 'https://tally.so/r/Gev5gZ?module=contact&lang=' + lang; });
         draw();
         try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
       }
