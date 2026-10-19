@@ -7,9 +7,10 @@
 
 const FR_TXT = {
   it: {
-    tools: { member: 'Trave', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
+    tools: { member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
     toolHelp: {
-      member: 'Trascina da un punto all\'altro (o clicca due punti) per creare una trave. I nodi si agganciano alla griglia e ai nodi esistenti.',
+      member: 'Trascina da un punto all\'altro (o clicca due punti) per creare una trave: lavora a sforzo normale, taglio e flessione. I nodi si agganciano alla griglia e ai nodi esistenti.',
+      bar: 'Come la trave, ma con una cerniera a entrambi gli estremi: lavora solo a sforzo normale, come nei tralicci. Metti i carichi nei nodi: un carico distribuito la farebbe inflettere.',
       support: 'Clicca un nodo per cambiare vincolo: cerniera → carrello orizzontale → carrello verticale → incastro → pattino → nessuno.',
       load: 'Clicca un nodo per aggiungere una forza (poi correggi i valori nella tabella).',
       dload: 'Clicca una trave per aggiungere un carico distribuito (verticale, per unità di lunghezza).',
@@ -20,7 +21,7 @@ const FR_TXT = {
     presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
     view: 'Mostra', views: { model: 'Modello', def: 'Deformata', N: 'Sforzo normale N', V: 'Taglio T', M: 'Momento flettente M', util: 'Utilizzo delle travi' },
     nodes: 'Nodi', members: 'Travi', supports: 'Vincoli', loads: 'Forze nei nodi', dloads: 'Carichi distribuiti', add: 'Aggiungi',
-    node: 'Nodo', member: 'Trave', start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
+    node: 'Nodo', member: 'Trave', kinds: { beam: 'trave', bar: 'asta', half: 'trave, 1 cerniera' }, start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
     sup: { pin: 'Cerniera', rollerX: 'Carrello (scorre in x)', rollerY: 'Carrello (scorre in y)', fixed: 'Incastro', guide: 'Pattino (blocca y e rotazione)' },
     dirs: { gy: 'Verticale (globale y)', perp: 'Perpendicolare alla trave' },
     matTitle: 'Materiale e criteri', material: 'Materiale', custom: 'Personalizzato',
@@ -46,9 +47,10 @@ const FR_TXT = {
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    tools: { member: 'Member', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
+    tools: { member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
     toolHelp: {
-      member: 'Drag from one point to another (or click two points) to create a member. Nodes snap to the grid and to existing nodes.',
+      member: 'Drag from one point to another (or click two points) to create a beam: it carries axial force, shear and bending. Nodes snap to the grid and to existing nodes.',
+      bar: 'Like a beam, but hinged at both ends: it carries axial force only, as in a truss. Put the loads on the nodes: a distributed load would bend it.',
       support: 'Click a node to change its support: pin → horizontal roller → vertical roller → fixed → guide → none.',
       load: 'Click a node to add a force (then correct the values in the table).',
       dload: 'Click a member to add a distributed load (vertical, per unit length).',
@@ -59,7 +61,7 @@ const FR_TXT = {
     presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
     view: 'Show', views: { model: 'Model', def: 'Deformed shape', N: 'Axial force N', V: 'Shear V', M: 'Bending moment M', util: 'Member utilization' },
     nodes: 'Nodes', members: 'Members', supports: 'Supports', loads: 'Nodal forces', dloads: 'Distributed loads', add: 'Add',
-    node: 'Node', member: 'Member', start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
+    node: 'Node', member: 'Member', kinds: { beam: 'beam', bar: 'bar', half: 'beam, 1 hinge' }, start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
     sup: { pin: 'Pin', rollerX: 'Roller (slides in x)', rollerY: 'Roller (slides in y)', fixed: 'Fixed', guide: 'Guide (blocks y and rotation)' },
     dirs: { gy: 'Vertical (global y)', perp: 'Perpendicular to the member' },
     matTitle: 'Material and criteria', material: 'Material', custom: 'Custom',
@@ -284,9 +286,10 @@ function frRenderTables() {
   const memOpts = sel => m.members.map((n, i) => `<option value="${i}" ${i === sel ? 'selected' : ''}>${i + 1}</option>`).join('');
   frEl('frNodesTbl').innerHTML = frTable(['#', 'x [mm]', 'y [mm]', ''], m.nodes.map((n, i) =>
     `<tr data-k="nodes" data-i="${i}"><td class="pr-2 text-slate-400">${i + 1}</td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="x" value="${n.x}"></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="y" value="${n.y}"></td><td>${FR_DEL}</td></tr>`));
-  frEl('frMembersTbl').innerHTML = frTable(['#', t.node + ' 1', t.node + ' 2', `${t.hingeAt} ${t.start}`, `${t.hingeAt} ${t.end}`, ''], m.members.map((mm, i) =>
+  const kind = mm => mm.relStart && mm.relEnd ? t.kinds.bar : mm.relStart || mm.relEnd ? t.kinds.half : t.kinds.beam;
+  frEl('frMembersTbl').innerHTML = frTable(['#', t.node + ' 1', t.node + ' 2', `${t.hingeAt} ${t.start}`, `${t.hingeAt} ${t.end}`, t.type, ''], m.members.map((mm, i) =>
     `<tr data-k="members" data-i="${i}"><td class="pr-2 text-slate-400">${i + 1}</td><td class="pr-2"><select class="${FR_TSEL}" data-f="n1">${nodeOpts(mm.n1)}</select></td><td class="pr-2"><select class="${FR_TSEL}" data-f="n2">${nodeOpts(mm.n2)}</select></td>` +
-    `<td class="pr-2"><input type="checkbox" data-f="relStart" ${mm.relStart ? 'checked' : ''}></td><td class="pr-2"><input type="checkbox" data-f="relEnd" ${mm.relEnd ? 'checked' : ''}></td><td>${FR_DEL}</td></tr>`));
+    `<td class="pr-2"><input type="checkbox" data-f="relStart" ${mm.relStart ? 'checked' : ''}></td><td class="pr-2"><input type="checkbox" data-f="relEnd" ${mm.relEnd ? 'checked' : ''}></td><td class="pr-2 text-slate-400 whitespace-nowrap">${kind(mm)}</td><td>${FR_DEL}</td></tr>`));
   frEl('frSupportsTbl').innerHTML = frTable([t.node, t.type, ''], m.supports.map((s, i) =>
     `<tr data-k="supports" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="node">${nodeOpts(s.node)}</select></td><td class="pr-2"><select class="${FR_TSEL}" data-f="type">${Object.entries(t.sup).map(([k, v]) => `<option value="${k}" ${k === s.type ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`)) +
     (m.nodes.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="supports">+ ${t.add}</button>` : '');
@@ -400,7 +403,8 @@ function frAddMember(a, b) {
   if (Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6) return false;
   const n1 = frNodeAt(a), n2 = frNodeAt(b);
   if (frModel.members.some(mm => (mm.n1 === n1 && mm.n2 === n2) || (mm.n1 === n2 && mm.n2 === n1))) return false;
-  frModel.members.push({ n1, n2, relStart: false, relEnd: false });
+  const bar = frTool === 'bar';   // a bar is a beam hinged at both ends: axial force only
+  frModel.members.push({ n1, n2, relStart: bar, relEnd: bar });
   return true;
 }
 
@@ -408,7 +412,7 @@ function frInitCanvas() {
   const svg = frEl('frCanvas');
   svg.addEventListener('pointerdown', ev => {
     const { X, Y } = frEventPoint(ev);
-    if (frTool === 'member') {
+    if (frTool === 'member' || frTool === 'bar') {
       frDrag = { a: frSnap(X, Y), b: frSnap(X, Y), moved: false };
       svg.setPointerCapture(ev.pointerId);
       return;
@@ -445,7 +449,7 @@ function frInitCanvas() {
     if (frDrag) {
       const b = frSnap(X, Y);
       if (b.x !== frDrag.b.x || b.y !== frDrag.b.y) { frDrag.b = b; frDrag.moved = true; frDraw(); }
-    } else if (frTool === 'member' && frPending) {
+    } else if ((frTool === 'member' || frTool === 'bar') && frPending) {
       frPending.hover = frSnap(X, Y); frDraw();
     }
   });
