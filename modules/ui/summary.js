@@ -15,7 +15,7 @@ const SUM_TXT = {
     ge: { m: 'Modulo', L: 'Larghezza di fascia', lewis: 'Lewis σL', a: 'Interasse', P: 'Potenza trasmissibile', M1: 'Momento al pignone', lim: { hertz: 'limita Hertz', lewis: 'limita Lewis' }, und: 'sottotaglio' },
     be: { indic: 'indicativa, da confermare sul catalogo', C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
     fi: { hole: 'Foro', shaft: 'Albero', fit: 'Accoppiamento', d: 'Diametro nominale', kinds: { clearance: 'GIOCO', interference: 'INTERFERENZA', transition: 'INCERTO' }, play: 'gioco', inter: 'interferenza' },
-    fr: { sec: 'Sezione scelta', mass: 'Peso', util: 'Utilizzo massimo', defl: 'Freccia massima', empty: 'Disegna la struttura', bars: 'aste' },
+    fr: { sec: 'Sezione scelta', mass: 'Peso', util: 'Utilizzo massimo', defl: 'Freccia massima', empty: 'Disegna la struttura', bars: 'travi' },
     bo: { bolts: 'Viti', Ms: 'Coppia di serraggio', X: 'X vite', N: 'Precarico per vite', Fmax: 'Carico trasmissibile', screw: 'Vite di manovra', eta: 'Rendimento', lock: 'autobloccante', nolock: 'non autobloccante', perBolt: 'per vite', sep: 'il giunto si apre' }
   },
   en: {
