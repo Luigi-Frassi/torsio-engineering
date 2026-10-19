@@ -179,7 +179,7 @@ function projectSnapshot() {
 }
 
 function prjFileName(ext) {
-  const base = [projectMeta.code, projectMeta.project].filter(Boolean).join('_') || 'torsio-progetto';
+  const base = [projectMeta.code, projectMeta.project].filter(Boolean).join('_') || (currentLang === 'it' ? 'torsio-progetto' : 'torsio-project');
   return base.replace(/[^\w\-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 80) + (projectMeta.rev ? `_rev${projectMeta.rev}` : '') + ext;
 }
 

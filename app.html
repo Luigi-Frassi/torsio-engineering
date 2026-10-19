@@ -66,6 +66,14 @@
     .sum-bar div { position: absolute; left: 0; top: 0; bottom: 0; }
     .sum-bar i { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #22211f; }
     @media (max-width: 900px) { .sum-bar-wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; } .sum-val { font-size: 24px; } }
+    .sum-card-wide { grid-column: span 2; }
+    /* invalid inputs (modules/ui/validate.js) */
+    input.val-bad { border-color: #b42318 !important; background: #fdf3f2 !important; box-shadow: 0 0 0 1px #b42318 inset; }
+    /* results computed from invalid inputs are faded (panels with no fields in them) */
+    .val-on [class*="rounded-xl"]:not(:has(input, select, textarea, button)):not([class*="rounded-xl"]:not(:has(input, select, textarea, button)) *) { opacity: .28; filter: grayscale(1); transition: opacity .15s; }
+    .val-msg { margin: 4px 0 0; font-size: 11px; font-weight: 600; color: #b42318; }
+    .val-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 16px; padding: 10px 14px; border: 1px solid #b42318; border-left-width: 4px; background: #fdf3f2; color: #7a1a10; font-size: 13px; font-weight: 600; }
+    .val-banner button { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #b42318; text-decoration: underline; }
     .demo-list button { width: 100%; justify-content: flex-start; text-align: left; }
     .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     .ico { flex: none; display: inline-block; vertical-align: -3px; }
@@ -268,7 +276,7 @@
           <span data-i18n="modeDirectLabel">Direct Fit Selection</span>
         </button>
         <button id="modeReverse" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white border border-transparent transition-all">
-          <span data-i18n="modeReverseLabel">Inverse Search (By Target Play)</span>
+          <span data-i18n="modeReverseLabel">Inverse Search (By Target Clearance)</span>
         </button>
       </div>
 
@@ -2024,10 +2032,10 @@
         pageTitleGears: "Cylindrical Gears Sizing (Hertz & Lewis)",
         pageSubtitleGears: "Standard module selection, pitch diameters, face width factor, and bending/pitting capacity checks.",
         modeDirectLabel: "Direct Fit Selection",
-        modeReverseLabel: "Inverse Search (By Target Play)",
+        modeReverseLabel: "Inverse Search (By Target Clearance)",
         inputDiamLabel: "Nominal Diameter (d)",
         inputFitLabel: "Desired Fit",
-        reverseTargetLabel: "Target Play & Condition",
+        reverseTargetLabel: "Target Clearance & Condition",
         optClearance: "Clearance",
         optInterference: "Interference",
         stepOver: "ISO Step: over",
@@ -2068,7 +2076,7 @@
         maxInterference: "Max interf.:",
         copiedAlert: "Specifications copied to clipboard for CAD drawing!",
         closestMatch: "Suggested ISO fit:",
-        meanPlay: "Mean play:",
+        meanPlay: "Mean clearance:",
         demoBarTitle: "Quick Demo (1-Click):",
         demoHelical: "Helical Gearbox (50 kW)",
         demoSpur: "Spur Gears (5.5 kW)",
@@ -3641,6 +3649,7 @@
   <script src="modules/ui/dxf-ui.js"></script>
   <script src="modules/ui/links.js"></script>
   <script src="modules/ui/feedback.js"></script>
+  <script src="modules/ui/validate.js"></script>
   <script src="modules/ui/summary.js"></script>
   <script>
     // Demo menu in the toolbar: opens on click, closes on a choice, outside click or Escape

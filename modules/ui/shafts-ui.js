@@ -111,13 +111,10 @@ function calculateShafts() {
   shaftShow('shaftSectionPanel', currentShaftMode !== 'beam');
   calculateShaftBeam(t, MtShaft);          // always kept up to date, also while hidden
   if (currentShaftMode === 'beam') {
-    // the summary band shows the section result also while the beam is being edited: design it silently
-    try {
-      const sIn = readShaftInputs();
-      const des = shaftDesign(sIn.inp, sIn.Xreq);
-      const sh = sIn.notchType === 'shoulder' || sIn.notchType === 'combined';
-      lastShaftSection = des.ok ? { mode: 'design', d: des.d, D: sh ? des.D : null, r: sh ? sIn.inp.notch.r : null, res: des.final, Xreq: sIn.Xreq, dMin: des.dMin, governing: des.governing } : null;
-    } catch (e) { lastShaftSection = null; }
+    // the summary band shows the section result also while the beam is being edited: design silently the
+    // section chosen on the beam (the critical one by default), with the beam's own actions — exactly what
+    // "use this section" would send to step 2, without touching the step-2 fields
+    lastShaftSection = shaftSilentSection();
     return;
   }
 
@@ -735,6 +732,31 @@ function shaftGoToCritical() {
   const el = document.getElementById('shaftSecX');
   if (el) el.value = Math.round(lastShaftBeam.critical.x * 10) / 10;
   calculateShafts();
+}
+
+// Section designed from the beam for the summary band (null when the beam has no valid result)
+function shaftSilentSection() {
+  try {
+    const b = lastShaftBeam;
+    if (!b || !b.critical) return null;
+    const xs = parseFloat(document.getElementById('shaftSecX')?.value);
+    const x = Number.isFinite(xs) && xs >= (b.xmin ?? 0) && (!(b.L > 0) || xs <= b.L) ? xs : b.critical.x;
+    const s = shaftBeamSection(b, x);
+    const sIn = readShaftInputs();
+    const MtShaft = readShaftTorque().Mt;
+    const seat = b.loads.some(l => (l.el.type === 'gear' || l.el.type === 'coupling') && Math.abs(l.x - x) < 1e-6);
+    let notch = sIn.inp.notch, notchType = sIn.notchType;
+    if (seat && notchType !== 'combined') {
+      const key = { key: document.getElementById('shaftKeyType')?.value, condition: document.getElementById('shaftKeyCond')?.value, keyKe: shaftVal('shaftKeyKe', 1), keyKeT: shaftVal('shaftKeyKeT', 1) };
+      notch = { type: 'combined', Dd: Math.max(1, shaftVal('shaftDd', 1.1)), r: Math.max(0.05, shaftVal('shaftR', 1)), ...key };
+      notchType = 'combined';
+    }
+    const inp = { ...sIn.inp, notch, loads: { ...sIn.inp.loads, Mf: Math.abs(s.Mf), N: s.N || 0, Mt: Math.abs(s.T) > 1e-6 ? Math.abs(MtShaft) : 0 } };
+    if (!(inp.loads.Mf > 0 || inp.loads.Mt > 0 || Math.abs(inp.loads.N) > 0)) return null;   // nothing loads the section
+    const des = shaftDesign(inp, sIn.Xreq);
+    const sh = notchType === 'shoulder' || notchType === 'combined';
+    return des.ok ? { mode: 'design', d: des.d, D: sh ? des.D : null, r: sh ? notch.r : null, res: des.final, Xreq: sIn.Xreq, dMin: des.dMin, governing: des.governing, x, fromBeam: true } : null;
+  } catch (e) { return null; }
 }
 
 // Copies the internal actions of the chosen section into the fatigue design (step 2)

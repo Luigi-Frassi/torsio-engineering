@@ -17,7 +17,7 @@ const LINK_TXT = {
     shaftFits: 'Accoppiamento sul diametro', shaftFitsSub: d => `Ø ${d} mm (foro base H7)`, shaftNoD: 'Calcola prima la sezione (passo 2 o 3)',
     shaftBolts: 'Giunto a flange bullonato', shaftBoltsSub: Mt => `Mt = ${Mt} N·m da trasmettere per attrito`,
     frameBolts: n => `Bulloni al vincolo del nodo ${n}`, frameBoltsSub: (T, Pe, M) => `taglio ${T} kN · sollevamento ${Pe} kN` + (M ? ' · momento escluso' : ''), frameNone: 'Nessuna reazione: calcola prima la struttura',
-    from: 'Dati presi da', close: 'Chiudi',
+    from: 'Dati presi da', close: 'Chiudi', undo: 'Annulla', undone: 'Valori precedenti ripristinati.',
     src: { beltGears: 'Cinghia sincrona → ruote', beltShaft: 'Cinghia sincrona → albero', gearPinion: 'Ruote dentate → albero del pignone', gearWheel: 'Ruote dentate → albero della ruota',
       shaftFits: 'Albero → accoppiamento', shaftBolts: 'Albero → giunto a flange', frameBolts: n => `Strutture → vincolo del nodo ${n}` },
     noteBeltShaft: 'La forza della cinghia sull\'albero non è trasferita: inseriscila come forza generica nella posizione della puleggia.',
@@ -34,7 +34,7 @@ const LINK_TXT = {
     shaftFits: 'Fit on the diameter', shaftFitsSub: d => `Ø ${d} mm (hole basis H7)`, shaftNoD: 'Calculate the section first (step 2 or 3)',
     shaftBolts: 'Bolted flange coupling', shaftBoltsSub: Mt => `Mt = ${Mt} N·m transmitted by friction`,
     frameBolts: n => `Bolts at the support of node ${n}`, frameBoltsSub: (T, Pe, M) => `shear ${T} kN · uplift ${Pe} kN` + (M ? ' · moment excluded' : ''), frameNone: 'No reactions: calculate the structure first',
-    from: 'Data taken from', close: 'Close',
+    from: 'Data taken from', close: 'Close', undo: 'Undo', undone: 'Previous values restored.',
     src: { beltGears: 'Timing belt → gears', beltShaft: 'Timing belt → shaft', gearPinion: 'Gears → pinion shaft', gearWheel: 'Gears → wheel shaft',
       shaftFits: 'Shaft → fit', shaftBolts: 'Shaft → flange coupling', frameBolts: n => `Frames → support of node ${n}` },
     noteBeltShaft: 'The belt pull on the shaft is not transferred: add it as a generic force at the pulley position.',
@@ -100,6 +100,12 @@ function linkButton(action, arg, title, sub, enabled = true) {
 
 function linkBarHtml(mod) {
   const t = linkT(), b = [];
+  // invalid inputs (validate.js) are never carried into another module
+  if (typeof valCheck === 'function' && valCheck(mod).length) {
+    return `<div class="bg-slate-800/40 rounded-xl border border-slate-700/60 p-4 mt-6 mb-6">` +
+      `<h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${t.bar}</h3>` +
+      `<p class="text-sm text-rose-400">${valT().blocked}</p></div>`;
+  }
   if (mod === 'belts') {
     const d = linkBeltData();
     b.push(d ? linkButton('beltGears', '', t.beltGears, t.beltGearsSub(linkNum(d.P, 2), linkNum(d.n2, 0))) : linkButton('beltGears', '', t.beltGears, t.beltGeom, false));
@@ -159,13 +165,20 @@ function linkBanner(mod, src, rows, notes) {
   div.innerHTML = `<div class="flex items-start justify-between gap-3"><div><span class="text-amber-300 font-semibold">${t.from}: ${src}</span>` +
     `<div class="text-slate-200 text-xs mt-1 font-mono">${rows.join(' · ')}</div>` +
     notes.map(n => `<div class="text-slate-400 text-[11px] mt-1">${n}</div>`).join('') +
-    `</div><button type="button" class="text-slate-400 hover:text-white text-lg leading-none" aria-label="${t.close}" onclick="this.closest('#linkBanner').remove()">×</button></div>`;
+    `</div><div class="flex items-center gap-3 shrink-0">` +
+    (linkUndoList && linkUndoList.length ? `<button type="button" data-link-undo="1" class="text-xs font-semibold underline text-slate-200 hover:text-white">${t.undo}</button>` : '') +
+    `<button type="button" class="text-slate-400 hover:text-white text-lg leading-none" aria-label="${t.close}" onclick="this.closest('#linkBanner').remove()">×</button></div></div>`;
+  div.addEventListener('click', ev => { if (ev.target.closest('[data-link-undo]')) linkUndo(mod); });
   sec.insertBefore(div, sec.firstChild);
 }
 
+// the values a transfer overwrites, so that "Undo" can put them back (the target module stays independent:
+// a transfer is a one-off copy into its normal fields, made only when the user asks for it)
+let linkUndoList = null;
 function linkSet(id, value) {
   const el = linkEl(id);
   if (!el) return;
+  if (linkUndoList && !linkUndoList.some(u => u.el === el)) linkUndoList.push({ el, old: el.value });
   el.value = value;
   el.classList.add('ring-2', 'ring-amber-400');
   setTimeout(() => el.classList.remove('ring-2', 'ring-amber-400'), 2500);
@@ -180,7 +193,10 @@ function linkGo(mod) {
 // ---- actions ----------------------------------------------------------------------------------------------
 function linkToGears(P, n) {
   const radio = document.querySelector('input[name="gearLoadMode"][value="power"]');
-  if (radio && !radio.checked) { radio.checked = true; radio.dispatchEvent(new Event('change', { bubbles: true })); }
+  if (radio && !radio.checked) {
+    const was = document.querySelector('input[name="gearLoadMode"]:checked');
+    if (linkUndoList && was) linkUndoList.push({ radio: was });
+    radio.checked = true; radio.dispatchEvent(new Event('change', { bubbles: true })); }
   linkSet('gearPower', linkNice(P, 3));
   linkSet('gearSpeed', linkNice(n, 1));
 }
@@ -195,6 +211,10 @@ function linkClick(ev) {
   const btn = ev.target.closest('button[data-link]');
   if (!btn || btn.disabled) return;
   const t = linkT(), act = btn.dataset.link, arg = btn.dataset.arg;
+  if (typeof valCheck === 'function' && valCheck(activeModule).length) return;
+  linkUndoList = [];
+  if (typeof currentShaftMode !== 'undefined') linkUndoList.push({ shaftMode: currentShaftMode });
+  if (typeof currentBoltMode !== 'undefined') linkUndoList.push({ boltMode: currentBoltMode });
   if (act === 'beltGears' || act === 'beltShaft') {
     const d = linkBeltData(); if (!d) return;
     if (act === 'beltGears') {
@@ -254,6 +274,24 @@ function linkClick(ev) {
     if (M > 1e-6) notes.unshift(t.noteFrameM(linkNum(M, 2)));
     linkBanner('bolts', t.src.frameBolts(r.node + 1), [`Rx = ${linkNum(r.Rx / 1000, 2)} kN`, `Ry = ${linkNum(r.Ry / 1000, 2)} kN`, `F = ${linkNum(T, 2)} kN`, `Pe = ${linkNum(Pe, 2)} kN`], notes);
   }
+}
+
+// puts back the values the last transfer overwrote, and recalculates the target module
+function linkUndo(mod) {
+  const list = linkUndoList || [];
+  linkUndoList = null;
+  for (const u of list) {
+    if (u.el) { u.el.value = u.old; u.el.dispatchEvent(new Event(u.el.tagName === 'SELECT' ? 'change' : 'input', { bubbles: true })); }
+    else if (u.radio) { u.radio.checked = true; u.radio.dispatchEvent(new Event('change', { bubbles: true })); }
+  }
+  const sm = list.find(u => u.shaftMode), bm = list.find(u => u.boltMode);
+  if (mod === 'shafts' && sm && typeof setShaftMode === 'function') setShaftMode(sm.shaftMode);
+  if (mod === 'bolts' && bm && typeof setBoltMode === 'function') setBoltMode(bm.boltMode);
+  const calc = { fits: 'calculateFits', belts: 'calculateBelts', gears: 'calculateGears', shafts: 'calculateShafts', frames: 'frScheduleCalc', bolts: 'calculateBolts' }[mod];
+  if (calc && typeof window[calc] === 'function') window[calc]();
+  if (typeof syncShareUrl === 'function') syncShareUrl();
+  const b = linkEl('linkBanner');
+  if (b) { b.innerHTML = `<div class="flex items-start justify-between gap-3"><span class="text-slate-300 text-xs">${linkT().undone}</span><button type="button" class="text-slate-400 hover:text-white text-lg leading-none" aria-label="${linkT().close}" onclick="this.closest('#linkBanner').remove()">×</button></div>`; }
 }
 
 function linkBoltsPrepare() {

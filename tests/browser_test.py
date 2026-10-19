@@ -607,6 +607,48 @@ with sync_playwright() as p:
     fs = sp.evaluate("[document.getElementById('sumStatus').innerText, document.getElementById('sumBar').innerText]")
     check('  strutture in inglese: T-05 VERIFIED con peso e utilizzo', 'T-05' in fs[0] and 'VERIFIED' in fs[0] and 'kg' in fs[1] and '%' in fs[1], str(fs)); sp.close()
 
+    # --- shaft step 1: the summary follows the beam (not the step-2 fields)
+    sv = new_page(); sv.goto(BASE + '?m=shafts&lang=it'); settle(sv); sv.evaluate("sumRender()")
+    d30 = sv.evaluate("document.querySelector('#sumBar .sum-val').innerText")
+    set_val(sv, 'shaftPower', 60); sv.wait_for_timeout(500); sv.evaluate("sumRender()")
+    d60 = sv.evaluate("document.querySelector('#sumBar .sum-val').innerText")
+    check('albero, passo 1: con più potenza sulla trave il diametro del riepilogo cresce', d30 != d60 and float(d60.split('mm')[0]) > float(d30.split('mm')[0]), f'{d30} → {d60}')
+    silent = sv.evaluate("document.getElementById('sumBar').innerText"); sv.evaluate("shaftGoToCritical(); shaftUseSection()"); sv.wait_for_timeout(500); sv.evaluate("sumRender()")
+    check('  il riepilogo al passo 1 coincide con "usa questa sezione" al passo 2', silent.split('\n')[:4] == sv.evaluate("document.getElementById('sumBar').innerText").split('\n')[:4])
+    sv.close()
+
+    # --- invalid inputs: marked, no verdict, no report, no transfer; everything back once fixed
+    iv = new_page(); iv.goto(BASE + '?m=belts&lang=it'); settle(iv)
+    set_val(iv, 'pulleyZ2', -5); iv.wait_for_timeout(400); iv.evaluate("sumRender(); linkRender('belts')")
+    st = iv.evaluate("[document.getElementById('pulleyZ2').classList.contains('val-bad'), document.querySelector('#pulleyZ2').parentElement.parentElement.innerText, document.getElementById('sumStatus').innerText, !!document.getElementById('valBanner_belts'), document.getElementById('linkBar_belts').innerText]")
+    check('dati non validi: z₂ = −5 evidenziato, messaggio, riepilogo DATI NON VALIDI, banner, collegamenti bloccati',
+          st[0] and 'Almeno 10 denti' in st[1] and 'DATI NON VALIDI' in st[2] and st[3] and 'Correggi prima' in st[4], str(st))
+    npages = len(ctx.pages); iv.evaluate("openReport()"); iv.wait_for_timeout(500)
+    check('  la relazione non si apre con dati non validi', len(ctx.pages) == npages)
+    for v, ok in [('', False), ('abc', False), ('4.5', False), ('30', True)]:
+        set_val(iv, 'pulleyZ2', v); iv.wait_for_timeout(300)
+        if (iv.evaluate("valCheck('belts').length") == 0) != ok: check(f'  z₂ = "{v}"', False); break
+    else: check('  vuoto, testo e decimali rifiutati; 30 denti accettato', True)
+    iv.evaluate("sumRender()")
+    check('  corretto il campo, tornano verdetto e collegamenti', 'NON VALIDI' not in iv.evaluate("document.getElementById('sumStatus').innerText") and not iv.evaluate("!!document.getElementById('valBanner_belts')"))
+    for d in ['bearingFit', 'boltsExam', 'frames', 'shaftExam', 'transmission']:
+        iv.goto(BASE + f'?demo={d}'); settle(iv)
+        bad = iv.evaluate("['fits','belts','gears','shafts','frames','bolts'].flatMap(m => valCheck(m).map(b => m + ':' + (b.el.id || b.el.dataset.f)))")
+        if bad: check(f'  demo {d} senza campi non validi', False, str(bad)); break
+    else: check('  nessuna demo ha campi non validi', True)
+    iv.close()
+
+    # --- transfers between modules only on request, and undoable
+    lu = new_page(); lu.goto(BASE + '?m=shafts&lang=it'); settle(lu)
+    set_val(lu, 'shaftPower', 7); lu.evaluate("switchModule('gears')"); settle(lu)
+    check('  aprire un altro modulo non cambia l\'albero', lu.evaluate("document.getElementById('shaftPower').value") == '7')
+    lu.click('#linkBar_gears button[data-arg="pinion"]'); settle(lu)
+    moved = lu.evaluate("[activeModule, document.getElementById('shaftPower').value]")
+    lu.click('#linkBanner [data-link-undo]'); settle(lu)
+    back = lu.evaluate("[activeModule, document.getElementById('shaftPower').value, document.getElementById('shaftEl1D').value]")
+    check('collegamenti: ruote → albero copia i dati, "Annulla" rimette quelli di prima', moved[0] == 'shafts' and moved[1] != '7' and back[1] == '7' and back[2] == '210', f'{moved} {back}')
+    lu.close()
+
     check('nessun errore JS in tutto il test', not errors, '; '.join(errors[:3]))
     browser.close()
 srv.shutdown()
