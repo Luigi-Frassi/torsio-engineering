@@ -99,7 +99,7 @@ function prjBuildPanel() {
   </div>`;
   document.body.appendChild(p);
   p.addEventListener('click', ev => { if (ev.target === p) prjClosePanel(); });
-  p.addEventListener('keydown', ev => { if (ev.key === 'Escape') prjClosePanel(); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !p.classList.contains('hidden')) prjClosePanel(); });   // Esc closes it wherever the focus is
   document.getElementById('prjClose').addEventListener('click', prjClosePanel);
   p.addEventListener('input', ev => {
     const k = ev.target.id && ev.target.id.startsWith('prj_') ? ev.target.id.slice(4) : null;
