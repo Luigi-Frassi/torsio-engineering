@@ -169,6 +169,8 @@ The target fields are filled in and highlighted, and a banner says where the dat
 ## 📚 Method and validation page
 
 `metodo.html` (IT/EN) states, module by module, the method, the key formulas, the sources, how many automatic cases check it and where it stops.
+
+`novita.html` lists the changes version by version, `privacy.html` says what data the site handles (calculations stay in the browser, cookieless statistics, the Tally form only on request), `404.html` is the page for wrong addresses. Fonts (Archivo, IBM Plex Mono, OFL) are served from `vendor/fonts`, so no page calls Google. `app.html` without a module opens on a start screen with the six stations (`modules/ui/start.js`).
 Shafts can start from a table of quenched and tempered steels (EN 10083-2/-3, +QT, by diameter range: σR = Rm min, σs = Re min, σLF ≈ 0.5·Rm min as an estimate).
 
 ## 🗂️ Projects and CAD export

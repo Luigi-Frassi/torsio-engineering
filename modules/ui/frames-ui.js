@@ -7,33 +7,34 @@
 
 const FR_TXT = {
   it: {
-    tools: { member: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
+    tools: { member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
     toolHelp: {
-      member: 'Trascina da un punto all\'altro (o clicca due punti) per creare un\'asta. I nodi si agganciano alla griglia e ai nodi esistenti.',
+      member: 'Trascina da un punto all\'altro (o clicca due punti) per creare una trave: lavora a sforzo normale, taglio e flessione. I nodi si agganciano alla griglia e ai nodi esistenti.',
+      bar: 'Come la trave, ma con una cerniera a entrambi gli estremi: lavora solo a sforzo normale, come nei tralicci. Metti i carichi nei nodi: un carico distribuito la farebbe inflettere.',
       support: 'Clicca un nodo per cambiare vincolo: cerniera → carrello orizzontale → carrello verticale → incastro → pattino → nessuno.',
       load: 'Clicca un nodo per aggiungere una forza (poi correggi i valori nella tabella).',
-      dload: 'Clicca un\'asta per aggiungere un carico distribuito (verticale, per unità di lunghezza).',
-      hinge: 'Clicca un\'asta vicino a un estremo per mettere o togliere la cerniera (momento nullo) in quel punto.',
-      del: 'Clicca un nodo o un\'asta per eliminarli.'
+      dload: 'Clicca una trave per aggiungere un carico distribuito (verticale, per unità di lunghezza).',
+      hinge: 'Clicca una trave vicino a un estremo per mettere o togliere la cerniera (momento nullo) in quel punto.',
+      del: 'Clicca un nodo o una trave per eliminarli.'
     },
     grid: 'Griglia', fit: 'Adatta vista', clear: 'Svuota', preset: 'Esempi', presetPick: 'Carica un esempio…',
     presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
-    view: 'Mostra', views: { model: 'Modello', def: 'Deformata', N: 'Sforzo normale N', V: 'Taglio T', M: 'Momento flettente M', util: 'Utilizzo delle aste' },
-    nodes: 'Nodi', members: 'Aste', supports: 'Vincoli', loads: 'Forze nei nodi', dloads: 'Carichi distribuiti', add: 'Aggiungi',
-    node: 'Nodo', member: 'Asta', start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
+    view: 'Mostra', views: { model: 'Modello', def: 'Deformata', N: 'Sforzo normale N', V: 'Taglio T', M: 'Momento flettente M', util: 'Utilizzo delle travi' },
+    nodes: 'Nodi', members: 'Travi', supports: 'Vincoli', loads: 'Forze nei nodi', dloads: 'Carichi distribuiti', add: 'Aggiungi',
+    node: 'Nodo', member: 'Trave', kinds: { beam: 'trave', bar: 'asta', half: 'trave, 1 cerniera' }, start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
     sup: { pin: 'Cerniera', rollerX: 'Carrello (scorre in x)', rollerY: 'Carrello (scorre in y)', fixed: 'Incastro', guide: 'Pattino (blocca y e rotazione)' },
-    dirs: { gy: 'Verticale (globale y)', perp: 'Perpendicolare all\'asta' },
+    dirs: { gy: 'Verticale (globale y)', perp: 'Perpendicolare alla trave' },
     matTitle: 'Materiale e criteri', material: 'Materiale', custom: 'Personalizzato',
     mats: { s235: 'Acciaio S235', s355: 'Acciaio S355', c40: 'C40 bonificato', al6061: 'Alluminio 6061-T6', al_nb: 'Alluminio (notebook: σamm 170 MPa)' },
     E: 'Modulo elastico E', sy: 'Snervamento σs', rho: 'Densità ρ', X: 'X statico', Xb: 'X instabilità', beta: 'Lunghezza libera β·L', defl: 'Freccia ammissibile', deflHint: '0 = nessun limite',
-    mode: 'Sezioni', modeMember: 'una per asta (minimo peso)', modeUniform: 'una sola per tutte le aste',
+    mode: 'Sezioni', modeMember: 'una per trave (minimo peso)', modeUniform: 'una sola per tutte le travi',
     families: 'Famiglie di sezioni', fam: { round: 'Tondo pieno', tube: 'Tubo tondo', rect: 'Rettangolare pieno (h = 2b)', box: 'Scatolato quadro', IPE: 'IPE', HEA: 'HEA' },
     resTitle: 'Dimensionamento: confronto delle sezioni', family: 'Famiglia', sections: 'Sezioni', mass: 'Massa', Xmin: 'X min', Xbmin: 'X inst. min', dmax: 'Freccia max', status: 'Esito',
     ok: 'verificata', ko: 'non verificata', best: 'più leggera', saving: 'risparmio', vsRound: 'rispetto al tondo pieno',
-    reasons: { catalogTooSmall: 'nemmeno la sezione più grande del catalogo basta (asta {m})', deflection: 'freccia oltre il limite anche con le sezioni più grandi', strength: 'resistenza o instabilità non verificate', mechanism: 'struttura labile: aggiungi vincoli o aste', momentOnHinge: 'momento applicato su un nodo con sole cerniere', zeroLength: 'asta di lunghezza nulla', empty: 'disegna almeno un\'asta' },
-    pick: 'Clicca una riga per vedere quella famiglia sul disegno e nella tabella delle aste.',
+    reasons: { catalogTooSmall: 'nemmeno la sezione più grande del catalogo basta (trave {m})', deflection: 'freccia oltre il limite anche con le sezioni più grandi', strength: 'resistenza o instabilità non verificate', mechanism: 'struttura labile: aggiungi vincoli o travi', momentOnHinge: 'momento applicato su un nodo con sole cerniere', zeroLength: 'trave di lunghezza nulla', empty: 'disegna almeno una trave' },
+    pick: 'Clicca una riga per vedere quella famiglia sul disegno e nella tabella delle travi.',
     secTitle: 'Sezioni scelte (la più grande per famiglia, quote in mm)',
-    memTitle: 'Aste — famiglia', colSec: 'Sezione', colL: 'L [mm]', colN: 'N [kN]', colM: '|M| max [kN·m]', colS: 'σ max [MPa]', colX: 'X', colXb: 'X inst.', colU: 'Utilizzo',
+    memTitle: 'Travi — famiglia', colSec: 'Sezione', colL: 'L [mm]', colN: 'N [kN]', colM: '|M| max [kN·m]', colS: 'σ max [MPa]', colX: 'X', colXb: 'X inst.', colU: 'Utilizzo',
     reacTitle: 'Reazioni vincolari', colRx: 'Rx [kN]', colRy: 'Ry [kN]', colRM: 'M [kN·m]',
     nbTitle: 'Confronto con il notebook (aree continue, aste solo assiali, stessi limiti 5–226 cm²)',
     nbRows: { fsd: 'FSD del notebook, senza instabilità', fsdB: 'FSD con instabilità, tondo pieno (|σ| ≤ 0,8·σcr come nel tuo gradiente)', grad: 'Gradiente del notebook (L-BFGS-B con penalità, tondo pieno)', cat: 'Torsio, sezioni a catalogo con Eulero' },
@@ -42,13 +43,14 @@ const FR_TXT = {
     nbText: (W, nInst, sAmm) => `Con le aree libere (5–226 cm², come nel notebook) e σamm = σs/X = ${sAmm} MPa l'FSD del notebook arriva a ${W} kg, ma ${nInst} aste compresse risultano instabili se fatte a tondo pieno (σ > σcr). Il dimensionamento a catalogo qui sopra tiene conto di Eulero.`,
     nbOk: (W, sAmm) => `Con le aree libere (5–226 cm², come nel notebook) e σamm = σs/X = ${sAmm} MPa l'FSD del notebook arriva a ${W} kg: è il limite inferiore teorico, senza instabilità né sezioni commerciali.`,
     hyp: 'Ipotesi: travi di Eulero-Bernoulli, piccoli spostamenti, flessione nel piano attorno all\'asse forte; σ = |N|/A + |M|/W; instabilità di Eulero con il momento d\'inerzia minimo e lunghezza libera β·L; peso proprio trascurato; taglio non verificato.',
-    empty: 'Disegna una struttura: scegli "Asta" e trascina sulla griglia, oppure carica un esempio.',
+    empty: 'Disegna una struttura: scegli "Trave" e trascina sulla griglia, oppure carica un esempio.',
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    tools: { member: 'Member', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
+    tools: { member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
     toolHelp: {
-      member: 'Drag from one point to another (or click two points) to create a member. Nodes snap to the grid and to existing nodes.',
+      member: 'Drag from one point to another (or click two points) to create a beam: it carries axial force, shear and bending. Nodes snap to the grid and to existing nodes.',
+      bar: 'Like a beam, but hinged at both ends: it carries axial force only, as in a truss. Put the loads on the nodes: a distributed load would bend it.',
       support: 'Click a node to change its support: pin → horizontal roller → vertical roller → fixed → guide → none.',
       load: 'Click a node to add a force (then correct the values in the table).',
       dload: 'Click a member to add a distributed load (vertical, per unit length).',
@@ -59,7 +61,7 @@ const FR_TXT = {
     presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
     view: 'Show', views: { model: 'Model', def: 'Deformed shape', N: 'Axial force N', V: 'Shear V', M: 'Bending moment M', util: 'Member utilization' },
     nodes: 'Nodes', members: 'Members', supports: 'Supports', loads: 'Nodal forces', dloads: 'Distributed loads', add: 'Add',
-    node: 'Node', member: 'Member', start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
+    node: 'Node', member: 'Member', kinds: { beam: 'beam', bar: 'bar', half: 'beam, 1 hinge' }, start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
     sup: { pin: 'Pin', rollerX: 'Roller (slides in x)', rollerY: 'Roller (slides in y)', fixed: 'Fixed', guide: 'Guide (blocks y and rotation)' },
     dirs: { gy: 'Vertical (global y)', perp: 'Perpendicular to the member' },
     matTitle: 'Material and criteria', material: 'Material', custom: 'Custom',
@@ -284,9 +286,10 @@ function frRenderTables() {
   const memOpts = sel => m.members.map((n, i) => `<option value="${i}" ${i === sel ? 'selected' : ''}>${i + 1}</option>`).join('');
   frEl('frNodesTbl').innerHTML = frTable(['#', 'x [mm]', 'y [mm]', ''], m.nodes.map((n, i) =>
     `<tr data-k="nodes" data-i="${i}"><td class="pr-2 text-slate-400">${i + 1}</td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="x" value="${n.x}"></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="y" value="${n.y}"></td><td>${FR_DEL}</td></tr>`));
-  frEl('frMembersTbl').innerHTML = frTable(['#', t.node + ' 1', t.node + ' 2', `${t.hingeAt} ${t.start}`, `${t.hingeAt} ${t.end}`, ''], m.members.map((mm, i) =>
+  const kind = mm => mm.relStart && mm.relEnd ? t.kinds.bar : mm.relStart || mm.relEnd ? t.kinds.half : t.kinds.beam;
+  frEl('frMembersTbl').innerHTML = frTable(['#', t.node + ' 1', t.node + ' 2', `${t.hingeAt} ${t.start}`, `${t.hingeAt} ${t.end}`, t.type, ''], m.members.map((mm, i) =>
     `<tr data-k="members" data-i="${i}"><td class="pr-2 text-slate-400">${i + 1}</td><td class="pr-2"><select class="${FR_TSEL}" data-f="n1">${nodeOpts(mm.n1)}</select></td><td class="pr-2"><select class="${FR_TSEL}" data-f="n2">${nodeOpts(mm.n2)}</select></td>` +
-    `<td class="pr-2"><input type="checkbox" data-f="relStart" ${mm.relStart ? 'checked' : ''}></td><td class="pr-2"><input type="checkbox" data-f="relEnd" ${mm.relEnd ? 'checked' : ''}></td><td>${FR_DEL}</td></tr>`));
+    `<td class="pr-2"><input type="checkbox" data-f="relStart" ${mm.relStart ? 'checked' : ''}></td><td class="pr-2"><input type="checkbox" data-f="relEnd" ${mm.relEnd ? 'checked' : ''}></td><td class="pr-2 text-slate-400 whitespace-nowrap">${kind(mm)}</td><td>${FR_DEL}</td></tr>`));
   frEl('frSupportsTbl').innerHTML = frTable([t.node, t.type, ''], m.supports.map((s, i) =>
     `<tr data-k="supports" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="node">${nodeOpts(s.node)}</select></td><td class="pr-2"><select class="${FR_TSEL}" data-f="type">${Object.entries(t.sup).map(([k, v]) => `<option value="${k}" ${k === s.type ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`)) +
     (m.nodes.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="supports">+ ${t.add}</button>` : '');
@@ -400,7 +403,8 @@ function frAddMember(a, b) {
   if (Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6) return false;
   const n1 = frNodeAt(a), n2 = frNodeAt(b);
   if (frModel.members.some(mm => (mm.n1 === n1 && mm.n2 === n2) || (mm.n1 === n2 && mm.n2 === n1))) return false;
-  frModel.members.push({ n1, n2, relStart: false, relEnd: false });
+  const bar = frTool === 'bar';   // a bar is a beam hinged at both ends: axial force only
+  frModel.members.push({ n1, n2, relStart: bar, relEnd: bar });
   return true;
 }
 
@@ -408,7 +412,7 @@ function frInitCanvas() {
   const svg = frEl('frCanvas');
   svg.addEventListener('pointerdown', ev => {
     const { X, Y } = frEventPoint(ev);
-    if (frTool === 'member') {
+    if (frTool === 'member' || frTool === 'bar') {
       frDrag = { a: frSnap(X, Y), b: frSnap(X, Y), moved: false };
       svg.setPointerCapture(ev.pointerId);
       return;
@@ -445,7 +449,7 @@ function frInitCanvas() {
     if (frDrag) {
       const b = frSnap(X, Y);
       if (b.x !== frDrag.b.x || b.y !== frDrag.b.y) { frDrag.b = b; frDrag.moved = true; frDraw(); }
-    } else if (frTool === 'member' && frPending) {
+    } else if ((frTool === 'member' || frTool === 'bar') && frPending) {
       frPending.hover = frSnap(X, Y); frDraw();
     }
   });

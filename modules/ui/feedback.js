@@ -80,6 +80,8 @@ function fbRender() {
 (function fbInstall() {
   const box = document.getElementById('fbBar');
   if (box) box.addEventListener('click', ev => { const b = ev.target.closest('button[data-fb]'); if (b) openFeedback(b.dataset.fb); });
+  const contact = document.getElementById('contactLink');
+  if (contact) contact.addEventListener('click', () => { contact.href = feedbackUrl('', 'contact', typeof currentLang !== 'undefined' ? currentLang : 'en'); });
   const side = document.getElementById('fbSide');
   // the sidebar link opens the form in a new tab, with the module and the language
   if (side) side.addEventListener('click', () => { side.href = feedbackUrl('', typeof activeModule !== 'undefined' ? activeModule : '', typeof currentLang !== 'undefined' ? currentLang : 'en'); });

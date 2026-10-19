@@ -17,9 +17,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <!-- Tailwind CSS compiled from tailwind.config.js (sh tools/build-css.sh), where the CDN script used to be: the page styles below override it -->
   <link rel="stylesheet" href="vendor/tailwind/app.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="vendor/fonts/fonts.css">
   <link rel="icon" href="vendor/brand/torsio-mark.svg" type="image/svg+xml">
   <style>
     input[type=checkbox], input[type=radio] { accent-color: #21497f; } body { font-feature-settings: "tnum" 1; }
@@ -58,6 +56,25 @@
     .val-msg { margin: 4px 0 0; font-size: 11px; font-weight: 600; color: #b42318; }
     .val-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 16px; padding: 10px 14px; border: 1px solid #b42318; border-left-width: 4px; background: #fdf3f2; color: #7a1a10; font-size: 13px; font-weight: 600; }
     .val-banner button { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #b42318; text-decoration: underline; }
+    /* start screen (modules/ui/start.js) */
+    .start-on #sumStatus, .start-on #sumBar, .start-on [id^="module"][id$="Section"], .start-on #fbBar, .start-on #dxfBtn, .start-on .js-share-btn,
+    .start-on #unitToggleContainer, .start-on #gearUnitBadge, .start-on div:has(> #reportBtn) { display: none !important; }
+    .start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: -8px 0 18px; }
+    .start-card { position: relative; background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; transition: border-color .15s; }
+    .start-card:hover { border-top-color: #e8b321; }
+    .start-main { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; height: 100%; text-align: left; padding: 16px 18px 18px; }
+    .start-main .st-code { font-size: 11px; color: #6f6a62; }
+    .start-name { font-size: 18px; font-weight: 800; font-stretch: 106%; color: #22211f; margin: 0; }
+    .start-desc { font-size: 13.5px; line-height: 1.45; color: #5b5750; margin: 0; flex: 1; }
+    .start-go { margin-top: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #21497f; }
+    .start-ex { position: absolute; right: 12px; bottom: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #6f6a62; text-decoration: underline; text-underline-offset: 3px; }
+    .start-ex:hover { color: #22211f; }
+    .start-tx { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; background: #22211f; color: #f1efea; padding: 18px 20px; margin-bottom: 28px; }
+    .start-tx .start-name { color: #f1efea; } .start-tx .start-desc { color: #c9c3b8; }
+    .start-tx-btn { background: #e8b321; color: #22211f; font-weight: 700; font-size: 14px; padding: 10px 16px; border: 2px solid #e8b321; }
+    .start-tx-btn:hover { background: #f0c241; }
+    @media (max-width: 900px) { .start-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .start-grid { grid-template-columns: minmax(0, 1fr); } }
     .demo-list button { width: 100%; justify-content: flex-start; text-align: left; }
     .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     .ico { flex: none; display: inline-block; vertical-align: -3px; }
@@ -99,7 +116,7 @@
           <img src="vendor/brand/torsio-mark.svg" alt="" class="w-8 h-8">
           <span class="leading-none"><span class="block text-lg font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></span><span class="block text-[11px] text-slate-400 tracking-wide">Engineering</span></span>
         </a>
-        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v0.9</span>
+        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.0</span>
       </div>
       <p class="st-head" data-i18n="navStations">Stations</p>
       <nav class="space-y-0">
@@ -133,7 +150,7 @@
       <a href="https://tally.so/r/Gev5gZ" id="fbSide" target="_blank" rel="noopener" class="flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-blue-500/50 transition-colors">
         <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg><span id="fbSideText">Give feedback or report a problem</span>
       </a>
-      <div>Mechanical Design Suite</div>
+      <div class="flex flex-wrap gap-x-3 gap-y-1 px-1"><a href="metodo.html" class="hover:text-slate-200" data-i18n="sideMet">Method</a><a href="novita.html" class="hover:text-slate-200" data-i18n="sideNews">What's new</a><a href="privacy.html" class="hover:text-slate-200">Privacy</a></div>
     </div>
   </aside>
 
@@ -141,7 +158,7 @@
   <div class="md:hidden bg-slate-950 border-b border-slate-800 p-3 sticky top-0 z-50">
     <div class="flex items-center justify-between mb-2.5 px-1">
       <a href="./" class="flex items-center gap-2"><img src="vendor/brand/torsio-mark.svg" alt="" class="w-6 h-6"><span class="text-base font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span> <span class="font-medium text-slate-400" style="font-stretch:100%">Engineering</span></span></a>
-      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v0.9</span>
+      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.0</span>
     </div>
     <div class="grid grid-cols-6 gap-1">
       <button id="navBtnFitsMobile" class="m-station m-station-on">
@@ -1974,7 +1991,7 @@
         Calculations follow standard analytical machine design equations (ISO 286-2 for fits, ISO 5296 / DIN 7721 for synchronous belts, Hertz/Lewis for gears). Sizing values are preliminary guides for mechanical engineering and CAD design.
       </p>
       <p class="pt-2">
-        <a href="https://github.com/Luigi-Frassi/torsio-engineering/issues/new" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 underline underline-offset-2" data-i18n="feedbackFooter">Missing something, or found a wrong result? Tell us on GitHub.</a>
+        <a href="https://tally.so/r/Gev5gZ?module=contact" id="contactLink" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 underline underline-offset-2" data-i18n="feedbackFooter">Missing something, or found a wrong result? Write to us.</a>
       </p>
     </footer>
   </main>
@@ -2106,7 +2123,7 @@
         shaftIsoTitle: "forces on the shaft · +H towards you",
         optTorqueNone: "None (idler gear)",
         reportBtn: "Report",
-        reportTitle: "Calculation report: formulas with your numbers, downloadable as PDF",
+        reportTitle: "Calculation report: formulas with your numbers, downloadable as PDF", sideMet: "Method", sideNews: "What's new",
         shaftRealSecTitle: "Real sections: which one is really critical? (optional)",
         shaftRealSecHint: "The largest bending moment is not always the critical section: a small diameter or a sharp notch can be worse. Enter the real sections (x, diameter d, shoulder diameter D and fillet r, keyway): each is checked with material, finish, life and X of the Design/Check tabs, and the one with the lowest X is the critical one. A groove is a shoulder with D = the adjacent diameter.",
         shaftRealSecLabel: "Section",
@@ -2320,7 +2337,7 @@
         shaftFromBeam: "from the beam, section x = {x} mm",
         shareCopied: "Link copied!",
         shareTitle: "Copy a link to this calculation",
-        feedbackFooter: "Missing something, or found a wrong result? Tell us on GitHub.",
+        feedbackFooter: "Missing something, or found a wrong result? Write to us.",
         wrapAngleCard: "Wrap Angle (θ₁)",
         teethInMeshCard: "Teeth in Mesh (z_mesh)",
         motorPowerLabel: "Motor Power (P)",
@@ -2553,7 +2570,7 @@
         shaftIsoTitle: "forze sull'albero · +H verso di te",
         optTorqueNone: "Nessuna (ruota folle)",
         reportBtn: "Relazione",
-        reportTitle: "Relazione di calcolo: formule con i tuoi numeri, da scaricare in PDF",
+        reportTitle: "Relazione di calcolo: formule con i tuoi numeri, da scaricare in PDF", sideMet: "Metodo", sideNews: "Novità",
         shaftRealSecTitle: "Sezioni reali: qual è davvero la più critica? (facoltativo)",
         shaftRealSecHint: "Il momento flettente massimo non è sempre la sezione critica: un diametro piccolo o un intaglio stretto possono essere peggio. Inserisci le sezioni reali (x, diametro d, diametro dello spallamento D e raccordo r, linguetta): ognuna viene verificata con materiale, finitura, vita e X delle schede Progetto/Verifica, e la più critica è quella con X minore. Una gola di scarico è uno spallamento con D = diametro adiacente.",
         shaftRealSecLabel: "Sezione",
@@ -2767,7 +2784,7 @@
         shaftFromBeam: "dalla trave, sezione x = {x} mm",
         shareCopied: "Link copiato!",
         shareTitle: "Copia un link a questo calcolo",
-        feedbackFooter: "Manca qualcosa o hai trovato un risultato sbagliato? Scrivici su GitHub.",
+        feedbackFooter: "Manca qualcosa o hai trovato un risultato sbagliato? Scrivici.",
         wrapAngleCard: "Angolo di Contatto (θ₁)",
         teethInMeshCard: "Denti in Presa (z_mesh)",
         motorPowerLabel: "Potenza Motore (P)",
@@ -3635,6 +3652,7 @@
   <script src="modules/ui/feedback.js"></script>
   <script src="modules/ui/validate.js"></script>
   <script src="modules/ui/summary.js"></script>
+  <script src="modules/ui/start.js"></script>
   <script>
     // Demo menu in the toolbar: opens on click, closes on a choice, outside click or Escape
     (function () {

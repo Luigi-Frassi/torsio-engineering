@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagina non trovata — Torsio Engineering</title>
+  <meta name="description" content="Pagina non trovata.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .doc h2 { margin-top: 0; }
+    .doc section { padding: 40px 0; }
+    .doc ul { max-width: var(--measure); padding-left: 20px; }
+    .doc li { margin-bottom: 6px; }
+    .log { list-style: none; padding: 0; margin: 0; max-width: 46rem; }
+    .log > li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 4px 24px; padding: 22px 0; border-top: 1px solid var(--line); }
+    .log .d { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; color: var(--ink-2); padding-top: 4px; }
+    .log .v { display: inline-block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; background: var(--ink); color: var(--sheet); padding: 1px 7px; margin-left: 6px; vertical-align: 2px; }
+    .log h3 { margin: 0 0 6px; }
+    .log ul { margin: 0; padding-left: 18px; }
+    .log li li { margin-bottom: 4px; font-size: 16px; }
+    .e404 { padding: 72px 0 96px; }
+    .e404 .code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 15px; letter-spacing: .1em; color: var(--blue); font-weight: 600; margin: 0 0 10px; }
+    .e404 .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn.plain { background: var(--sheet); color: var(--ink); }
+    @media (max-width: 640px) { .log > li { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigazione">
+        <span class="links">
+          <a href="/"><span data-l="it">Home</span><span data-l="en">Home</span></a>
+          <a href="/metodo.html"><span data-l="it">Metodo</span><span data-l="en">Method</span></a>
+        </span>
+        <span class="lang" role="group" aria-label="Lingua"><button type="button" data-lang="it" aria-pressed="true">IT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+        <a class="btn go small" href="/app.html" data-app><span data-l="it">Apri il calcolatore</span><span data-l="en">Open the calculator</span></a>
+      </nav>
+    </div>
+  </div>
+  <div class="wrap e404">
+    <p class="code">404</p>
+    <h1><span data-l="it">Questa pagina non c'è.</span><span data-l="en">This page does not exist.</span></h1>
+    <p class="lead" data-l="it">L'indirizzo potrebbe essere scritto male, o la pagina è stata spostata. I calcoli sono tutti nel calcolatore.</p>
+      <p class="lead" data-l="en">The address may be mistyped, or the page has moved. All the calculations are in the calculator.</p>
+    <div class="acts"><a class="btn go" href="/app.html" data-app><span data-l="it">Apri il calcolatore</span><span data-l="en">Open the calculator</span></a><a class="btn plain" href="/"><span data-l="it">Torna alla home</span><span data-l="en">Back to the home page</span></a></div>
+  </div>
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · <span data-l="it">un progetto di Luigi Frassi</span><span data-l="en">a project by Luigi Frassi</span></span>
+      <span><a href="/metodo.html"><span data-l="it">Metodo</span><span data-l="en">Method</span></a> · <a href="/novita.html"><span data-l="it">Novità</span><span data-l="en">What's new</span></a> · <a href="/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact" data-contact target="_blank" rel="noopener"><span data-l="it">Contatti</span><span data-l="en">Contact</span></a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener"><span data-l="it">Codice sorgente</span><span data-l="en">Source code</span></a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var T = { it: 'Pagina non trovata', en: 'Page not found' };
+      function setLang(l) {
+        var lang = l === 'en' ? 'en' : 'it';
+        document.documentElement.lang = lang;
+        document.title = T[lang] + ' — Torsio Engineering';
+        document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+        document.querySelectorAll('[data-app]').forEach(function (a) { a.href = '/app.html?' + (a.getAttribute('data-app') === 'demo' ? 'demo=transmission&' : '') + 'lang=' + lang; });
+        document.querySelectorAll('[data-contact]').forEach(function (a) { a.href = 'https://tally.so/r/Gev5gZ' + '?module=contact&lang=' + lang; });
+        try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
+      }
+      document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
+      var saved = null;
+      try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
+      var q = new URLSearchParams(location.search).get('lang');
+      setLang(q || saved || ((navigator.language || 'it').slice(0, 2) === 'it' ? 'it' : 'en'));
+    })();
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
