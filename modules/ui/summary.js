@@ -11,7 +11,7 @@ const SUM_TXT = {
   it: {
     ok: 'VERIFICATO', ko: 'NON VERIFICATO', info: 'CALCOLATO', na: 'DA COMPLETARE',
     req: 'richiesto', margin: 'margine', min: 'min', none: '—',
-    sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R' },
+    sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', noLoad: 'La sezione scelta non è sollecitata', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R' },
     ge: { m: 'Modulo', L: 'Larghezza di fascia', lewis: 'Lewis σL', a: 'Interasse', P: 'Potenza trasmissibile', M1: 'Momento al pignone', lim: { hertz: 'limita Hertz', lewis: 'limita Lewis' }, und: 'sottotaglio' },
     be: { indic: 'indicativa, da confermare sul catalogo', C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
     fi: { hole: 'Foro', shaft: 'Albero', fit: 'Accoppiamento', d: 'Diametro nominale', kinds: { clearance: 'GIOCO', interference: 'INTERFERENZA', transition: 'INCERTO' }, play: 'gioco', inter: 'interferenza' },
@@ -21,7 +21,7 @@ const SUM_TXT = {
   en: {
     ok: 'VERIFIED', ko: 'NOT VERIFIED', info: 'CALCULATED', na: 'TO COMPLETE',
     req: 'required', margin: 'margin', min: 'min', none: '—',
-    sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', govF: 'fatigue governs', govY: 'yield governs', reac: 'R' },
+    sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', noLoad: 'The chosen section carries no load', govF: 'fatigue governs', govY: 'yield governs', reac: 'R' },
     ge: { m: 'Module', L: 'Face width', lewis: 'Lewis σL', a: 'Centre distance', P: 'Power capacity', M1: 'Pinion torque', lim: { hertz: 'Hertz limits', lewis: 'Lewis limits' }, und: 'undercut' },
     be: { indic: 'indicative, confirm in the catalog', C: 'Exact centre distance', zb: 'Belt', w: 'Width', mesh: 'Teeth in mesh', teeth: 'teeth', geom: 'geometry only' },
     fi: { hole: 'Hole', shaft: 'Shaft', fit: 'Fit', d: 'Nominal diameter', kinds: { clearance: 'CLEARANCE', interference: 'INTERFERENCE', transition: 'TRANSITION' }, play: 'clearance', inter: 'interference' },
@@ -63,9 +63,10 @@ function sumShafts(t) {
     cards.push({ k: t.sh.xf, v: sumNum(s.res.Xfatigue, 2), sub: `${t.req} ${sumNum(s.Xreq, 2)} · ${t.margin} ${sumNum((s.res.Xfatigue / s.Xreq - 1) * 100, 0)} %`, tone: okF ? 'b' : 'r', bar: { x: s.res.Xfatigue, req: s.Xreq } });
     cards.push({ k: t.sh.xy, v: sumNum(s.res.Xyield, 2), sub: `${t.req} ${sumNum(s.Xreq, 2)}`, tone: okY ? 'b' : 'r', bar: { x: s.res.Xyield, req: s.Xreq } });
   } else {
-    cards.push({ k: t.sh.d, v: t.none, sub: t.sh.step2, tone: 'y' });
-    cards.push({ k: t.sh.xf, v: t.none, sub: t.sh.step2, tone: 'k' });
-    cards.push({ k: t.sh.xy, v: t.none, sub: t.sh.step2, tone: 'k' });
+    const why = typeof currentShaftMode !== 'undefined' && currentShaftMode === 'beam' && b ? t.sh.noLoad : t.sh.step2;
+    cards.push({ k: t.sh.d, v: t.none, sub: why, tone: 'y' });
+    cards.push({ k: t.sh.xf, v: t.none, sub: why, tone: 'k' });
+    cards.push({ k: t.sh.xy, v: t.none, sub: why, tone: 'k' });
   }
   if (b && b.critical) {
     const c = b.critical, nm = (b.labels.points.find(p => Math.abs(p.x - c.x) < 1e-6) || {}).name;
@@ -183,12 +184,13 @@ function sumCardHtml(c) {
     const w = Math.min(100, c.bar.x / max * 100), m = c.bar.req / max * 100;
     bar = `<div class="sum-bar" aria-hidden="true"><div style="width:${w.toFixed(1)}%;background:${c.tone === 'r' ? SUM_TONE.r : SUM_TONE.b}"></div><i style="left:${m.toFixed(1)}%"></i></div>`;
   }
-  return `<div class="sum-card" style="border-top-color:${SUM_TONE[c.tone] || SUM_TONE.k}"><p class="sum-k">${sumEsc(c.k)}</p>${val}${bar}${c.sub ? `<p class="sum-sub">${sumEsc(c.sub)}</p>` : ''}</div>`;
+  return `<div class="sum-card${c.wide ? ' sum-card-wide' : ''}" style="border-top-color:${SUM_TONE[c.tone] || SUM_TONE.k}"><p class="sum-k">${sumEsc(c.k)}</p>${val}${bar}${c.sub ? `<p class="sum-sub">${sumEsc(c.sub)}</p>` : ''}</div>`;
 }
 
 function sumRender() {
   const mod = typeof activeModule !== 'undefined' ? activeModule : 'fits';
-  const t = sumT(), data = sumCards(mod);
+  // invalid inputs come first: no verdict on numbers that make no sense (validate.js)
+  const t = sumT(), data = (typeof valSummary === 'function' && valSummary(mod)) || sumCards(mod);
   const st = document.getElementById('sumStatus');
   if (st) {
     const label = data.statusText || (data.status === 'ok' ? t.ok : data.status === 'ko' ? t.ko : data.status === 'info' ? t.info : t.na);

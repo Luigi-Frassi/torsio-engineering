@@ -43,6 +43,7 @@ function buildBoltReportHtml() {
   const R = REPORT_TXT[currentLang] || REPORT_TXT.en, B = REPORT_BT_TXT[currentLang] || REPORT_BT_TXT.en, t = btT(), N_ = reportNum, T = texNum;
   let body = '', sec = 0;
   const H = title => `<h3><span class="n">${++sec}.</span>${title}</h3>`;
+  const MB = currentLang === 'it' ? 'viti' : 'bolts';   // subscript of the number of bolts in the formulas
   if (st.mode === 'screw') {
     const i = st.inp, r = st.r;
     body += H(B.screwData) + reportKV([[t.d, `${N_(i.d, 1)} mm`], [t.p, `${N_(i.p, 2)} mm`], [t.hT, `${N_(i.hT, 2)} mm`], [B.profile, t.betas[i.beta] || i.beta], [t.fScrew, N_(i.f, 3)], [t.N, `${N_(i.N / 1000, 2)} kN`], [t.sy, `${N_(i.sigmaS, 0)} MPa`]]);
@@ -65,16 +66,16 @@ function buildBoltReportHtml() {
   if (design) {
     body += H(B.s2) + reportEq([
       i.load === 'torque' ? `F = \\frac{M_t}{D/2} = \\frac{${T(i.Mt, 0)}}{${T(i.Dcircle / 2, 1)}} = ${T(r.Ft, 0)}\\ \\text{N}` : `F = ${T(r.Ft, 0)}\\ \\text{N}`,
-      `T = \\frac{F}{m_{viti}\\, m_{int}},\\qquad N = \\frac{T}{f}\\,X \\;\\Rightarrow\\; N_{tot} = \\frac{F\\, X}{f\\, m_{int}} = \\frac{${T(r.Ft, 0)} \\cdot ${T(i.X, 2)}}{${T(i.f, 3)} \\cdot ${i.mInt}} = ${T(r.Ntot, 0)}\\ \\text{N}`]);
+      `T = \\frac{F}{m_{${MB}}\\, m_{int}},\\qquad N = \\frac{T}{f}\\,X \\;\\Rightarrow\\; N_{tot} = \\frac{F\\, X}{f\\, m_{int}} = \\frac{${T(r.Ft, 0)} \\cdot ${T(i.X, 2)}}{${T(i.f, 3)} \\cdot ${i.mInt}} = ${T(r.Ntot, 0)}\\ \\text{N}`]);
     body += H(B.s3) + reportEq([
-      `\\frac{N}{A_{res}} = \\frac{\\sigma_s}{X} \\;\\Rightarrow\\; m_{viti} = \\frac{N_{tot}}{A_{res}\\,\\sigma_s/X} = \\frac{${T(r.Ntot, 0)}}{${T(g.Ares, 1)} \\cdot ${T(st.sS, 0)}/${T(i.X, 2)}} = ${T(r.mReq, 3)} \\;\\to\\; ${st.m}`,
+      `\\frac{N}{A_{res}} = \\frac{\\sigma_s}{X} \\;\\Rightarrow\\; m_{${MB}} = \\frac{N_{tot}}{A_{res}\\,\\sigma_s/X} = \\frac{${T(r.Ntot, 0)}}{${T(g.Ares, 1)} \\cdot ${T(st.sS, 0)}/${T(i.X, 2)}} = ${T(r.mReq, 3)} \\;\\to\\; ${st.m}`,
       i.load === 'torque' ? `m_{max} = \\frac{\\pi\\, D}{D_c} = \\frac{\\pi \\cdot ${T(i.Dcircle, 0)}}{${T(sz.Dc, 0)}} = ${T(Math.PI * i.Dcircle / sz.Dc, 1)} \\;\\to\\; ${r.nMax}` : '',
-      `N = \\frac{N_{tot}}{m_{viti}} = ${T(r.N, 0)}\\ \\text{N}`]);
+      `N = \\frac{N_{tot}}{m_{${MB}}} = ${T(r.N, 0)}\\ \\text{N}`]);
   } else {
     body += H(B.s2t) + reportEq([
       `M_s = N\\left(\\frac{d_m}{2}\\,k_1 + \\frac{D_m}{2}\\,f\\right) \\;\\Rightarrow\\; N = \\frac{${T(i.Ms, 0)}}{${T(g.dm / 2, 2)} \\cdot ${T(r.k1, 4)} + ${T(g.Dm / 2, 2)} \\cdot ${T(i.fThread, 3)}} = ${T(r.N, 0)}\\ \\text{N}`]);
     body += H(B.s3t) + reportEq([
-      `T = \\frac{N\\, f}{X} = ${T(r.Tbolt, 0)}\\ \\text{N},\\qquad F_{max} = \\frac{m_{viti}\\, N\\, f\\, m_{int}}{X} = ${T(r.Fmax, 0)}\\ \\text{N}` + (r.Mtmax ? `,\\qquad M_{t,max} = F_{max}\\,\\frac{D}{2} = ${T(r.Mtmax / 1e6, 2)}\\ \\text{kN}\\cdot\\text{m}` : '')]);
+      `T = \\frac{N\\, f}{X} = ${T(r.Tbolt, 0)}\\ \\text{N},\\qquad F_{max} = \\frac{m_{${MB}}\\, N\\, f\\, m_{int}}{X} = ${T(r.Fmax, 0)}\\ \\text{N}` + (r.Mtmax ? `,\\qquad M_{t,max} = F_{max}\\,\\frac{D}{2} = ${T(r.Mtmax / 1e6, 2)}\\ \\text{kN}\\cdot\\text{m}` : '')]);
   }
   body += H(B.s4) + reportEq([
     `\\tan\\alpha = \\frac{p}{\\pi\\, d_m} = \\frac{${T(sz.p, 2)}}{\\pi \\cdot ${T(g.dm, 1)}} \\;\\Rightarrow\\; \\alpha = ${T(g.alpha * 180 / Math.PI, 2)}^\\circ,\\qquad D_m = \\frac{D_c + d}{2} = ${T(g.Dm, 1)}\\ \\text{mm}`,

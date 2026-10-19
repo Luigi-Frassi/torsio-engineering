@@ -282,7 +282,7 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
   let link = '';
   try { link = typeof shareUrl === 'function' ? shareUrl() : window.location.href; } catch (e) { link = window.location.href; }
   const tbk = reportTitleBlock(title, R);
-  const fname = typeof prjFileName === 'function' ? prjFileName('.html') : 'relazione-torsio.html';
+  const fname = typeof prjFileName === 'function' ? prjFileName('.html') : (currentLang === 'it' ? 'relazione-torsio.html' : 'torsio-report.html');
   return `<!doctype html><html lang="${currentLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${reportEsc(R.docTitle)} — ${reportEsc(subtitle)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"><link rel="stylesheet" href="${new URL('vendor/katex/katex.min.css', window.location.href).href}"><style>${reportCSS()}</style></head><body>
@@ -303,7 +303,7 @@ function reportOpen(html, w = null) {
   // popup blocked: download the report instead
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-  a.download = 'relazione-torsio.html';
+  a.download = typeof prjFileName === 'function' ? prjFileName('.html') : (currentLang === 'it' ? 'relazione-torsio.html' : 'torsio-report.html');
   document.body.appendChild(a); a.click(); a.remove();
   return false;
 }
