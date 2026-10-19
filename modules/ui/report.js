@@ -9,7 +9,7 @@ const REPORT_TXT = {
   it: {
     docTitle: 'Relazione di calcolo', shaftTitle: 'Albero di trasmissione — dimensionamento di massima',
     project: 'Progetto', author: 'Autore', date: 'Data', clickToEdit: 'clicca per modificare',
-    fbAsk: 'Ti è stata utile?', printBtn: 'Stampa / Salva PDF', htmlBtn: 'Scarica HTML', printHint: 'Nel dialogo di stampa scegli “Salva come PDF”. I campi in giallo si possono modificare prima di stampare.',
+    fbAsk: 'Ti è stata utile?', printBtn: 'Stampa', htmlBtn: 'HTML', pdfBtn: 'Scarica PDF', pdfBusy: 'Preparo il PDF…', pdfFail: 'Il PDF non si è potuto creare: usa Stampa → Salva come PDF.', pdfPage: 'Pagina {i} di {n}', printHint: 'I campi in giallo si possono modificare prima di scaricare o stampare.',
     reopen: 'Riapri questo calcolo', generated: 'Generata con Torsio Engineering',
     disclaimer: 'Dimensionamento di massima con il metodo del corso di Costruzione di Macchine (Goodman, coefficienti da diagrammi). I valori servono come prime quote per il CAD: la verifica finale va fatta con le norme (es. DIN 743 / ISO 6336), i cataloghi dei produttori o un\'analisi FEM.',
     s1: 'Dati di progetto', s2: 'Schema dell\'albero e carichi', s3: 'Reazioni vincolari e cuscinetti', s4: 'Diagrammi delle sollecitazioni',
@@ -43,7 +43,7 @@ const REPORT_TXT = {
   en: {
     docTitle: 'Calculation report', shaftTitle: 'Transmission shaft — preliminary sizing',
     project: 'Project', author: 'Author', date: 'Date', clickToEdit: 'click to edit',
-    fbAsk: 'Was it useful?', printBtn: 'Print / Save as PDF', htmlBtn: 'Download HTML', printHint: 'In the print dialog choose “Save as PDF”. The yellow fields can be edited before printing.',
+    fbAsk: 'Was it useful?', printBtn: 'Print', htmlBtn: 'HTML', pdfBtn: 'Download PDF', pdfBusy: 'Preparing the PDF…', pdfFail: 'The PDF could not be created: use Print → Save as PDF.', pdfPage: 'Page {i} of {n}', printHint: 'The yellow fields can be edited before downloading or printing.',
     reopen: 'Reopen this calculation', generated: 'Generated with Torsio Engineering',
     disclaimer: 'Preliminary sizing with the method of the Machine Design course (Goodman line, coefficients from charts). The values are first dimensions for CAD: the final check must follow the standards (e.g. DIN 743 / ISO 6336), the manufacturers\' catalogs or an FEM analysis.',
     s1: 'Design data', s2: 'Shaft layout and loads', s3: 'Support reactions and bearings', s4: 'Internal action diagrams',
@@ -286,9 +286,10 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
   return `<!doctype html><html lang="${currentLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${reportEsc(R.docTitle)} — ${reportEsc(subtitle)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"><link rel="stylesheet" href="${new URL('vendor/katex/katex.min.css', window.location.href).href}"><style>${reportCSS()}</style></head><body>
-<div class="toolbar"><button onclick="window.print()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><path d="M5 17H3V9h18v8h-2"/><path d="M7 14h10v7H7z"/></svg> ${R.printBtn}</button>
-<button class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg> ${R.htmlBtn}</button>
-<span>${R.printHint}</span>${reportFeedbackLinks(R)}</div>
+<div class="toolbar"><button type="button" onclick="if(window.torsioPdf){torsioPdf(this)}else{var b=this,s=document.createElement('script');s.src=b.dataset.pdf;s.onload=function(){torsioPdf(b)};document.head.appendChild(s)}" data-pdf="${new URL('modules/ui/report-pdf.js', window.location.href).href}" data-lib="${new URL('vendor/html2canvas/html2canvas.min.js', window.location.href).href}" data-fname="${reportEsc(fname.replace(/\.html$/, '.pdf'))}" data-title="${reportEsc(title)}" data-footer="${reportEsc('Torsio Engineering · ' + title)}" data-lbl="${reportEsc(JSON.stringify({ busy: R.pdfBusy, fail: R.pdfFail, page: R.pdfPage }))}"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg> ${R.pdfBtn}</button>
+<button type="button" class="sec" onclick="window.print()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><path d="M5 17H3V9h18v8h-2"/><path d="M7 14h10v7H7z"/></svg> ${R.printBtn}</button>
+<button type="button" class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()">${R.htmlBtn}</button>
+<span>${R.printHint} <b id="pdfFail" style="color:#e8b321"></b></span>${reportFeedbackLinks(R)}</div>
 <div class="page">
 <header class="rep">${tbk.head}<h1>${reportEsc(title)}</h1><h2>${reportEsc(subtitle)}</h2></header>
 ${reportScrollTables(body)}

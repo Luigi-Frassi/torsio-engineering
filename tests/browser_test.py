@@ -513,7 +513,7 @@ with sync_playwright() as p:
         fb = pl.evaluate("[activeModule, document.getElementById('btLoad').value, +document.getElementById('btF').value, +document.getElementById('btPe').value, document.getElementById('linkBanner')?.innerText || '']")
         check('  strutture → bulloni: taglio |Rx| e sollevamento max(0, −Ry)', fb[0] == 'bolts' and fb[1] == 'force' and abs(fb[2] - abs(r0[1]) / 1000) < 1e-3 and abs(fb[3] - max(0, -r0[2]) / 1000) < 1e-3 and 'nodo' in fb[4], str(fb) + str(r0))
     pl.evaluate("updateLanguage('en')"); pl.evaluate("switchModule('gears')"); settle(pl)
-    check('  barra tradotta in inglese', 'Continue with these results' in pl.evaluate("document.getElementById('linkBar_gears').innerText"))
+    check('  barra tradotta in inglese', 'Continue with these results' in pl.evaluate("document.getElementById('linkBar_gears').textContent"))
 
     # --- product: steel table for shafts, method page, meta
     pm = new_page(); pm.goto(BASE + '?m=shafts&lang=it&smode=design'); settle(pm)
@@ -637,6 +637,24 @@ with sync_playwright() as p:
         if bad: check(f'  demo {d} senza campi non validi', False, str(bad)); break
     else: check('  nessuna demo ha campi non validi', True)
     iv.close()
+
+    # --- report → PDF in the browser (popups do not load scripts here: the report is opened as a normal page)
+    pp = new_page(); pp.goto(BASE + '?demo=boltsExam&lang=it'); settle(pp)
+    html = pp.evaluate("reportLoadKatex().then(() => buildBoltReportHtml())")
+    pr = ctx.new_page(); pr.on('pageerror', lambda e: errors.append(str(e)))
+    pr.goto(HOME + 'index.html'); pr.set_content(html); pr.wait_for_timeout(500)
+    pdf_ok = False
+    try:
+        with pr.expect_download(timeout=90000) as dl:
+            pr.click('.toolbar button')
+        path = dl.value.path(); data = open(path, 'rb').read()
+        last = pr.evaluate("window.__torsioPdfLast")
+        pdf_ok = data[:5] == b'%PDF-' and data.rstrip().endswith(b'%%EOF') and last['pages'] >= 2 and data.count(b'/Type /Page ') == last['pages'] and dl.value.suggested_filename.endswith('.pdf')
+        detail = f"{last['pages']} pagine, {len(data) // 1024} kB, {dl.value.suggested_filename}"
+    except Exception as e:
+        detail = str(e)[:200]
+    check('relazione → "Scarica PDF": file PDF A4 a più pagine, scaricato', pdf_ok, detail)
+    pr.close(); pp.close()
 
     # --- transfers between modules only on request, and undoable
     lu = new_page(); lu.goto(BASE + '?m=shafts&lang=it'); settle(lu)

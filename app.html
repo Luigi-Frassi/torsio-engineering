@@ -15,24 +15,8 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // Torsio Engineering palette, "B3 · Banco di comando su carta" (18/10): warm drafting paper and graphite, Prussian blue accent.
-    // The calculator was written for a dark theme, so the scales are inverted: slate-900 is the paper, slate-50 the ink,
-    // "white" is the ink; blue is the accent, emerald (verified) is blue too; the other accents are darkened for paper.
-    if (typeof tailwind !== "undefined") tailwind.config = { theme: { extend: {
-      fontFamily: { sans: ['Archivo', 'Helvetica Neue', 'Arial', 'sans-serif'], mono: ['IBM Plex Mono', 'ui-monospace', 'Consolas', 'monospace'] },
-      colors: {
-        white: '#22211f',
-        slate: { 50: '#22211f', 100: '#2c2a27', 200: '#3a3732', 300: '#4a463f', 400: '#5b5750', 500: '#6f6a62', 600: '#a39d92', 700: '#d6d1c6', 800: '#fbfaf7', 900: '#f1efea', 950: '#e9e6df' },
-        blue: { 50: '#16304f', 100: '#1b3a63', 200: '#21497f', 300: '#21497f', 400: '#21497f', 500: '#9bb7dc', 600: '#dce6f3', 700: '#e7eef7', 800: '#eef3f9', 900: '#f3f6fa', 950: '#f7f9fc' },
-        sky: { 300: '#21497f', 400: '#2f66b3', 500: '#2f66b3', 600: '#21497f' },
-        emerald: { 300: '#21497f', 400: '#21497f', 500: '#2f66b3', 600: '#2f66b3' },
-        amber: { 300: '#7a5806', 400: '#8a6408', 500: '#c99613', 600: '#8a6408' },
-        rose: { 300: '#9b2317', 400: '#b42318', 500: '#c0392b', 600: '#c0392b', 900: '#f6dcd8', 950: '#fbecea' },
-        purple: { 300: '#5e3591', 400: '#6b3fa0', 500: '#7a4fb3' }
-      } } } };
-  </script>
+  <!-- Tailwind CSS compiled from tailwind.config.js (sh tools/build-css.sh), where the CDN script used to be: the page styles below override it -->
+  <link rel="stylesheet" href="vendor/tailwind/app.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -2122,7 +2106,7 @@
         shaftIsoTitle: "forces on the shaft · +H towards you",
         optTorqueNone: "None (idler gear)",
         reportBtn: "Report",
-        reportTitle: "Calculation report: opens a printable page, save it as PDF",
+        reportTitle: "Calculation report: formulas with your numbers, downloadable as PDF",
         shaftRealSecTitle: "Real sections: which one is really critical? (optional)",
         shaftRealSecHint: "The largest bending moment is not always the critical section: a small diameter or a sharp notch can be worse. Enter the real sections (x, diameter d, shoulder diameter D and fillet r, keyway): each is checked with material, finish, life and X of the Design/Check tabs, and the one with the lowest X is the critical one. A groove is a shoulder with D = the adjacent diameter.",
         shaftRealSecLabel: "Section",
@@ -2569,7 +2553,7 @@
         shaftIsoTitle: "forze sull'albero · +H verso di te",
         optTorqueNone: "Nessuna (ruota folle)",
         reportBtn: "Relazione",
-        reportTitle: "Relazione di calcolo: apre una pagina stampabile, salvala come PDF",
+        reportTitle: "Relazione di calcolo: formule con i tuoi numeri, da scaricare in PDF",
         shaftRealSecTitle: "Sezioni reali: qual è davvero la più critica? (facoltativo)",
         shaftRealSecHint: "Il momento flettente massimo non è sempre la sezione critica: un diametro piccolo o un intaglio stretto possono essere peggio. Inserisci le sezioni reali (x, diametro d, diametro dello spallamento D e raccordo r, linguetta): ognuna viene verificata con materiale, finitura, vita e X delle schede Progetto/Verifica, e la più critica è quella con X minore. Una gola di scarico è uno spallamento con D = diametro adiacente.",
         shaftRealSecLabel: "Sezione",

@@ -139,18 +139,22 @@ torsio-engineering/
 │       ├── report-bolts.js   # Calculation report of the bolted joints
 │       ├── report.js         # Calculation reports of each module (A4, KaTeX)
 │       ├── report-transmission.js  # Complete transmission report: power flow + chapters
+│       ├── report-pdf.js     # "Download PDF": A4 pages drawn in the browser, no server
+│       ├── validate.js       # Input rules of every field: invalid values marked, no verdict on them
 │       └── share.js          # Shareable links: state <-> URL
-├── vendor/                   # KaTeX (MIT) and the brand mark
+├── vendor/                   # KaTeX and html2canvas (MIT), compiled Tailwind CSS, brand mark
+├── tailwind.config.js        # Palette and theme of the calculator; tools/build-css.sh compiles vendor/tailwind/app.css
 ├── tests/
 │   ├── validation.test.js    # Core vs. worked exam problems (node, no dependencies)
-│   └── browser_test.py       # Share links & form behaviour in headless Chromium (Playwright)
+│   ├── browser_test.py       # Share links & form behaviour in headless Chromium (Playwright)
+│   └── css_check.py          # Compiled CSS up to date and covering every class used at run time
 └── README.md                 # Documentation
 ```
 
 Each `ui/*.js` file depends on the matching `core/*.js` file, so `app.html` loads the core first.
 
 * **Frontend**: Pure Vanilla JavaScript (ES6+, classic `<script>` files, no bundler) & HTML5
-* **Styling**: Tailwind CSS
+* **Styling**: Tailwind CSS 3.4, compiled once and committed (`sh tools/build-css.sh` with the Tailwind standalone CLI after changing classes; `tests/css_check.py` tells when it is needed)
 * **Rendering**: Inline Mathematical SVG
 
 ---
