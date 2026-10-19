@@ -384,7 +384,9 @@ with sync_playwright() as p:
     a = scr(0, 0); b = scr(4000, 0)
     pf.mouse.move(*a); pf.mouse.down(); pf.mouse.move((a[0] + b[0]) / 2, a[1], steps=4); pf.mouse.move(*b, steps=4); pf.mouse.up(); settle(pf)
     check('strutture: trascinando si crea un\'asta da 4 m tra due nodi', pf.evaluate("frModel.members.length === 1 && frModel.nodes.length === 2 && frModel.nodes[1].x === 4000"), pf.evaluate("JSON.stringify(frModel.nodes)"))
-    pf.click('#frTools button[data-tool=support]'); a = scr(0, 0); b = scr(4000, 0); pf.mouse.click(*a); pf.mouse.click(*b); pf.wait_for_timeout(300); pf.mouse.click(*b); settle(pf)   # a pause, or the two clicks on the same node can merge
+    pf.click('#frTools button[data-tool=support]'); settle(pf)
+    for x in (0, 4000, 4000):   # positions read again before every click: the summary band above can change height
+        pf.mouse.click(*scr(x, 0)); settle(pf)
     check('  vincoli con un clic: cerniera, poi carrello al secondo clic', pf.evaluate("frModel.supports.map(s => s.type).join(',')") == 'pin,rollerX', pf.evaluate("frModel.supports.map(s => s.type).join(',')"))
     pf.click('#frTools button[data-tool=dload]'); a = scr(0, 0); b = scr(4000, 0); pf.mouse.click((a[0] + b[0]) / 2, a[1]); settle(pf)
     best = pf.evaluate("frResults.best + ' ' + frResults.byFamily[frResults.best].secs[0].name")
