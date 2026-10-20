@@ -117,7 +117,7 @@
     obj(1, ['<< /Type /Catalog /Pages 2 0 R >>']);
     obj(2, [`<< /Type /Pages /Kids [${kids}] /Count ${n} >>`]);
     obj(3, ['<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>']);
-    obj(4, [`<< /Title ${utf16hex(meta.title)} /Producer (Torsio Engineering) /Creator (torsio-engineering.vercel.app) >>`]);
+    obj(4, [`<< /Title ${utf16hex(meta.title)} /Producer (Torsio Engineering) /Creator (torsio.app) >>`]);
     pages.forEach((p, i) => {
       const pn = first + i * 3, cn = pn + 1, im = pn + 2;
       const x0 = M.l * 72 / 25.4, yTop = PAGE.h - M.t * 72 / 25.4;
