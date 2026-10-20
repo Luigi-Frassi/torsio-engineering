@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Torsio Engineering — calcolatore</title>
-  <meta name="description" content="Calcolatore di dimensionamento di massima: alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, strutture FEM e collegamenti bullonati, con relazione di calcolo e DXF.">
+  <title>Torsio Engineering — calculator</title>
+  <meta name="description" content="Free preliminary sizing calculator: shafts, gears, timing belts, ISO fits, FEM frames and bolted joints, with calculation report (PDF) and DXF.">
   <link rel="canonical" href="https://torsio-engineering.vercel.app/app.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Torsio Engineering">
-  <meta property="og:title" content="Torsio Engineering — calcolatore">
-  <meta property="og:description" content="Calcolatore di dimensionamento di massima: alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, strutture FEM e collegamenti bullonati, con relazione di calcolo e DXF.">
+  <meta property="og:title" content="Torsio Engineering — calculator">
+  <meta property="og:description" content="Free preliminary sizing calculator: shafts, gears, timing belts, ISO fits, FEM frames and bolted joints, with calculation report (PDF) and DXF.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="it_IT">
   <meta property="og:url" content="https://torsio-engineering.vercel.app/app.html">
   <meta property="og:image" content="https://torsio-engineering.vercel.app/vendor/brand/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -3164,6 +3166,7 @@
     function updateLanguage(lang) {
       currentLang = lang;
       const t = translations[lang];
+      document.title = lang === 'it' ? 'Torsio Engineering — calcolatore' : 'Torsio Engineering — calculator';
 
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');

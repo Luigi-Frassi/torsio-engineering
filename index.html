@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Torsio Engineering — dimensionamento di massima di organi di macchine</title>
-  <meta name="description" content="Alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, strutture FEM e collegamenti bullonati: dimensionamento di massima con i metodi della Costruzione di Macchine, relazione di calcolo con tutte le formule e disegno DXF.">
+  <title>Torsio Engineering — preliminary sizing of machine elements</title>
+  <meta name="description" content="Shafts, gears, timing belts, ISO fits, FEM frames and bolted joints: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 387 hand-worked cases.">
   <link rel="canonical" href="https://torsio-engineering.vercel.app/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Torsio Engineering">
-  <meta property="og:title" content="Torsio Engineering — dimensionamento di massima di organi di macchine">
-  <meta property="og:description" content="Alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, strutture FEM e collegamenti bullonati: dimensionamento di massima con i metodi della Costruzione di Macchine, relazione di calcolo con tutte le formule e disegno DXF.">
+  <meta property="og:title" content="Torsio Engineering — preliminary sizing of machine elements">
+  <meta property="og:description" content="Shafts, gears, timing belts, ISO fits, FEM frames and bolted joints: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 387 hand-worked cases.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="it_IT">
   <meta property="og:url" content="https://torsio-engineering.vercel.app/">
   <meta property="og:image" content="https://torsio-engineering.vercel.app/vendor/brand/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -437,6 +439,7 @@
       lang = l === 'en' ? 'en' : 'it';
       var d = lang === 'en' ? T.en : IT;
       document.documentElement.lang = lang;
+      document.title = lang === 'en' ? 'Torsio Engineering — preliminary sizing of machine elements' : 'Torsio Engineering — dimensionamento di massima di organi di macchine';
       document.querySelectorAll('[data-t]').forEach(function (el) { var k = el.getAttribute('data-t'); if (d[k] != null) el.textContent = d[k]; });
       document.querySelectorAll('[data-t-svg]').forEach(function (el) { var k = el.getAttribute('data-t-svg'); if (d[k] != null) el.textContent = d[k]; });
       document.querySelectorAll('[data-t-html]').forEach(function (el) { var k = el.getAttribute('data-t-html'); if (d[k] != null) el.innerHTML = d[k]; });
