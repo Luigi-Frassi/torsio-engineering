@@ -669,6 +669,25 @@ with sync_playwright() as p:
     check('strutture: lo strumento Asta crea aste incernierate ai due estremi, segnate "asta" nella tabella', r[0] and r[1], str(r))
     fb.close()
 
+    # --- landing pages for search (tools/mkguides.py): load, formulas, hreflang pair, links to real modules and demos
+    lp = new_page()
+    pairs = [('shaft-calculator/', 'it/dimensionamento-albero/', 'shafts', 'shaftExam'), ('bolted-joint-calculator/', 'it/calcolo-bulloni/', 'bolts', 'boltsExam'), ('frame-truss-calculator/', 'it/calcolo-telaio-traliccio/', 'frames', 'frames')]
+    bad = []
+    LP_JS = """([o, m, d, l]) => { const hrefs = [...document.querySelectorAll('a')].map(a => a.getAttribute('href'));
+      return [document.documentElement.lang === l, document.querySelectorAll('.katex').length >= 2,
+        [...document.querySelectorAll('link[hreflang]')].some(k => k.href.endsWith('/' + o)),
+        hrefs.includes('/app.html?m=' + m + '&lang=' + l), hrefs.includes('/app.html?demo=' + d + '&lang=' + l),
+        JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent).length === 2]; }"""
+    for en, it, mod, demo in pairs:
+        for path, other, lang in ((en, it, 'en'), (it, en, 'it')):
+            lp.goto(HOME + path); lp.wait_for_timeout(500)
+            r = lp.evaluate(LP_JS, [other, mod, demo, lang])
+            if not all(r): bad.append(path + ' ' + str(r))
+    check('pagine per Google: sei pagine con formule, coppia di lingue, link al modulo e alla demo, dati strutturati', not bad, '; '.join(bad))
+    lp.goto(HOME + 'index.html'); lp.evaluate("setLang('en')")
+    check('  la home linka le pagine dei calcolatori nella lingua scelta', lp.evaluate("[...document.querySelectorAll('.calcs a')].map(a => a.getAttribute('href')).join()") == '/shaft-calculator/,/bolted-joint-calculator/,/frame-truss-calculator/')
+    lp.close()
+
     # --- start screen: only for a bare calculator link, closed by any choice
     sctx = browser.new_context(); sctx.route('**/*', router)
     sp = sctx.new_page(); sp.on('pageerror', lambda e: errors.append(str(e)))
