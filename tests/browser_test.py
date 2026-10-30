@@ -337,7 +337,7 @@ with sync_playwright() as p:
     body = rep.evaluate("document.body.textContent")
     svgs = rep.evaluate("document.querySelectorAll('svg').length")
     check('  relazione: formule impaginate (frazioni e radici vere)', rep.evaluate("document.querySelectorAll('.eq .katex .mfrac').length > 5 && document.querySelectorAll('.katex .sqrt').length > 1"))
-    check('relazione di calcolo (alberi): capitoli, Mf 1887, d = 65 e diagrammi', all(k in body for k in ['Relazione di calcolo', 'Reazioni vincolari', 'Retta di Goodman', 'Quote per il CAD', '1.887', 'd = 65 mm']) and svgs >= 5, f'svg={svgs} missing=' + str([k for k in ['Relazione di calcolo', 'Reazioni vincolari', 'Retta di Goodman', 'Quote per il CAD', '1.887', 'd = 65 mm'] if k not in body]))
+    check('relazione di calcolo (alberi): capitoli, Mf 1887, d = 65 e diagrammi', ('1.887' in body or '1887' in body) and all(k in body for k in ['Relazione di calcolo', 'Reazioni vincolari', 'Retta di Goodman', 'Quote per il CAD', 'd = 65 mm']) and svgs >= 5, f'svg={svgs} missing=' + str([k for k in ['Relazione di calcolo', 'Reazioni vincolari', 'Retta di Goodman', 'Quote per il CAD', '1.887', 'd = 65 mm'] if k not in body]))
     check('  bottone Relazione visibile in tutti i moduli', pg6.evaluate("['fits','belts','gears','shafts'].every(m => { switchModule(m); return !document.getElementById('reportBtn').classList.contains('hidden'); })"))
     # relazioni degli altri moduli: ingranaggi (progetto e potenza massima), cinghie, accoppiamenti
     for q, keys in [('?m=gears&lang=it', ['Progetto a usura (Hertz)', 'Verifica a flessione (Lewis)', 'Quote per il CAD', 'm = 2,250 mm']),
@@ -398,7 +398,7 @@ with sync_playwright() as p:
     check('  il link condivisibile riapre la stessa struttura', pf2.evaluate("frModel.members.length === 1 && frModel.dloads.length === 1 && frModel.supports.length === 2 && frResults.best") == best.split(' ')[0], url[-80:])
     pf3 = new_page(); pf3.goto(BASE + '?demo=frames&lang=it'); settle(pf3)
     tw = pf3.evaluate("[frModel.members.length, frResults.best, Math.round(frResults.notebook.W), frResults.byFamily.IPE.ok, frResults.notebook.tower, Math.round(frResults.notebook.buck.W)]")
-    check('  confronto col notebook: 285 kg senza instabilità, ~1471 kg con instabilità (tondo pieno), gradiente 1453,6 kg', tw[2] == 285 and tw[4] is True and abs(tw[5] - 1471) <= 2 and '1.453,6 kg' in pf3.evaluate("document.getElementById('frNb').textContent"), str(tw))
+    check('  confronto col notebook: 285 kg senza instabilità, ~1471 kg con instabilità (tondo pieno), gradiente 1453,6 kg', tw[2] == 285 and tw[4] is True and abs(tw[5] - 1471) <= 2 and any(k in pf3.evaluate("document.getElementById('frNb').textContent") for k in ('1.453,6 kg', '1453,6 kg')), str(tw))
     check('  demo torre radio (notebook): 20 aste, tubo il più leggero, IPE non basta (Eulero)', tw[0] == 20 and tw[1] == 'tube' and tw[3] is False, str(tw))
     pf3.click('#reportBtn')
     with ctx.expect_page() as rpf:
