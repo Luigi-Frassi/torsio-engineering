@@ -89,7 +89,7 @@ with sync_playwright() as p:
     # --- 2. fits: click a comparison-table row
     def a2(pg):
         set_val(pg, 'nominalDiameter', '75')
-        pg.click('#comparisonTableBody tr:nth-child(5)')
+        pg.click('#comparisonTableBody tr:nth-child(9)')   # hole basis: c11 d9 f7(H8) f7 g6 h6 h7(H8) js6 k6 …
     _, _, u = roundtrip('accoppiamenti click su riga tabella', a2)
     check('  riga cliccata salvata (H7/k6)', 'fitType=H7%2Fk6' in u, u)
 

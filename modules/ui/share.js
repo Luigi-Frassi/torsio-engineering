@@ -6,7 +6,7 @@
 // ==========================================
 
 const SHARE_FIELDS = {
-  fits: ['nominalDiameter', 'fitType', 'reverseFitNature', 'reverseTargetVal'],
+  fits: ['nominalDiameter', 'fitType', 'reverseFitNature', 'reverseBasis', 'reverseTargetVal'],
   belts: ['beltProfile', 'pulleyZ1', 'pulleyZ2', 'targetTau', 'desiredCenter', 'motorPower', 'driverSpeed', 'serviceFactor'],
   gears: ['gearToothType', 'gearPower', 'gearTorqueInput', 'gearSpeed', 'gearTargetTau', 'gearTauTolVal',
     'gearLockedMVal', 'gearLockedLVal', 'gearZ1', 'gearZ2', 'gearTargetCenter', 'gearXr1', 'gearKeInput', 'gearSigmaH',
@@ -113,7 +113,8 @@ function applyShareState(q) {
     if (el.type === 'checkbox') {
       el.checked = v === '1';
     } else if (el.tagName === 'SELECT') {
-      if ([...el.options].some(o => o.value === v)) el.value = v;
+      if (id === 'fitType' && typeof fitsEnsureOption === 'function') fitsEnsureOption(v);   // any ISO fit, also custom ones
+      else if ([...el.options].some(o => o.value === v)) el.value = v;
     } else if (v !== '' && isFinite(Number(v))) {
       el.value = v;
     }

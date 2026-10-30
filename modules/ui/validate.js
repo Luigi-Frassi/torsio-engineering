@@ -17,7 +17,7 @@ const VAL_TXT = {
     status: 'DATI NON VALIDI', card: 'Da correggere', more: n => `e altri ${n}`, go: 'Vai al campo',
     blocked: 'Correggi prima i campi in rosso', blockedIn: m => `Dati non validi in: ${m}`,
     sX: 'Un coefficiente di sicurezza sotto 1 non ha senso', fr: 'Coefficiente d\'attrito tra 0 e 1',
-    fitRange: 'Campo coperto dalla ISO 286: 3–500 mm', gearZ: 'Almeno 9 denti', helix: 'Angolo d\'elica tra 0° e 45°',
+    fitRange: 'Campo coperto dalla ISO 286: 1–500 mm', gearZ: 'Almeno 9 denti', helix: 'Angolo d\'elica tra 0° e 45°',
     pressure: 'Angolo di pressione tra 10° e 30°', share: 'Quota della coppia tra 0 e 100 %', cyc: 'Vita a termine: tra 10³ e 10⁶ cicli',
     beltZ: 'Almeno 10 denti', dd: 'D/d deve essere almeno 1', notInShaft: 'Fuori dall\'albero (0 … L)', sameBearings: 'I due cuscinetti non possono coincidere',
     pitch: 'Il passo deve essere minore del diametro', table: 'tabella'
@@ -30,7 +30,7 @@ const VAL_TXT = {
     status: 'INVALID INPUT', card: 'To fix', more: n => `and ${n} more`, go: 'Go to the field',
     blocked: 'Fix the fields in red first', blockedIn: m => `Invalid input in: ${m}`,
     sX: 'A safety factor below 1 makes no sense', fr: 'Friction coefficient between 0 and 1',
-    fitRange: 'Range covered by ISO 286: 3–500 mm', gearZ: 'At least 9 teeth', helix: 'Helix angle between 0° and 45°',
+    fitRange: 'Range covered by ISO 286: 1–500 mm', gearZ: 'At least 9 teeth', helix: 'Helix angle between 0° and 45°',
     pressure: 'Pressure angle between 10° and 30°', share: 'Torque share between 0 and 100 %', cyc: 'Finite life: between 10³ and 10⁶ cycles',
     beltZ: 'At least 10 teeth', dd: 'D/d must be at least 1', notInShaft: 'Outside the shaft (0 … L)', sameBearings: 'The two bearings cannot coincide',
     pitch: 'The pitch must be smaller than the diameter', table: 'table'
@@ -97,7 +97,7 @@ function valField(el) {
   if (!Number.isFinite(v)) return t.empty;
   if (el.id === 'nominalDiameter') {
     const mm = typeof currentUnit !== 'undefined' && currentUnit !== 'metric' ? v * 25.4 : v;
-    return mm >= 3 - 1e-9 && mm <= 500 + 1e-9 ? '' : t.fitRange;
+    return mm >= 1 - 1e-9 && mm <= 500 + 1e-9 ? '' : t.fitRange;
   }
   const r = VAL_RULES[el.id];
   if (!r) return '';

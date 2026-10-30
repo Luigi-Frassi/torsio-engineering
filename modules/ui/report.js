@@ -761,22 +761,26 @@ function buildBeltReportHtml() {
 // ---------------------------------------------------------------------------
 const REPORT_FIT_TXT = {
   it: {
-    title: 'Accoppiamento albero-foro ISO 286 — sistema foro base H7', s1: 'Dati', s2: 'Scostamenti e dimensioni limite', s3: 'Giochi e natura dell\'accoppiamento',
-    s4: 'Lavorazioni e rugosità', s5: 'Confronto con gli altri accoppiamenti H7', s6: 'Quote per il disegno', s7: 'Note',
+    title: 'Accoppiamento albero-foro ISO 286', s1: 'Dati', s2: 'Scostamenti e dimensioni limite', s3: 'Giochi e natura dell\'accoppiamento',
+    s4: 'Lavorazioni e rugosità', s5: 'Confronto con gli accoppiamenti raccomandati dello stesso sistema', s6: 'Quote per il disegno', s7: 'Note',
     d: 'Diametro nominale', step: 'Scaglione ISO 286', fit: 'Accoppiamento', hole: 'Foro', shaft: 'Albero', es: 'Scost. sup.', ei: 'Scost. inf.', it: 'Tolleranza',
     dmax: 'Dim. max', dmin: 'Dim. min', playMax: 'Gioco max', playMin: 'Gioco min', kind: 'Natura', clearance: 'con gioco', interference: 'con interferenza', transition: 'incerto',
     proc: 'Lavorazione', ra: 'Rugosità', mean: 'Gioco medio', reverse: 'Scelto con la ricerca inversa: gioco desiderato', drawing: 'Indicazione a disegno',
-    disclaimer: 'Valori da ISO 286-2 per lo scaglione del diametro nominale (3–500 mm). Per accoppiamenti con interferenza verificare anche pressione di calettamento e tensioni (Lamé), e le condizioni di montaggio.',
-    notes: ['Sistema foro base: foro H7 (EI = 0, ES = IT7), l\'albero porta la posizione della tolleranza.', 'Gioco = dimensione del foro − dimensione dell\'albero; un gioco negativo è un\'interferenza.', 'Lavorazioni e rugosità sono indicazioni tipiche per la classe di tolleranza.']
+    disclaimer: 'Valori da ISO 286-2 per lo scaglione del diametro nominale (fino a 500 mm). Per accoppiamenti con interferenza verificare anche pressione di calettamento e tensioni (Lamé), e le condizioni di montaggio.',
+    basis: { hole: 'Sistema foro base: foro H (EI = 0), l\'albero porta la posizione della tolleranza.', shaft: 'Sistema albero base: albero h (es = 0), il foro porta la posizione della tolleranza.', mixed: 'Accoppiamento misto: né il foro né l\'albero sono in posizione H/h.' },
+    delta: 'Scostamenti dei fori K–S secondo ISO 286-1: ES = −ei + Δ, con Δ = IT(n) − IT(n−1).',
+    notes: ['Gioco = dimensione del foro − dimensione dell\'albero; un gioco negativo è un\'interferenza.', 'Lavorazioni e rugosità sono indicazioni tipiche per la classe di tolleranza.']
   },
   en: {
-    title: 'Shaft-hole fit ISO 286 — hole-basis system H7', s1: 'Data', s2: 'Deviations and limit sizes', s3: 'Clearances and type of fit',
-    s4: 'Machining and roughness', s5: 'Comparison with the other H7 fits', s6: 'Drawing callouts', s7: 'Notes',
+    title: 'Shaft-hole fit ISO 286', s1: 'Data', s2: 'Deviations and limit sizes', s3: 'Clearances and type of fit',
+    s4: 'Machining and roughness', s5: 'Comparison with the preferred fits of the same system', s6: 'Drawing callouts', s7: 'Notes',
     d: 'Nominal diameter', step: 'ISO 286 size range', fit: 'Fit', hole: 'Hole', shaft: 'Shaft', es: 'Upper dev.', ei: 'Lower dev.', it: 'Tolerance',
     dmax: 'Max size', dmin: 'Min size', playMax: 'Max clearance', playMin: 'Min clearance', kind: 'Type', clearance: 'clearance', interference: 'interference', transition: 'transition',
     proc: 'Machining', ra: 'Roughness', mean: 'Mean clearance', reverse: 'Chosen by the reverse lookup: desired clearance', drawing: 'Drawing callout',
-    disclaimer: 'Values from ISO 286-2 for the size range of the nominal diameter (3–500 mm). For interference fits also check the fit pressure and stresses (Lamé) and the assembly conditions.',
-    notes: ['Hole-basis system: hole H7 (EI = 0, ES = IT7), the shaft carries the tolerance position.', 'Clearance = hole size − shaft size; a negative clearance is an interference.', 'Machining and roughness are typical indications for the tolerance grade.']
+    disclaimer: 'Values from ISO 286-2 for the size range of the nominal diameter (up to 500 mm). For interference fits also check the fit pressure and stresses (Lamé) and the assembly conditions.',
+    basis: { hole: 'Hole-basis system: hole H (EI = 0), the shaft carries the tolerance position.', shaft: 'Shaft-basis system: shaft h (es = 0), the hole carries the tolerance position.', mixed: 'Mixed fit: neither the hole nor the shaft is in the H/h position.' },
+    delta: 'Deviations of the holes K–S per ISO 286-1: ES = −ei + Δ, with Δ = IT(n) − IT(n−1).',
+    notes: ['Clearance = hole size − shaft size; a negative clearance is an interference.', 'Machining and roughness are typical indications for the tolerance grade.']
   }
 };
 
@@ -792,10 +796,10 @@ function buildFitReportHtml() {
   let body = '', sec = 0;
   const H = title => `<h3><span class="n">${++sec}.</span>${title}</h3>`;
   const rev = currentMode === 'reverse' ? [[F.reverse, `${document.getElementById('reverseTargetVal').value} µm (${document.getElementById('reverseFitNature').value})`]] : [];
-  body += H(F.s1) + reportKV([[F.d, `Ø ${N(d, 2)} mm`], [F.step, `${step.min} – ${step.max} mm`], [F.fit, `${fit} — ${reportEsc(t.fits[fit].label)}`], ...rev]);
+  body += H(F.s1) + reportKV([[F.d, `Ø ${N(d, 2)} mm`], [F.step, `${step.min} – ${step.max} mm`], [F.fit, `${fit} — ${reportEsc(fitText(fit, t).label)}`], ...rev]);
   const itS = a.devs.es - a.devs.ei;
   body += H(F.s2) + reportTable(['', F.es, F.ei, F.it, F.dmax, F.dmin], [
-    [`${F.hole} H7`, um(a.ES_H), um(a.EI_H), `${N(a.ES_H - a.EI_H, 0)} µm`, mm(d + a.ES_H / 1000), mm(d + a.EI_H / 1000)],
+    [`${F.hole} ${a.holeClass}`, um(a.ES_H), um(a.EI_H), `${N(a.ES_H - a.EI_H, 0)} µm`, mm(d + a.ES_H / 1000), mm(d + a.EI_H / 1000)],
     [`${F.shaft} ${a.shaftClass}`, um(a.devs.es), um(a.devs.ei), `${N(itS, 0)} µm`, mm(d + a.devs.es / 1000), mm(d + a.devs.ei / 1000)]
   ]);
   const ch = document.getElementById('toleranceChart');
@@ -806,13 +810,13 @@ function buildFitReportHtml() {
     `G_{min} = EI - es = ${T(a.EI_H, 1)} - (${T(a.devs.es, 1)}) = ${T(a.minPlay, 1)}\\ \\mu\\text{m}`,
     `G_{med} = \\dfrac{G_{max} + G_{min}}{2} = ${T((a.maxPlay + a.minPlay) / 2, 1)}\\ \\mu\\text{m}`]) +
     `<div class="res"><div>${F.kind}: <span class="big">${kindTxt}</span> · ${F.playMin} ${um(a.minPlay)} · ${F.playMax} ${um(a.maxPlay)}</div></div>`;
-  body += H(F.s4) + reportTable(['', F.proc, F.ra], [[F.hole, reportEsc(t.fits[fit].holeProc), fitsRa[fit].holeRa], [F.shaft, reportEsc(t.fits[fit].shaftProc), fitsRa[fit].shaftRa]]);
-  body += H(F.s5) + reportTable([F.fit, F.playMin, F.playMax, F.kind], fitKeys.map(k => { const b = analyzeFit(step, k); return { cls: k === fit ? 'hl' : '', cells: [k, um(b.minPlay), um(b.maxPlay), F[b.kind]] }; }));
+  body += H(F.s4) + reportTable(['', F.proc, F.ra], [[F.hole, reportEsc(fitText(fit, t).holeProc), fitRa(fit).holeRa], [F.shaft, reportEsc(fitText(fit, t).shaftProc), fitRa(fit).shaftRa]]);
+  body += H(F.s5) + reportTable([F.fit, F.playMin, F.playMax, F.kind], ((fitBasis(fit) === 'shaft' ? fitKeysShaft : fitKeysHole).includes(fit) ? (fitBasis(fit) === 'shaft' ? fitKeysShaft : fitKeysHole) : (fitBasis(fit) === 'shaft' ? fitKeysShaft : fitKeysHole).concat([fit])).map(k => { const b = analyzeFit(step, k); return { cls: k === fit ? 'hl' : '', cells: [k, um(b.minPlay), um(b.maxPlay), F[b.kind]] }; }));
   const sgn = v => (v >= 0 ? '+' : '−') + N(Math.abs(v) / 1000, 3);
   body += H(F.s6) + reportKV([
-    [`${F.hole}`, `Ø${N(d, d % 1 ? 2 : 0)} H7 (${sgn(a.ES_H)} / ${sgn(a.EI_H)})`], [`${F.shaft}`, `Ø${N(d, d % 1 ? 2 : 0)} ${a.shaftClass} (${sgn(a.devs.es)} / ${sgn(a.devs.ei)})`],
+    [`${F.hole}`, `Ø${N(d, d % 1 ? 2 : 0)} ${a.holeClass} (${sgn(a.ES_H)} / ${sgn(a.EI_H)})`], [`${F.shaft}`, `Ø${N(d, d % 1 ? 2 : 0)} ${a.shaftClass} (${sgn(a.devs.es)} / ${sgn(a.devs.ei)})`],
     [F.drawing, `Ø${N(d, d % 1 ? 2 : 0)} ${fit}`]
   ]);
-  body += H(F.s7) + '<ul>' + F.notes.map(h => `<li>${reportTexify(h)}</li>`).join('') + '</ul>';
+  body += H(F.s7) + '<ul>' + [F.basis[fitBasis(fit)]].concat('KMNPRS'.includes(a.holeClass[0]) ? [F.delta] : [], F.notes).map(h => `<li>${reportTexify(h)}</li>`).join('') + '</ul>';
   return reportShell(F.title, `Ø${N(d, 2)} ${fit} · ${kindTxt}`, body, R, F.disclaimer);
 }
