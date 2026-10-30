@@ -590,6 +590,14 @@ with sync_playwright() as p:
     check('  il filtro privacy lascia passare /feedback/<voto>/<modulo>', ev2.endswith('/feedback/down/shafts'), ev2)
     fp.evaluate("switchModule('gears')")
     check('  cambiando modulo si può votare di nuovo', fp.evaluate("!!document.querySelector('#fbBar button[data-fb]')"))
+    fp.click('#fbBar button[data-fb="down"]')
+    asked = fp.evaluate("[document.getElementById('fbBar').innerText, document.querySelectorAll('#fbBar button[data-fb-reason]').length]")
+    fp.click('#fbBar button[data-fb-reason="missing"]')
+    got = fp.evaluate("[document.getElementById('fbBar').innerText, (window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path), document.querySelector('#fbBar a')?.href || '']")
+    ev3 = fp.evaluate("(() => { const f = (window.vaq || []).find(a => a[0] === 'beforeSend'); return f[1]({ url: location.origin + '/feedback/down/gears/missing?x=1' }).url; })()")
+    check('  ✕: quattro risposte rapide, poi il motivo conta in Analytics, grazie e link facoltativo al modulo',
+          'Cosa non è andato?' in asked[0] and asked[1] == 4 and '/feedback/down/gears/missing' in got[1] and '/feedback/down/gears' in got[1]
+          and 'Grazie' in got[0] and 'vote=down&module=gears' in got[2] and ev3.endswith('/feedback/down/gears/missing'), str(asked) + str(got) + ev3)
     fp.click('#reportBtn')
     with ctx.expect_page() as frp:
         fp.click('#reportMenuThis')

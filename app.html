@@ -102,7 +102,7 @@
     window.va('beforeSend', function (event) {
       try {
         var u = new URL(event.url);
-        if (/^\/(app|feedback\/(up|down))\/(fits|belts|gears|shafts|frames|bolts|transmission)$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
+        if (/^\/(app|feedback\/(up|down))\/(fits|belts|gears|shafts|frames|bolts|transmission)(\/(wrong|missing|hard|notwhat))?$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
         var m = u.searchParams.get('m');
         u.search = (m === 'fits' || m === 'belts' || m === 'gears' || m === 'shafts' || m === 'frames' || m === 'bolts') ? '?m=' + m : '';
         u.hash = '';
