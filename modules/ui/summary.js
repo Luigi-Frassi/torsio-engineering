@@ -121,7 +121,7 @@ function sumFits(t) {
     : `${t.fi.play} ${f(a.maxPlay)} · ${t.fi.inter} ${sumNum(Math.abs(a.minPlay), 0)} µm`;
   return { status: 'info', statusText: t.fi.kinds[a.kind] || '', cards: [
     { k: t.fi.d, v: sumNum(s.dMm, s.dMm % 1 ? 2 : 0), u: 'mm', sub: s.fit, tone: 'y' },
-    { k: `${t.fi.hole} H7`, v: `${f(a.ES_H)} / 0`, u: 'µm', sub: `${sumNum(s.dMm, 3)} … ${sumNum(s.dMm + a.ES_H / 1000, 3)}`, tone: 'b' },
+    { k: `${t.fi.hole} ${a.holeClass}`, v: `${f(a.ES_H)} / ${f(a.EI_H)}`, u: 'µm', sub: `${sumNum(s.dMm + a.EI_H / 1000, 3)} … ${sumNum(s.dMm + a.ES_H / 1000, 3)}`, tone: 'b' },
     { k: `${t.fi.shaft} ${a.shaftClass}`, v: `${f(a.devs.es)} / ${f(a.devs.ei)}`, u: 'µm', sub: `${sumNum(s.dMm + a.devs.ei / 1000, 3)} … ${sumNum(s.dMm + a.devs.es / 1000, 3)}`, tone: 'b' },
     { k: t.fi.fit, v: t.fi.kinds[a.kind] || '', sub: play, tone: 'k' }
   ] };

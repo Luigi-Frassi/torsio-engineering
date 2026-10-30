@@ -10,7 +10,7 @@ const START_TXT = {
     title: 'Scegli una stazione', sub: 'Sei moduli indipendenti: ognuno calcola da solo e, se vuoi, passa i risultati al successivo. Ogni calcolo ha la sua relazione in PDF.',
     open: 'Apri', example: 'Esempio', txT: 'Trasmissione completa', txS: 'Cinghia → ruote dentate → albero: un esempio già impostato, con la relazione completa.', txB: 'Apri la demo',
     m: {
-      fits: ['Tolleranze e accoppiamenti', 'Foro H7 e albero: giochi e interferenze ISO 286, ricerca per gioco desiderato.'],
+      fits: ['Tolleranze e accoppiamenti', 'ISO 286 completa: foro e albero base, IT5–IT11, giochi e interferenze, ricerca per gioco desiderato.'],
       belts: ['Cinghie dentate', 'Pulegge, lunghezza della cinghia e interasse esatto; larghezza dalla potenza.'],
       gears: ['Ruote dentate', 'Modulo e larghezza di fascia da Hertz, verifica a flessione di Lewis.'],
       shafts: ['Alberi', 'Carichi, reazioni e momenti; diametro a fatica e snervamento; profilo per il CAD.'],
@@ -22,7 +22,7 @@ const START_TXT = {
     title: 'Choose a station', sub: 'Six independent modules: each one calculates on its own and, if you want, passes its results to the next. Every calculation has its PDF report.',
     open: 'Open', example: 'Example', txT: 'Complete drive', txS: 'Belt → gears → shaft: a ready-made example, with the complete report.', txB: 'Open the demo',
     m: {
-      fits: ['Tolerances and fits', 'H7 hole and shaft: ISO 286 clearances and interferences, search by target clearance.'],
+      fits: ['Tolerances and fits', 'Full ISO 286: hole and shaft basis, IT5–IT11, clearances and interferences, search by target clearance.'],
       belts: ['Timing belts', 'Pulleys, belt length and exact centre distance; width from the power.'],
       gears: ['Gears', 'Module and face width from Hertz, Lewis bending check.'],
       shafts: ['Shafts', 'Loads, reactions and moments; diameter for fatigue and yield; profile for CAD.'],

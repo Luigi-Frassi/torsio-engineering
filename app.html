@@ -67,6 +67,11 @@
     .start-on #sumStatus, .start-on #sumBar, .start-on [id^="module"][id$="Section"], .start-on #fbBar, .start-on #dxfBtn, .start-on .js-share-btn,
     .start-on #unitToggleContainer, .start-on #gearUnitBadge, .start-on div:has(> #reportBtn) { display: none !important; }
     .start-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: -8px 0 18px; }
+    .fit-custom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 12px; color: #6f6a62; }
+    .fit-custom-row { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .fit-custom-part { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: #22211f; }
+    .fit-custom-part select { border: 1px solid #cfc9bd; border-radius: 6px; padding: 3px 4px; font-family: ui-monospace, monospace; font-size: 13px; min-width: 3.2em; }
+    .fit-custom-sep { font-family: ui-monospace, monospace; color: #8a857c; }
     .start-card { position: relative; background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; transition: border-color .15s; }
     .start-card:hover { border-top-color: #e8b321; }
     .start-main { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; height: 100%; text-align: left; padding: 16px 18px 18px; }
@@ -196,7 +201,7 @@
       <div class="flex-1 pr-2 min-w-[260px]">
         <p id="sumStatus" class="sum-status" aria-live="polite"></p>
         <h1 class="text-2xl font-extrabold tracking-tight text-white mb-1 leading-tight" style="font-stretch:108%" id="moduleTitle">ISO Fit & Tolerance Selector</h1>
-        <p class="text-sm text-slate-400 leading-snug" id="moduleSubtitle">H7 Hole-Basis System. Interactive matrix, reverse lookup, and unit conversion.</p>
+        <p class="text-sm text-slate-400 leading-snug" id="moduleSubtitle">ISO 286 fits, hole and shaft basis. Comparison table, reverse lookup and unit conversion.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:gap-3 shrink-0 pt-0.5">
         <div class="relative" id="demoWrap">
@@ -292,7 +297,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" data-i18n="inputDiamLabel">Nominal Diameter (d)</label>
           <div class="relative">
-            <input type="number" id="nominalDiameter" value="25" min="0.12" max="500" step="any"
+            <input type="number" id="nominalDiameter" value="25" min="1" max="500" step="any"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
             <span class="absolute right-4 top-2.5 text-slate-400 font-medium text-sm" id="fitUnitLabel">mm</span>
           </div>
@@ -302,6 +307,16 @@
         <div id="directInputs">
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2" data-i18n="inputFitLabel">Desired Fit</label>
           <select id="fitType" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
+          <div class="fit-custom mt-2.5" id="fitCustom">
+            <span class="fit-custom-lbl" data-i18n="fitCustomLabel">Or any ISO combination</span>
+            <span class="fit-custom-row">
+              <span class="fit-custom-part"><span data-i18n="fitHoleShort">Hole</span>
+                <select id="fitHoleLetter" aria-label="Hole deviation"></select><select id="fitHoleGrade" aria-label="Hole grade"></select></span>
+              <span class="fit-custom-sep">/</span>
+              <span class="fit-custom-part"><span data-i18n="fitShaftShort">Shaft</span>
+                <select id="fitShaftLetter" aria-label="Shaft deviation"></select><select id="fitShaftGrade" aria-label="Shaft grade"></select></span>
+            </span>
+          </div>
         </div>
 
         <div id="reverseInputs" class="hidden">
@@ -310,6 +325,10 @@
             <select id="reverseFitNature" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
               <option value="clearance" data-i18n="optClearance">Clearance</option>
               <option value="interference" data-i18n="optInterference">Interference</option>
+            </select>
+            <select id="reverseBasis" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="hole" data-i18n="optHoleBasis">Hole basis</option>
+              <option value="shaft" data-i18n="optShaftBasis">Shaft basis</option>
             </select>
             <div class="relative flex-1">
               <input type="number" id="reverseTargetVal" value="20" step="1"
@@ -323,7 +342,7 @@
 
       <div data-sum-dup="1" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50">
-          <span class="text-xs font-medium text-slate-400" data-i18n="holeCardTitle">Hole (H7)</span>
+          <span class="text-xs font-medium text-slate-400"><span data-i18n="holeCardTitle">Hole</span> (<span id="holeClassLabel">H7</span>)</span>
           <div class="text-lg font-bold text-sky-400 mt-1" id="holeDisp">+21 / 0 µm</div>
           <div class="text-xs text-slate-400 mt-1 font-mono" id="holeDims">25.000 / 25.021 mm</div>
         </div>
@@ -343,7 +362,7 @@
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-300" data-i18n="chartTitle">Relative Tolerance Zone Positions</span>
           <div class="flex gap-4 text-xs">
-            <span class="flex items-center gap-1.5 text-sky-400"><span class="w-3 h-3 rounded bg-sky-500/30 border border-sky-400 inline-block"></span> <span data-i18n="legendHole">Hole (H7)</span></span>
+            <span class="flex items-center gap-1.5 text-sky-400"><span class="w-3 h-3 rounded bg-sky-500/30 border border-sky-400 inline-block"></span> <span data-i18n="legendHole">Hole</span></span>
             <span class="flex items-center gap-1.5 text-amber-400"><span class="w-3 h-3 rounded bg-amber-500/30 border border-amber-400 inline-block"></span> <span data-i18n="legendShaft">Shaft</span></span>
             <span class="flex items-center gap-1.5 text-slate-400"><span class="w-4 h-0.5 bg-slate-500 inline-block"></span> <span data-i18n="legendZero">Zero Line</span></span>
           </div>
@@ -363,6 +382,7 @@
             <thead class="text-[11px] uppercase tracking-wider text-slate-400 bg-slate-950/60 border-b border-slate-800">
               <tr>
                 <th class="p-2.5" data-i18n="thFit">Fit</th>
+                <th class="p-2.5" data-i18n="thHoleDev">Hole Dev.</th>
                 <th class="p-2.5" data-i18n="thShaftDev">Shaft Dev.</th>
                 <th class="p-2.5" data-i18n="thFitCond">Fit Condition</th>
                 <th class="p-2.5" data-i18n="thMinMax">Min / Max</th>
@@ -2034,7 +2054,7 @@
         demoFrames: "Radio tower (FEM)",
         comingSoon: "Soon",
         pageTitleFits: "ISO Fit & Tolerance Selector",
-        pageSubtitleFits: "H7 Hole-Basis System. Interactive matrix, reverse lookup, and unit conversion.",
+        pageSubtitleFits: "ISO 286 fits, hole and shaft basis. Comparison table, reverse lookup and unit conversion.",
         pageTitleBelts: "Synchronous Timing Belt Sizing",
         pageSubtitleBelts: "Pitch diameters, integer belt teeth rounding, exact center distance, and preliminary catalog power capacity.",
         pageTitleGears: "Cylindrical Gears Sizing (Hertz & Lewis)",
@@ -2046,24 +2066,28 @@
         reverseTargetLabel: "Target Clearance & Condition",
         optClearance: "Clearance",
         optInterference: "Interference",
+        optHoleBasis: "Hole basis", optShaftBasis: "Shaft basis",
+        fitCustomLabel: "Or any ISO combination", fitHoleShort: "Hole", fitShaftShort: "Shaft",
+        fitGroupHole: "Hole basis (H)", fitGroupShaft: "Shaft basis (h)", fitGroupCustom: "Custom combination",
         stepOver: "ISO Step: over",
         stepUpTo: "up to",
-        outOfRange: "Out of ISO 286 range (allowed: 3 - 500 mm / 0.118 - 19.68 in)",
+        outOfRange: "Out of ISO 286 range (allowed: 1 - 500 mm / 0.04 - 19.68 in)",
         invalidInput: "Invalid input",
-        holeCardTitle: "Hole (H7)",
+        holeCardTitle: "Hole",
         shaftCardTitle: "Shaft",
         fitCardTitle: "Fit Condition",
         chartTitle: "Relative Tolerance Zone Positions",
         comparisonTitle: "Instant ISO Fits Comparison Table",
         comparisonHelp: "Click any row to select fit",
         thFit: "Fit",
+        thHoleDev: "Hole Dev.",
         thShaftDev: "Shaft Dev.",
         thFitCond: "Fit Condition",
         thMinMax: "Min / Max",
         thAction: "Action",
         btnSelect: "Select",
         btnActive: "✓ Active",
-        legendHole: "Hole (H7)",
+        legendHole: "Hole",
         legendShaft: "Shaft",
         legendZero: "Zero Line",
         machiningSectionTitle: "Machining & Surface Finish Guidelines",
@@ -2452,8 +2476,25 @@
           'H7/h6': { label: "Sliding by hand / Location fit (H7/h6)", shaftProc: "Finish Turning / Grinding", holeProc: "Reaming" },
           'H7/js6': { label: "Transition / Mallet assembly (H7/js6)", shaftProc: "Cylindrical Grinding", holeProc: "Fine Reaming or Boring" },
           'H7/k6': { label: "Light press / Hand press fit (H7/k6)", shaftProc: "Cylindrical Grinding", holeProc: "Finish Reaming" },
-          'H7/p6': { label: "Permanent press / Heat shrink fit (H7/p6)", shaftProc: "Precision Cylindrical Grinding", holeProc: "Internal Grinding / Fine Reaming" }
+          'H7/p6': { label: "Permanent press / Heat shrink fit (H7/p6)", shaftProc: "Precision Cylindrical Grinding", holeProc: "Internal Grinding / Fine Reaming" },
+          'H11/c11': { label: "Very loose running, wide clearance (H11/c11)" },
+          'H9/d9': { label: "Free running, large clearance (H9/d9)" },
+          'H8/f7': { label: "Close running, lubricated journals (H8/f7)" },
+          'H8/h7': { label: "Sliding location, medium precision (H8/h7)" },
+          'H7/n6': { label: "Tight transition / Press assembly (H7/n6)" },
+          'H7/r6': { label: "Medium interference / Press fit (H7/r6)" },
+          'H7/s6': { label: "Heavy interference / Shrink fit (H7/s6)" },
+          'C11/h11': { label: "Very loose running, shaft basis (C11/h11)" },
+          'D9/h9': { label: "Free running, shaft basis (D9/h9)" },
+          'F8/h7': { label: "Close running, shaft basis (F8/h7)" },
+          'G7/h6': { label: "Precision running, shaft basis (G7/h6)" },
+          'K7/h6': { label: "Transition, shaft basis (K7/h6)" },
+          'N7/h6': { label: "Tight transition, shaft basis (N7/h6)" },
+          'P7/h6': { label: "Light interference, shaft basis (P7/h6)" },
+          'S7/h6': { label: "Heavy interference, shaft basis (S7/h6)" }
         },
+        fitProcShaft: { 5: "Fine grinding / Lapping", 6: "Cylindrical grinding", 7: "Grinding / Precision turning", 8: "Finish turning", 9: "Turning", 10: "Turning / Drawn bar", 11: "Rough turning / Drawn bar" },
+        fitProcHole: { 6: "Internal grinding / Honing", 7: "Precision reaming / Fine boring", 8: "Reaming / Boring", 9: "Boring / Reaming", 10: "Drilling and boring", 11: "Drilling" },
         serviceFactors: {
           '1.2': "1.2 - Uniform (Electric motor, continuous steady load)",
           '1.5': "1.5 - Moderate shocks (Pumps, conveyors, fans)",
@@ -2481,7 +2522,7 @@
         demoFrames: "Torre radio (FEM)",
         comingSoon: "In arrivo",
         pageTitleFits: "Selettore Tolleranze & Lavorazioni ISO",
-        pageSubtitleFits: "Sistema Foro Base H7. Tabella comparativa, ricerca inversa e conversione unità.",
+        pageSubtitleFits: "Accoppiamenti ISO 286, foro base e albero base. Tabella comparativa, ricerca inversa e conversione unità.",
         pageTitleBelts: "Dimensionamento Cinghie Dentate Sincrone",
         pageSubtitleBelts: "Diametri primitivi, arrotondamento denti commerciali, interasse analitico esatto e verifica preliminare di potenza.",
         pageTitleGears: "Dimensionamento Ruote Dentate Cilindriche",
@@ -2493,24 +2534,28 @@
         reverseTargetLabel: "Condizione & Gioco / Interferenza Target",
         optClearance: "Gioco",
         optInterference: "Interferenza",
+        optHoleBasis: "Foro base", optShaftBasis: "Albero base",
+        fitCustomLabel: "Oppure qualsiasi combinazione ISO", fitHoleShort: "Foro", fitShaftShort: "Albero",
+        fitGroupHole: "Sistema foro base (H)", fitGroupShaft: "Sistema albero base (h)", fitGroupCustom: "Combinazione personalizzata",
         stepOver: "Scaglione ISO: oltre",
         stepUpTo: "fino a",
-        outOfRange: "Valore fuori campo ISO 286 (consentito: 3 - 500 mm / 0.118 - 19.68 in)",
+        outOfRange: "Valore fuori campo ISO 286 (consentito: 1 - 500 mm / 0.04 - 19.68 in)",
         invalidInput: "Input non valido",
-        holeCardTitle: "Foro (H7)",
+        holeCardTitle: "Foro",
         shaftCardTitle: "Albero",
         fitCardTitle: "Condizione Accoppiamento",
         chartTitle: "Posizione Relativa delle Fasce di Tolleranza",
         comparisonTitle: "Tabella Comparativa Istantanea Accoppiamenti",
         comparisonHelp: "Clicca su una riga per selezionare l'accoppiamento",
         thFit: "Accoppiamento",
+        thHoleDev: "Scostam. Foro",
         thShaftDev: "Scostam. Albero",
         thFitCond: "Condizione",
         thMinMax: "Min / Max",
         thAction: "Azione",
         btnSelect: "Seleziona",
         btnActive: "✓ Attivo",
-        legendHole: "Foro (H7)",
+        legendHole: "Foro",
         legendShaft: "Albero",
         legendZero: "Linea dello Zero",
         machiningSectionTitle: "Indicazioni di Lavorazione & Finitura",
@@ -2899,8 +2944,25 @@
           'H7/h6': { label: "Scorrevole a mano / Posizionamento (H7/h6)", shaftProc: "Tornitura finita / Rettifica", holeProc: "Alesatura" },
           'H7/js6': { label: "Incerto / Montaggio a mazzuolo (H7/js6)", shaftProc: "Rettifica cilindrica", holeProc: "Alesatura o Barenatura fine" },
           'H7/k6': { label: "Leggera interferenza / Montaggio a pressione (H7/k6)", shaftProc: "Rettifica cilindrica", holeProc: "Alesatura di finitura" },
-          'H7/p6': { label: "Interferenza stabile / Forzamento a pressa o caldo (H7/p6)", shaftProc: "Rettifica cilindrica di precisione", holeProc: "Rettifica per interni o Alesatura fine" }
+          'H7/p6': { label: "Interferenza stabile / Forzamento a pressa o caldo (H7/p6)", shaftProc: "Rettifica cilindrica di precisione", holeProc: "Rettifica per interni o Alesatura fine" },
+          'H11/c11': { label: "Gioco molto ampio, montaggi grossolani (H11/c11)" },
+          'H9/d9': { label: "Rotante libero, gioco ampio (H9/d9)" },
+          'H8/f7': { label: "Rotante preciso, perni lubrificati (H8/f7)" },
+          'H8/h7': { label: "Scorrevole di posizionamento, precisione media (H8/h7)" },
+          'H7/n6': { label: "Incerto stretto / Montaggio a pressa (H7/n6)" },
+          'H7/r6': { label: "Interferenza media / Montaggio a pressa (H7/r6)" },
+          'H7/s6': { label: "Interferenza forte / Calettamento a caldo (H7/s6)" },
+          'C11/h11': { label: "Gioco molto ampio, albero base (C11/h11)" },
+          'D9/h9': { label: "Rotante libero, albero base (D9/h9)" },
+          'F8/h7': { label: "Rotante preciso, albero base (F8/h7)" },
+          'G7/h6': { label: "Scorrevole di precisione, albero base (G7/h6)" },
+          'K7/h6': { label: "Incerto, albero base (K7/h6)" },
+          'N7/h6': { label: "Incerto stretto, albero base (N7/h6)" },
+          'P7/h6': { label: "Interferenza leggera, albero base (P7/h6)" },
+          'S7/h6': { label: "Interferenza forte, albero base (S7/h6)" }
         },
+        fitProcShaft: { 5: "Rettifica fine / Lappatura", 6: "Rettifica cilindrica", 7: "Rettifica / Tornitura di precisione", 8: "Tornitura di finitura", 9: "Tornitura", 10: "Tornitura / Barra trafilata", 11: "Tornitura di sgrossatura / Barra trafilata" },
+        fitProcHole: { 6: "Rettifica interna / Levigatura", 7: "Alesatura di precisione / Barenatura fine", 8: "Alesatura / Barenatura", 9: "Barenatura / Alesatura", 10: "Foratura e barenatura", 11: "Foratura" },
         serviceFactors: {
           '1.2': "1.2 - Uniforme (Motore elettrico, carico continuo regolare)",
           '1.5': "1.5 - Urti moderati (Pompe, nastri trasportatori, ventilatori)",
@@ -3261,6 +3323,8 @@
 
     document.getElementById('nominalDiameter').addEventListener('input', () => { if (typeof calculateFits === 'function') calculateFits(); });
     document.getElementById('fitType').addEventListener('change', () => { if (typeof calculateFits === 'function') calculateFits(); });
+    ['fitHoleLetter', 'fitHoleGrade', 'fitShaftLetter', 'fitShaftGrade'].forEach(id => document.getElementById(id)?.addEventListener('change', () => { if (typeof fitsCustomChanged === 'function') fitsCustomChanged(); }));
+    document.getElementById('reverseBasis')?.addEventListener('change', () => { if (typeof calculateFits === 'function') calculateFits(); });
     document.getElementById('modeDirect').addEventListener('click', () => setMode('direct'));
     document.getElementById('modeReverse').addEventListener('click', () => setMode('reverse'));
     document.getElementById('reverseFitNature').addEventListener('change', () => { if (typeof calculateFits === 'function') calculateFits(); });

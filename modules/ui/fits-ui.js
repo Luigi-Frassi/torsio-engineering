@@ -4,19 +4,86 @@
 // draws the tolerance-zone SVG and the comparison table.
 // ==========================================
 
+// Text of a fit: description, machining of hole and shaft. Fits without their own text (custom
+// combinations) take the description from the kind and the machining from the IT grade.
+function fitText(fit, t) {
+  t = t || translations[currentLang];
+  const own = (t.fits && t.fits[fit]) || {}, p = parseFit(fit);
+  return {
+    label: own.label || fit,
+    shaftProc: own.shaftProc || (p && t.fitProcShaft ? t.fitProcShaft[p.shaft.grade] : '') || '--',
+    holeProc: own.holeProc || (p && t.fitProcHole ? t.fitProcHole[p.hole.grade] : '') || '--'
+  };
+}
+
+// Makes sure the menu has an entry for the fit (custom combinations get one in their own group)
+function fitsEnsureOption(fit) {
+  const select = document.getElementById('fitType');
+  if (!select || !isValidFit(fit)) return false;
+  if (![...select.options].some(o => o.value === fit)) {
+    const t = translations[currentLang];
+    let g = select.querySelector('optgroup[data-g="custom"]');
+    if (!g) { g = document.createElement('optgroup'); g.dataset.g = 'custom'; g.label = t.fitGroupCustom || 'Custom'; select.appendChild(g); }
+    g.innerHTML = '';
+    const opt = document.createElement('option');
+    opt.value = fit; opt.innerText = fit;
+    g.appendChild(opt);
+  }
+  select.value = fit;
+  return true;
+}
+
 function populateSelect() {
   const select = document.getElementById('fitType');
   if (!select) return;
   const cur = select.value || 'H7/g6';
   select.innerHTML = '';
-  const t = translations[currentLang].fits;
-  for (const [key, val] of Object.entries(t)) {
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.innerText = val.label;
-    if (key === cur) opt.selected = true;
-    select.appendChild(opt);
-  }
+  const t = translations[currentLang];
+  [['hole', fitKeysHole, t.fitGroupHole], ['shaft', fitKeysShaft, t.fitGroupShaft]].forEach(([g, keys, label]) => {
+    const og = document.createElement('optgroup');
+    og.dataset.g = g; og.label = label || g;
+    keys.forEach(key => {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.innerText = fitText(key, t).label;
+      og.appendChild(opt);
+    });
+    select.appendChild(og);
+  });
+  if (!fitsEnsureOption(cur)) select.value = 'H7/g6';
+  fitsPopulateCustom();
+}
+
+// The four small menus of the custom combination (deviation letter and grade of hole and shaft)
+function fitsPopulateCustom() {
+  const fill = (id, vals, lab) => {
+    const el = document.getElementById(id);
+    if (!el || el.options.length) return;
+    vals.forEach(v => { const o = document.createElement('option'); o.value = String(v); o.innerText = lab ? lab(v) : String(v); el.appendChild(o); });
+  };
+  fill('fitHoleLetter', ISO_HOLE_LETTERS);
+  fill('fitHoleGrade', ISO_GRADES_HOLE);
+  fill('fitShaftLetter', ISO_SHAFT_LETTERS);
+  fill('fitShaftGrade', ISO_GRADES_SHAFT);
+  fitsSyncCustom();
+}
+
+// Custom menus follow the fit chosen in the main menu
+function fitsSyncCustom() {
+  const p = parseFit(document.getElementById('fitType')?.value);
+  if (!p) return;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = String(v); };
+  set('fitHoleLetter', p.hole.letter); set('fitHoleGrade', p.hole.grade);
+  set('fitShaftLetter', p.shaft.letter); set('fitShaftGrade', p.shaft.grade);
+}
+
+// A change in the custom menus: the composed fit becomes the current one
+function fitsCustomChanged() {
+  const v = id => document.getElementById(id)?.value;
+  const fit = `${v('fitHoleLetter')}${v('fitHoleGrade')}/${v('fitShaftLetter')}${v('fitShaftGrade')}`;
+  if (!fitsEnsureOption(fit)) return;
+  if (currentMode === 'reverse') setMode('direct');
+  calculateFits();
 }
 
 function formatDeviation(valMicron) {
@@ -63,14 +130,14 @@ function drawToleranceChart(es_h, ei_h, es_s, ei_s) {
   svg.innerHTML += `
     <rect x="180" y="${hTop}" width="100" height="${hHeight}" fill="rgba(47,102,179, 0.25)" stroke="#2f66b3" stroke-width="2" rx="4" />
     <text x="230" y="${hTop - 8}" fill="#2f66b3" font-size="11" font-weight="bold" text-anchor="middle">${formatDeviation(es_h)}</text>
-    <text x="230" y="${hBottom + 16}" fill="#2f66b3" font-size="11" text-anchor="middle">${formatDeviation(0)}</text>
-    <text x="230" y="${hTop + (hHeight / 2) + 4}" fill="#22211f" font-size="12" font-weight="bold" text-anchor="middle">${holeText} (H7)</text>
+    <text x="230" y="${hBottom + 16}" fill="#2f66b3" font-size="11" text-anchor="middle">${formatDeviation(ei_h)}</text>
+    <text x="230" y="${hTop + (hHeight / 2) + 4}" fill="#22211f" font-size="12" font-weight="bold" text-anchor="middle">${holeText} (${(document.getElementById('holeClassLabel')?.innerText || 'H7')})</text>
   `;
 
   const sTop = yForVal(es_s);
   const sBottom = yForVal(ei_s);
   const sHeight = Math.max(Math.abs(sBottom - sTop), 2);
-  const shaftClass = document.getElementById('shaftClassLabel').innerText.toUpperCase();
+  const shaftClass = document.getElementById('shaftClassLabel').innerText;
   const shaftText = currentLang === 'it' ? 'ALBERO' : 'SHAFT';
   svg.innerHTML += `
     <rect x="320" y="${sTop}" width="100" height="${sHeight}" fill="rgba(183,121,31, 0.25)" stroke="#b7791f" stroke-width="2" rx="4" />
@@ -86,7 +153,9 @@ function updateComparisonTable(dMm, step, activeFit) {
   tbody.innerHTML = '';
   const t = translations[currentLang];
 
-  fitKeys.forEach(fitKey => {
+  const keys = (fitBasis(activeFit) === 'shaft' ? fitKeysShaft : fitKeysHole).slice();
+  if (!keys.includes(activeFit) && isValidFit(activeFit)) keys.push(activeFit);
+  keys.forEach(fitKey => {
     const a = analyzeFit(step, fitKey);
     const devs = a.devs;
     const maxPlay = a.maxPlay;
@@ -104,7 +173,7 @@ function updateComparisonTable(dMm, step, activeFit) {
     } else {
       typeStr = t.transitionFit;
       badgeColor = "text-amber-400 bg-amber-500/10 border border-amber-500/30";
-      minMaxStr = `-${formatDeviation(Math.abs(minPlay))} / +${formatDeviation(maxPlay)}`;
+      minMaxStr = `${formatDeviation(minPlay)} / ${formatDeviation(maxPlay)}`;
     }
 
     const isSelected = (fitKey === activeFit);
@@ -112,6 +181,7 @@ function updateComparisonTable(dMm, step, activeFit) {
     row.className = `cursor-pointer transition-colors ${isSelected ? 'bg-blue-600/20 text-white font-bold' : 'hover:bg-slate-800/60'}`;
     row.innerHTML = `
       <td class="p-2.5 font-sans font-semibold">${fitKey}</td>
+      <td class="p-2.5">${formatDeviation(a.ES_H)} / ${formatDeviation(a.EI_H)}</td>
       <td class="p-2.5">${formatDeviation(devs.es)} / ${formatDeviation(devs.ei)}</td>
       <td class="p-2.5 font-sans"><span class="px-2 py-0.5 rounded text-[10px] ${badgeColor}">${typeStr}</span></td>
       <td class="p-2.5">${minMaxStr}</td>
@@ -122,7 +192,7 @@ function updateComparisonTable(dMm, step, activeFit) {
       </td>
     `;
     row.addEventListener('click', () => {
-      document.getElementById('fitType').value = fitKey;
+      fitsEnsureOption(fitKey);
       if (currentMode === 'reverse') setMode('direct');
       calculateFits();
     });
@@ -169,6 +239,7 @@ function calculateFits() {
   stepInfoEl.innerText = stepLabel;
 
   let fit = document.getElementById('fitType').value;
+  if (!isValidFit(fit)) { fit = 'H7/g6'; fitsEnsureOption(fit); }
 
   if (currentMode === 'reverse') {
     const nature = document.getElementById('reverseFitNature').value;
@@ -176,9 +247,9 @@ function calculateFits() {
     let targetMicron = currentUnit === 'metric' ? targetVal : targetVal * 25.4;
     if (nature === 'interference') targetMicron = -Math.abs(targetMicron);
 
-    const match = reverseLookupFit(step, targetMicron);
+    const match = reverseLookupFit(step, targetMicron, document.getElementById('reverseBasis')?.value || 'hole');
     fit = match.fit;
-    document.getElementById('fitType').value = fit;
+    fitsEnsureOption(fit);
     const feedbackEl = document.getElementById('reverseMatchFeedback');
     feedbackEl.innerText = `${t.closestMatch} ${fit} (${t.meanPlay} ${formatDeviation(match.meanPlay)})`;
   }
@@ -189,9 +260,12 @@ function calculateFits() {
   const EI_H = a.EI_H;
   const devs_s = a.devs;
 
+  fitsSyncCustom();
   document.getElementById('shaftClassLabel').innerText = a.shaftClass;
-  document.getElementById('holeDisp').innerText = `${formatDeviation(ES_H)} / ${formatDeviation(0)}`;
-  document.getElementById('holeDims').innerText = `${formatDim(dMm, 0)} / ${formatDim(dMm, ES_H)}`;
+  const hl = document.getElementById('holeClassLabel');
+  if (hl) hl.innerText = a.holeClass;
+  document.getElementById('holeDisp').innerText = `${formatDeviation(ES_H)} / ${formatDeviation(EI_H)}`;
+  document.getElementById('holeDims').innerText = `${formatDim(dMm, EI_H)} / ${formatDim(dMm, ES_H)}`;
 
   document.getElementById('shaftDisp').innerText = `${formatDeviation(devs_s.es)} / ${formatDeviation(devs_s.ei)}`;
   document.getElementById('shaftDims').innerText = `${formatDim(dMm, devs_s.ei)} / ${formatDim(dMm, devs_s.es)}`;
@@ -215,11 +289,11 @@ function calculateFits() {
     catElem.innerText = t.transitionFit;
   }
 
-  const fitData = t.fits[fit];
+  const fitData = fitText(fit, t), ra = fitRa(fit);
   document.getElementById('shaftProcess').innerText = fitData.shaftProc;
-  document.getElementById('shaftRa').innerText = fitsRa[fit].shaftRa;
+  document.getElementById('shaftRa').innerText = ra.shaftRa;
   document.getElementById('holeProcess').innerText = fitData.holeProc;
-  document.getElementById('holeRa').innerText = fitsRa[fit].holeRa;
+  document.getElementById('holeRa').innerText = ra.holeRa;
 
   drawToleranceChart(ES_H, EI_H, devs_s.es, devs_s.ei);
   updateComparisonTable(dMm, step, fit);
