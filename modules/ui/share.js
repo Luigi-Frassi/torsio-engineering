@@ -18,7 +18,8 @@ const SHARE_FIELDS = {
     ...[1, 2, 3, 4].flatMap(i => ['X', 'D', 'DD', 'R', 'Key'].map(f => 'shaftRs' + i + f)),
     ...[1, 2, 3, 4].flatMap(i => ['Type', 'X', 'D', 'Helix', 'Torque', 'Share', 'DirMode', 'Angle', 'FtDir', 'FrDir', 'FaDir', 'Fv', 'Fh', 'Fa', 'E'].map(f => 'shaftEl' + i + f))],
   frames: ['frMat', 'frE', 'frSy', 'frRho', 'frX', 'frXb', 'frBeta', 'frDefl', 'frMode'],
-  bolts: ['btLoad', 'btF', 'btMt', 'btDc', 'btMint', 'btF0', 'btX', 'btCls', 'btSize', 'btFt', 'btM', 'btMs', 'btPe', 'btH', 'btE', 'bsD', 'bsP', 'bsH', 'bsBeta', 'bsF', 'bsN', 'bsSy']
+  bolts: ['btLoad', 'btF', 'btMt', 'btDc', 'btMint', 'btF0', 'btX', 'btCls', 'btSize', 'btFt', 'btM', 'btMs', 'btPe', 'btH', 'btE', 'bsD', 'bsP', 'bsH', 'bsBeta', 'bsF', 'bsN', 'bsSy'],
+  discs: []
 };
 // Inputs whose value depends on the unit system: always written when the unit is not metric
 const SHARE_UNIT_FIELDS = ['nominalDiameter', 'reverseTargetVal', 'desiredCenter'];
@@ -60,6 +61,9 @@ function readShareState() {
     s.fs = typeof frEncodeModel === 'function' ? frEncodeModel() : '';   // the whole structure in one parameter
   } else if (activeModule === 'bolts') {
     s.btm = typeof currentBoltMode !== 'undefined' ? currentBoltMode : 'design';
+  } else if (activeModule === 'discs') {
+    s.dsmode = typeof dsMode !== 'undefined' ? dsMode : 'stack';
+    s.dsm = typeof dsEncode === 'function' ? dsEncode() : '';   // the whole model in one parameter
   }
   return s;
 }
@@ -99,7 +103,7 @@ function syncShareUrl() {
 // Apply a state read from the URL. Unknown keys and invalid values are ignored.
 function applyShareState(q) {
   const m = q.get('m');
-  if (!['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts'].includes(m)) return false;
+  if (!['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs'].includes(m)) return false;
 
   const lang = q.get('lang');
   if (lang === 'it' || lang === 'en') updateLanguage(lang);
@@ -154,6 +158,9 @@ function applyShareState(q) {
   } else if (m === 'bolts') {
     const bm = q.get('btm');
     if (typeof setBoltMode === 'function') setBoltMode(['design', 'torque', 'screw'].includes(bm) ? bm : 'design');
+  } else if (m === 'discs') {
+    if (q.get('dsm') && typeof dsDecode === 'function') { const M = dsDecode(q.get('dsm')); if (M) dsModel = M; if (typeof dsRenderInputs === 'function') dsRenderInputs(); }
+    if (typeof setDiscMode === 'function') setDiscMode(q.get('dsmode') === 'uni' ? 'uni' : 'stack');
   } else if (m === 'frames') {
     if (q.get('fs') && typeof frDecodeModel === 'function') frDecodeModel(q.get('fs'));
   } else if (m === 'shafts') {
@@ -224,7 +231,7 @@ function initShareLinks() {
       const lang = q.get('lang');
       if (lang === 'it' || lang === 'en') updateLanguage(lang);
       const demo = q.get('demo');
-      if (demo && typeof loadDemoPreset === 'function' && ['transmission', 'shaftExam', 'helical50kw', 'spur5kw', 'bearingFit', 'frames', 'boltsExam'].includes(demo)) loadDemoPreset(demo);
+      if (demo && typeof loadDemoPreset === 'function' && ['transmission', 'shaftExam', 'helical50kw', 'spur5kw', 'bearingFit', 'frames', 'boltsExam', 'discsExam'].includes(demo)) loadDemoPreset(demo);
     }
   } catch (e) { console.error(e); }
 

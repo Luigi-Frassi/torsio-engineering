@@ -16,7 +16,7 @@ const vm = require('vm');
 
 const ctx = { Math, console };
 vm.createContext(ctx);
-for (const f of ['core/gears-core.js', 'core/fits-core.js', 'core/belts-core.js', 'core/shafts-core.js', 'core/frames-core.js', 'core/dxf-core.js', 'core/bolts-core.js', 'core/materials-core.js']) {
+for (const f of ['core/gears-core.js', 'core/fits-core.js', 'core/belts-core.js', 'core/shafts-core.js', 'core/frames-core.js', 'core/dxf-core.js', 'core/bolts-core.js', 'core/materials-core.js', 'core/discs-core.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'modules', f), 'utf8'), ctx, { filename: f });
 }
 const { computeGearWmax, computeGearDesign, getHelicalFactors, getLewisFactor } =
@@ -975,6 +975,62 @@ for (const [a, z1, z2, phi, g1, g2, psi] of [
   rel('2015-02-02  morsa: angolo d\'elica α [°]', v15.alpha * 180 / Math.PI, 3.8, 0.005);
   rel('morsa: con β = 0 il fattore di filetto è tan(α + φ)', v15.k1, Math.tan(v15.alpha + Math.atan(0.08)), 1e-12);
   abs('morsa: vite autobloccante (α = 3,8° < φ = 4,6°)', v15.selfLocking ? 1 : 0, 1, 0);
+}
+
+// ---------------------------------------------------------------------------
+// Dischi e calettamenti (Costruzione di Macchine): dischi a spessore costante, calettamento, velocità di distacco
+// ---------------------------------------------------------------------------
+{
+  const D = vm.runInContext('({ discsAnalyze, discStackSolve, rpmToRad })', ctx);
+  const mat = (E, rho, sy = 0) => ({ E, nu: 0.3, rho, alpha: 12e-6, sy });
+  const two = (n, extra = {}) => D.discsAnalyze({ rings: [{ Ri: 250, Re: 380, h: 10, ...mat(200000, 7800) }, { Ri: 380, Re: 540, h: 10, ...mat(200000, 7800) }], iRad: [0.0012 * 380], n, ...extra });
+  // 11/7/2015 es. 2: due dischi d'acciaio calettati, Ri = 250, Ro = 380, Re = 540 mm, iR = 0,0012
+  const a = two(5000);
+  rel('2015-07-11  pressione di calettamento a fermo [MPa]', a.rest.pairs[0].pOut, 43.73, 0.002);
+  rel('2015-07-11  σeq disco interno in Ri a fermo [MPa]', a.rest.rings[0].inner.seq, 154, 0.005);
+  rel('2015-07-11  σeq disco esterno in Ro a fermo [MPa]', a.rest.rings[1].inner.seq, 156, 0.005);
+  rel('2015-07-11  velocità di distacco [rad/s]', a.sep[0].omega, 403.8, 0.005);
+  abs('2015-07-11  a 5000 giri/min i dischi sono staccati', a.service.pairs[0].open ? 1 : 0, 1, 0);
+  rel('2015-07-11  5000 giri/min: σc disco interno in Ri [MPa]', a.service.rings[0].inner.sc, 278, 0.005);
+  rel('2015-07-11  5000 giri/min: σc disco esterno in Ro [MPa]', a.service.rings[1].inner.sc, 568.5, 0.002);
+  const b = two(200 * 60 / (2 * Math.PI));
+  rel('2015-07-11  ω = 200 rad/s: pressione di calettamento [MPa]', b.service.pairs[0].pOut, 33, 0.005);
+  rel('2015-07-11  ω = 200 rad/s: σeq disco interno in Ri [MPa]', b.service.rings[0].inner.seq, 75.78, 0.002);
+  rel('2015-07-11  ω = 200 rad/s: σc disco esterno in Ro [MPa]', b.service.rings[1].inner.sc, 180.08, 0.005, 'a mano p = 33 MPa arrotondata');
+  // 10/2/2017 es. 2: disco d'alluminio Ø600 calettato su albero pieno Ø200, iR = 0,001; inerzia dell'albero trascurata
+  const al = { E: 70000, nu: 0.3, rho: 2700, alpha: 23e-6, sy: 0 };
+  const rot = extra => D.discsAnalyze({ rings: [{ Ri: 0, Re: 100, h: 50, ...mat(200000, 7800), noInertia: true }, { Ri: 100, Re: 300, h: 50, ...al }], iRad: [0.1], n: 1000, ...extra });
+  const c = rot({});
+  rel('2017-02-10  pressione di calettamento [MPa]', c.rest.pairs[0].pOut, 39.2, 0.01, 'a mano coefficiente 2,2·10⁻¹² arrotondato');
+  rel('2017-02-10  σeq del disco in Ro [MPa]', c.rest.rings[1].inner.seq, 76.3, 0.01);
+  rel('2017-02-10  velocità di distacco [rad/s]', c.sep[0].omega, 584, 0.002);
+  const cb = rot({ band: { sigma: 500, t: 20 } });
+  rel('2017-02-10  fascia di composito: pressione sul disco p = σ·t/R [MPa]', cb.PeBand, 33.3, 0.002);
+  rel('2017-02-10  fascia di composito: velocità di distacco [rad/s]', cb.sep[0].omega, 830, 0.015, 'a mano u(Ro) = −1·10⁻⁴ m arrotondato');
+  // esercizio in classe 1: albero cavo (Ri 100) e mozzo (Re 600), Ro = 200, h = 60, 500 kW a 1000 giri/min, f = 0,15, X = 3
+  const T1 = 500e3 / D.rpmToRad(1000) * 1000;
+  const e1 = D.discsAnalyze({ rings: [{ Ri: 100, Re: 200, h: 60, ...mat(200000, 7800) }, { Ri: 200, Re: 600, h: 60, ...mat(200000, 7800) }], iRad: [0.02], n: 1000, torque: { k: 0, T: T1, f: 0.15, X: 1 } });
+  rel('classe 1  pressione per trasmettere la coppia in rotazione [MPa]', e1.design.pReqOut, 2.1, 0.01);
+  rel('classe 1  perdita di pressione per la rotazione σr^ω(Ro) [MPa]', e1.design.loss / 60, 8.5, 0.005);
+  const e1x = D.discsAnalyze({ rings: e1.rest.rings.map(r => r.el), iRad: [0.02], n: 1000, torque: { k: 0, T: T1, f: 0.15, X: 3 } });
+  rel('classe 1  pressione a fermo necessaria con X = 3 [MPa]', e1x.design.pRestNeedOut, 15, 0.015, 'a mano 3·2,1 + 8,5 arrotondato a 15');
+  rel('classe 1  interferenza relativa necessaria', e1x.design.iRNeed, 2.18e-4, 0.015, 'idem');
+  // esercizio in classe 2: mozzo d'acciaio (Ri 150, Ro 230, h 60) e anello d'alluminio (Re 290, h 80): interferenza massima elastica
+  const e2 = D.discsAnalyze({ rings: [{ Ri: 150, Re: 230, h: 60, E: 210000, nu: 0.3, rho: 7800, alpha: 12e-6, sy: 460 }, { Ri: 230, Re: 290, h: 80, E: 70000, nu: 0.3, rho: 2700, alpha: 23e-6, sy: 280 }], iRad: [0.0046 * 230], n: 0 });
+  rel('classe 2  pressione sull\'alluminio al limite elastico [MPa]', e2.iMax[0].pOut, 56.5, 0.005);
+  rel('classe 2  pressione sull\'acciaio (p·h uguale) [MPa]', e2.iMax[0].pIn, 75.3, 0.005);
+  abs('classe 2  governa l\'anello d\'alluminio', e2.iMax[0].ring, 1, 0);
+  rel('classe 2  interferenza relativa massima', e2.iMax[0].iR, 4.6e-3, 0.012, 'a mano spostamenti arrotondati');
+  const e2m = D.discStackSolve({ rings: e2.rest.rings.map(r => r.el), iRad: [e2.iMax[0].i] }, { omega: 0 });
+  rel('classe 2  σeq dell\'acciaio in Ri al limite dell\'alluminio [MPa]', e2m.rings[0].inner.seq, 262, 0.005);
+  rel('classe 2  velocità di distacco con iR = 0,0046 [rad/s]', e2.sep[0].omega, 1533, 0.015, 'a mano coefficienti 7 e 2,5·10⁻¹⁰ arrotondati');
+  // domanda d'orale: forzamento albero Ø50 in mozzo Ø100 (C45, σs = 340 MPa), p = 70 MPa, f = 0,15, Mt = 2830 N·m
+  const f50 = d => D.discsAnalyze({ rings: [{ Ri: 0, Re: 25, h: 68.6, ...mat(200000, 7800) }, { Ri: 25, Re: 50, h: 68.6, ...mat(200000, 7800, 340) }], iRad: [d], n: 0 });
+  const o1 = f50(9.33e-4 * 25);
+  rel('orale  σeq del mozzo in Ro = 2,34·p', o1.rest.rings[1].inner.seq / o1.rest.pairs[0].pOut, 2.34, 0.005);
+  rel('orale  pressione massima con il mozzo al limite [MPa]', o1.iMax[0].pOut, 145.3, 0.005);
+  rel('orale  iR = 9,33·10⁻⁴ dà p = 70 MPa', o1.rest.pairs[0].pOut, 70, 0.002);
+  rel('orale  coppia trasmissibile con L = 68,6 mm [N·m]', o1.torqueAt(o1.rest, 0, 0.15) / 1000, 2830, 0.003);
 }
 
 let failed = 0;

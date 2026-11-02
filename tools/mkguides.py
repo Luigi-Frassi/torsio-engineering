@@ -219,7 +219,7 @@ def page(P, lang):
            'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'author': {'@type': 'Person', 'name': 'Luigi Frassi'}},
           {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in d['faq']]}]
     others = ''.join(f'<a href="/{Q[lang]["path"]}">{Q[lang]["short"]}<span>{Q[lang]["card"]}</span></a>' for Q in PAGES if Q is not P)
-    others += f'<a href="/metodo.html?lang={lang}">{t["method"]}<span>{"387 hand-worked test cases" if lang == "en" else "387 casi di prova svolti a mano"}</span></a>'
+    others += f'<a href="/metodo.html?lang={lang}">{t["method"]}<span>{"416 hand-worked test cases" if lang == "en" else "416 casi di prova svolti a mano"}</span></a>'
     h = f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>

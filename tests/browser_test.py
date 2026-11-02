@@ -352,6 +352,29 @@ with sync_playwright() as p:
         tx = rr.evaluate("document.body.textContent")
         check('  relazione ' + q.split('&')[0][3:] + ': ' + ', '.join(keys), all(k in tx for k in keys), str([k for k in keys if k not in tx]))
 
+    # dischi e calettamenti: esempio d'esame, passaggi, link condiviso, relazione, accoppiamenti → calettamento, uniforme resistenza
+    pd = new_page(); pd.goto(BASE + '?demo=discsExam&lang=it'); settle(pd); pd.wait_for_timeout(600)
+    dv = pd.evaluate("[activeModule, lastDiscState.res.rest.pairs[0].pOut, lastDiscState.res.sep[0].omega, lastDiscState.res.service.pairs[0].open, document.querySelectorAll('#dsSteps .ds-step').length, document.querySelectorAll('#dsSteps .katex').length]")
+    check('dischi: esempio 11/7/2015, p = 43,73 MPa, distacco 403,5 rad/s, staccati a 5000 rpm, passaggi con formule', dv[0] == 'discs' and abs(dv[1] - 43.73) < 0.01 and abs(dv[2] - 403.5) < 0.5 and dv[3] and dv[4] >= 6 and dv[5] > 10, str(dv))
+    pd.evaluate("dsModel.n = 200 * 60 / (2 * Math.PI); dsRenderInputs(); calculateDiscs(); syncShareUrl()")
+    pd2 = new_page(); pd2.goto(pd.url); settle(pd2)
+    check('  il link riapre lo stesso calcolo (ω = 200 rad/s, p = 33 MPa)', abs(pd2.evaluate("lastDiscState.res.service.pairs[0].pOut") - 32.99) < 0.02 and pd2.evaluate("dsModel.rings[0].name") == 'disco interno', pd2.url[-80:]); pd2.close()
+    pd.click('#reportBtn')
+    with ctx.expect_page() as rpd:
+        pd.click('#reportMenuThis')
+    rd = rpd.value; rd.wait_for_load_state(); rd.wait_for_function("document.querySelector('.page') !== null")
+    tx = rd.evaluate("document.body.textContent")
+    keys = ['Dischi, tubi spessi e calettamenti', 'Passaggi del calcolo', 'Velocità di distacco', '43,73', 'Tensioni nei punti significativi']
+    check('  relazione dei dischi: ' + ', '.join(keys), all(k in tx for k in keys) and rd.evaluate("document.querySelectorAll('.katex').length") > 10, str([k for k in keys if k not in tx])); rd.close()
+    pd.evaluate("setDiscMode('uni')"); settle(pd)
+    check('  disco a uniforme resistenza: più spesso al centro', pd.evaluate("lastDiscState.uni && lastDiscState.r.h0 > lastDiscState.r.hE && document.getElementById('duSteps').innerText.length > 20")); pd.close()
+    pf = new_page(); pf.goto(BASE + '?m=fits&lang=it&nominalDiameter=40&fitType=H7%2Fs6'); settle(pf); pf.evaluate("linkRenderActive()")
+    pf.click('#linkBar_fits button[data-link="fitDiscs"]'); settle(pf)
+    fd = pf.evaluate("[activeModule, dsModel.ifs[0].mode, dsModel.ifs[0].fit, Math.round(dsInterference(0).i * 2000), dsRadii().Re[0]]")
+    check('  accoppiamenti → calettamento: H7/s6 su Ø40, interferenza massima 59 µm', fd == ['discs', 'iso', 'H7/s6', 59, 20], str(fd))
+    pf.click('#linkBanner [data-link-undo]'); settle(pf)
+    check('  annulla: torna il modello di prima', pf.evaluate("dsModel.ifs[0].mode") == 'iR'); pf.close()
+
     # relazione della trasmissione completa: preset collegato, capitoli, controlli di coerenza
     pt = new_page(); pt.goto(BASE + '?demo=transmission&lang=it'); settle(pt)
     st = pt.evaluate("[document.getElementById('shaftSpeed').value, document.getElementById('gearSpeed').value, document.getElementById('nominalDiameter').value, document.getElementById('shaftEl3D').value]")
@@ -539,7 +562,7 @@ with sync_playwright() as p:
     check('  la relazione dell\'albero cita l\'acciaio della tabella', '42CrMo4 +QT' in rm.evaluate("document.body.textContent")); rm.close(); pm.close()
     pmet = new_page(); pmet.goto(HOME + 'metodo.html?lang=it'); pmet.wait_for_timeout(800)
     mt_it = pmet.evaluate("[document.title, document.querySelectorAll('.katex').length, [...document.querySelectorAll('.tbl tbody tr')].length, document.querySelector('.tbl tfoot .n').innerText]")
-    check('pagina metodo: titolo, formule KaTeX, tabella dei moduli, totale casi', 'Metodo' in mt_it[0] and mt_it[1] >= 8 and mt_it[2] == 8 and mt_it[3] == '387', str(mt_it))
+    check('pagina metodo: titolo, formule KaTeX, tabella dei moduli, totale casi', 'Metodo' in mt_it[0] and mt_it[1] >= 8 and mt_it[2] == 9 and mt_it[3] == '416', str(mt_it))
     pmet.click('.lang button[data-lang="en"]'); pmet.wait_for_timeout(200)
     check('  versione inglese', pmet.evaluate("document.title.startsWith('Method') && document.querySelector('h1').innerText === 'Method and validation' && document.querySelector('[data-app]').href.endsWith('lang=en')"))
     pmet.close()
@@ -547,7 +570,7 @@ with sync_playwright() as p:
     check('home: i vecchi link ai bulloni vanno al calcolatore', 'app.html?m=bolts' in ph.url, ph.url)
     ph.goto(HOME); ph.wait_for_timeout(300)
     meta = ph.evaluate("[document.querySelector('meta[property=\"og:image\"]')?.content, [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === 'metodo.html'), document.querySelector('.facts .n').innerText]")
-    check('  anteprima per i social, link alla pagina metodo, 387 casi', meta[0].endswith('og-image.png') and meta[1] and meta[2] == '387', str(meta)); ph.close()
+    check('  anteprima per i social, link alla pagina metodo, 416 casi', meta[0].endswith('og-image.png') and meta[1] and meta[2] == '416', str(meta)); ph.close()
 
     # --- phone (390 px): report menu inside the screen, report without sideways overflow
     mctx = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
@@ -701,7 +724,7 @@ with sync_playwright() as p:
     sp = sctx.new_page(); sp.on('pageerror', lambda e: errors.append(str(e)))
     sp.goto(BASE + '?lang=it'); settle(sp)
     st = sp.evaluate("[document.body.classList.contains('start-on'), document.querySelectorAll('#startView [data-start]').length, document.getElementById('moduleTitle').textContent, getComputedStyle(document.getElementById('moduleFitsSection')).display]")
-    check('schermata iniziale: sei stazioni, titolo, moduli nascosti', st[0] and st[1] == 6 and 'stazione' in st[2] and st[3] == 'none', str(st))
+    check('schermata iniziale: sette stazioni, titolo, moduli nascosti', st[0] and st[1] == 7 and 'stazione' in st[2] and st[3] == 'none', str(st))
     sp.click('#startView [data-start="shafts"]'); settle(sp)
     check('  scegliendo una stazione si apre il modulo', sp.evaluate("!document.body.classList.contains('start-on') && activeModule === 'shafts' && !document.getElementById('startView')"))
     sp.goto(BASE + '?lang=it'); settle(sp); sp.click('#startView [data-start-demo="transmission"]'); settle(sp)

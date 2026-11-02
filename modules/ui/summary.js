@@ -5,7 +5,7 @@
 // (lastShaftSection, lastShaftBeam, lastGearState, lastBeltState, lastFitState, frResults, lastBoltState).
 // ============================================================================
 
-const SUM_CODES = { fits: 'F-01', belts: 'B-02', gears: 'G-03', shafts: 'S-04', frames: 'T-05', bolts: 'J-06' };
+const SUM_CODES = { fits: 'F-01', belts: 'B-02', gears: 'G-03', shafts: 'S-04', frames: 'T-05', bolts: 'J-06', discs: 'D-07' };
 
 const SUM_TXT = {
   it: {
@@ -16,6 +16,7 @@ const SUM_TXT = {
     be: { indic: 'indicativa, da confermare sul catalogo', C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
     fi: { hole: 'Foro', shaft: 'Albero', fit: 'Accoppiamento', d: 'Diametro nominale', kinds: { clearance: 'GIOCO', interference: 'INTERFERENZA', transition: 'INCERTO' }, play: 'gioco', inter: 'interferenza' },
     fr: { sec: 'Sezione scelta', mass: 'Peso', util: 'Utilizzo massimo', defl: 'Freccia massima', empty: 'Disegna la struttura', bars: 'travi', bar1: 'trave' },
+    ds: { pc: 'Pressione a fermo', pcs: 'Pressione in esercizio', sep: 'Velocità di distacco', seq: 'σeq massima', open: 'staccati', noSep: 'non si staccano', h0: 'Spessore al centro', he: 'Spessore al bordo', mass: 'Massa', uni: 'uniforme resistenza' },
     bo: { bolts: 'Viti', Ms: 'Coppia di serraggio', X: 'X vite', N: 'Precarico per vite', Fmax: 'Carico trasmissibile', screw: 'Vite di manovra', eta: 'Rendimento', lock: 'autobloccante', nolock: 'non autobloccante', perBolt: 'per vite', sep: 'il giunto si apre' }
   },
   en: {
@@ -26,6 +27,7 @@ const SUM_TXT = {
     be: { indic: 'indicative, confirm in the catalog', C: 'Exact centre distance', zb: 'Belt', w: 'Width', mesh: 'Teeth in mesh', teeth: 'teeth', geom: 'geometry only' },
     fi: { hole: 'Hole', shaft: 'Shaft', fit: 'Fit', d: 'Nominal diameter', kinds: { clearance: 'CLEARANCE', interference: 'INTERFERENCE', transition: 'TRANSITION' }, play: 'clearance', inter: 'interference' },
     fr: { sec: 'Chosen section', mass: 'Weight', util: 'Maximum utilisation', defl: 'Maximum deflection', empty: 'Draw the structure', bars: 'members', bar1: 'member' },
+    ds: { pc: 'Pressure at rest', pcs: 'Pressure in service', sep: 'Separation speed', seq: 'Max σeq', open: 'separated', noSep: 'no separation', h0: 'Centre thickness', he: 'Rim thickness', mass: 'Mass', uni: 'uniform strength' },
     bo: { bolts: 'Bolts', Ms: 'Tightening torque', X: 'Bolt X', N: 'Preload per bolt', Fmax: 'Transmissible load', screw: 'Power screw', eta: 'Efficiency', lock: 'self-locking', nolock: 'not self-locking', perBolt: 'per bolt', sep: 'the joint opens' }
   }
 };
@@ -46,6 +48,7 @@ function sumCards(mod) {
     if (mod === 'fits') return sumFits(t);
     if (mod === 'frames') return sumFrames(t);
     if (mod === 'bolts') return sumBolts(t);
+    if (mod === 'discs') return sumDiscs(t);
   } catch (e) { /* a module without a state yet */ }
   return { status: 'na', cards: [] };
 }
@@ -142,6 +145,25 @@ function sumFrames(t) {
     { k: t.fr.util, v: sumNum(util * 100, 0), u: '%', sub: '≤ 100 %', tone: util <= 1 + 1e-9 ? 'b' : 'r', bar: { x: 1 / Math.max(util, 1e-6), req: 1 } },
     { k: t.fr.defl, v: sumNum(ev.dmax, 1), u: 'mm', sub: deflMax ? `≤ ${sumNum(deflMax, 1)} mm` : '', tone: deflMax && ev.dmax > deflMax ? 'r' : 'k' }
   ] };
+}
+
+function sumDiscs(t) {
+  const s = typeof lastDiscState !== 'undefined' ? lastDiscState : null;
+  if (!s) return { status: 'na', cards: [] };
+  if (s.uni) return { status: 'info', cards: [
+    { k: t.ds.h0, v: sumNum(s.r.h0, 1), u: 'mm', sub: t.ds.uni, tone: 'y' }, { k: t.ds.he, v: sumNum(s.r.hE, 1), u: 'mm', sub: `R ${sumNum(s.Re, 0)} mm`, tone: 'k' },
+    { k: t.ds.mass, v: sumNum(s.r.mass, 1), u: 'kg', sub: `${sumNum(s.U.n, 0)} rpm`, tone: 'k' }] };
+  const { inp, res } = s, cards = [];
+  if (s.multi) {
+    const p = res.rest.pairs[0], q = res.service.pairs[0], sp = res.sep[0];
+    cards.push({ k: t.ds.pc, v: p.open ? t.ds.open : sumNum(p.pOut, 1), u: p.open ? '' : 'MPa', sub: `Ø ${sumNum(2 * p.R, 0)} mm`, tone: 'y' });
+    if (s.hasService) cards.push({ k: t.ds.pcs, v: q.open ? t.ds.open : sumNum(q.pOut, 1), u: q.open ? '' : 'MPa', sub: `${sumNum(inp.n, 0)} rpm`, tone: q.open ? 'r' : 'b' });
+    if (sp) cards.push({ k: t.ds.sep, v: sp.omega === null ? '—' : sumNum(sp.rpm, 0), u: sp.omega === null ? '' : 'rpm', sub: sp.omega === null ? t.ds.noSep : `${sumNum(sp.omega, 0)} rad/s`, tone: 'k' });
+  }
+  const S = s.hasService || !s.showRest ? res.service : res.rest, c = S.crit, anySy = inp.rings.some(r => r.sy > 0);
+  cards.push({ k: t.ds.seq, v: sumNum(c.seq, 1), u: 'MPa', sub: anySy ? `X ${sumNum(S.Xmin, 2)} · ${t.req} ${sumNum(inp.Xreq, 2)}` : `r ${sumNum(c.r, 1)} mm`, tone: anySy ? (S.Xmin >= inp.Xreq - 1e-9 ? 'b' : 'r') : 'k', bar: anySy ? { x: S.Xmin, req: inp.Xreq } : undefined });
+  const okAll = anySy ? [res.rest, res.service].every(x => x.Xmin >= inp.Xreq - 1e-9) : null;
+  return { status: okAll === null ? 'info' : okAll ? 'ok' : 'ko', cards: cards.slice(0, 4) };
 }
 
 function sumBolts(t) {
