@@ -111,6 +111,110 @@ const abs = (name, got, expected, tol, note = '') => cases.push({ name, got, exp
 }
 
 // ---------------------------------------------------------------------------
+// Appelli 2015–2024 (esercizio 1): potenza massima a pitting, progetto a uno o due stadi, Lewis.
+// σH ammissibile corretta per la durata come negli appunti: σ = σ_FL·(10⁷/N)^(3/20), N = 60·n·h.
+// ---------------------------------------------------------------------------
+{
+  const sigLife = (s, n, h) => s * Math.pow(1e7 / (60 * n * h), 3 / 20);
+  // 10/1/2015 tema 1: z 21/38, m 4, L 50, 750 rpm, σ_FL 900, h 5000; poi elicoidale z 15/27, mn 4, α 24,6°
+  rel('2015-01-10  σH corretta per 5000 h [MPa]', sigLife(900, 750, 5000), 564, 0.001);
+  rel('2015-01-10  W_max Hertz, denti diritti [kW]', wmax({ m_input: 4, L_mm: 50, z1: 21, z2: 38, n1: 750, sigmaH_lim: 564 }).P_kW_H, 13, 0.01);
+  rel('2015-01-10  elicoidale mn 4, α 24,6°: stessa potenza con L = 50 mm [kW]', wmax({ toothType: 'helical', m_input: 4, L_mm: 50, z1: 15, z2: 27, n1: 750, alphaDeg: 24.6, sigmaH_lim: 564 }).P_kW_H, 13, 0.015);
+  // 12/2/2015 tema 1: elicoidale 80 kW, 2000 rpm, σ_FL 950, h 2000
+  rel('2015-02-12  σH corretta per 2000 h [MPa]', sigLife(950, 2000, 2000), 589.78, 0.001);
+  // 6/6/2015: z 23/39, m 5, L 60, 650 rpm, σ_FL 1250, h 10000; poi elicoidale z 10/17, α 34°, mt 9,14
+  rel('2015-06-06  σH corretta per 10000 h [MPa]', sigLife(1250, 650, 10000), 721.52, 0.001);
+  rel('2015-06-06  W_max Hertz, denti diritti [kW]', wmax({ m_input: 5, L_mm: 60, z1: 23, z2: 39, n1: 650, sigmaH_lim: 721.52 }).P_kW_H, 40, 0.02, 'a mano 40 kW arrotondato');
+  rel('2015-06-06  elicoidale α 34°, mt 9,14: stessa potenza con L = 60 mm [kW]', wmax({ toothType: 'helical', m_input: 9.14 * Math.cos(34 * Math.PI / 180), L_mm: 60, z1: 10, z2: 17, n1: 650, alphaDeg: 34, sigmaH_lim: 721.52 }).P_kW_H, 40, 0.01);
+  // 11/7/2015: due stadi uguali z 24/61, m 5, 150 kW, 1500 rpm, σ_FL 1350, h 2500 (σ diversa per i due stadi)
+  const n3 = 1500 * 24 / 61;
+  rel('2015-07-11  σH corretta I stadio [MPa]', sigLife(1350, 1500, 2500), 846.26, 0.001);
+  const g1 = design({ z1: 24, z2: 61, n1: 1500, W_kW: 150, sigmaH: sigLife(1350, 1500, 2500), m: 5 });
+  rel('2015-07-11  I stadio: ϕ al limite di Hertz (L = 56,25 mm)', g1.phi, 0.46875, 0.005);
+  const g2 = design({ z1: 24, z2: 61, n1: n3, W_kW: 150, sigmaH: sigLife(1350, n3, 2500), m: 5 });
+  rel('2015-07-11  II stadio: modulo minimo con ϕ = 1 [mm]', g2.m_min, 4.88, 0.012, 'a mano ω₃ arrotondata');
+  rel('2015-07-11  II stadio: ϕ con m = 5', g2.phi, 0.9, 0.005);
+  // 10/1/2017: z 18/42, m 2,25, 150 rpm, σ_FL 1380, h 5000 → W_max 2063 W; poi creatore mn 3 elicoidale z 12/28, interasse 67,5
+  // (la W_max dei denti diritti a mano non torna con la formula: con gli stessi dati dà 1506 W; la parte elicoidale usa W = 2063 W)
+  rel('2017-01-10  σH corretta per 5000 h [MPa]', sigLife(1380, 150, 5000), 1101, 0.001);
+  rel('2017-01-10  elicoidale: α dall\'interasse 67,5 mm con mn 3, z 12/28 [°]', Math.acos(3 * 40 / (2 * 67.5)) * 180 / Math.PI, 27.28, 0.001);
+  rel('2017-01-10  elicoidale mn 3, α 27,28°, L 25: potenza [W]', wmax({ toothType: 'helical', m_input: 3, L_mm: 25, z1: 12, z2: 28, n1: 150, alphaDeg: 27.27, sigmaH_lim: 1101 }).P_kW_H * 1000, 2063, 0.035, 'a mano Φ/Γ = 0,61 letto, ϕ = 0,62 arrotondato');
+  {
+    const h = getHelicalFactors(27.27, 12, 28), y = getLewisFactor(12 / Math.pow(Math.cos(27.27 * Math.PI / 180), 3), 0.03);
+    rel('2017-01-10  σL Lewis elicoidale a parità di y e Ψ/Γt [MPa]', 6498 / (25 * 3 * y) * (h.Psi / h.Gamma_T) * (y / 0.34) * ((1.2 / 1.36) / (h.Psi / h.Gamma_T)), 224, 0.01);
+  }
+  // 10/2/2017 (ponte levatoio): I stadio z 27/157, m 4, d1 = 108 mm con ϕ = 1, σH 800 → coppia statica 1600 N·m
+  rel('2017-02-10  I stadio: coppia ammissibile a Hertz con d₁ = 108 mm [N·m]', wmax({ m_input: 4, L_mm: 108, z1: 27, z2: 157, n1: 1000, sigmaH_lim: 800 }).P_kW_H * 1000 / omega(1000), 1600, 0.015, 'a mano d₁ = 108 arrotondato');
+  // 9/6/2017: due stadi z 19/60, m 7, 80 kW, σH 1126 (I) e 1338 (II); la soluzione usa ω₃ = 15 rad/s
+  const e2 = design({ z1: 19, z2: 60, n1: 15 * 60 / (2 * Math.PI), W_kW: 80, sigmaH: 1338, m: 7 });
+  rel('2017-06-09  II stadio: ϕ al limite di Hertz', e2.phi, 0.72, 0.01);
+  rel('2017-06-09  II stadio: Fc [N]', e2.Fc, 80200, 0.001);
+  rel('2017-06-09  II stadio: σL Lewis a parità di y [MPa]', sigmaSameY(e2.Fc / (95.76 * 7 * e2.yLewis), e2.yLewis, 0.355), 337.02, 0.001);
+  const e1 = design({ z1: 19, z2: 60, n1: 495, W_kW: 80, sigmaH: 1126, m: 7 });
+  rel('2017-06-09  I stadio: ϕ al limite (poi portato a 0,5)', e1.phi, 0.29, 0.025, 'a mano 0,297 troncato');
+  rel('2017-06-09  I stadio: Fc [N]', e1.Fc, 23224, 0.002);
+  rel('2017-06-09  I stadio: σL Lewis con L = 66,5 a parità di y [MPa]', sigmaSameY(e1.Fc / (66.5 * 7 * e1.yLewis), e1.yLewis, 0.355), 140, 0.005);
+  // 12/7/2017: creatore m 4, 250 kW, 750 rpm, τ 0,055, σ_FL 1350, h 1000 → II stadio z 40/171, I stadio z 38/162
+  rel('2017-07-12  σH corretta II stadio [MPa]', sigLife(1350, 750 * 0.234, 1000), 1339, 0.001);
+  const f2 = design({ z1: 40, z2: 171, n1: 750 * 0.234, W_kW: 250, sigmaH: 1339, m: 4 });
+  rel('2017-07-12  II stadio: ϕ con z₃ = 40', f2.phi, 0.995, 0.005, 'a mano scritto 0,895: con z₃ = 39,84 a ϕ = 1 deve essere 0,99');
+  rel('2017-07-12  II stadio: Fc [N]', f2.Fc, 170021, 0.001);
+  rel('2017-07-12  II stadio: σL Lewis con L = 160 [MPa]', f2.Fc / (160 * 4 * f2.yLewis), 647, 0.005);
+  rel('2017-07-12  σH corretta I stadio [MPa]', sigLife(1350, 750, 1000), 1077, 0.001);
+  const f1 = design({ z1: 38, z2: 162, n1: 750, W_kW: 250, sigmaH: 1077, m: 4 });
+  rel('2017-07-12  I stadio: ϕ con z 38/162', f1.phi, 0.42, 0.005);
+  rel('2017-07-12  I stadio: Fc [N]', f1.Fc, 41804, 0.0025, 'a mano τ = 0,234 arrotondato');
+  rel('2017-07-12  I stadio: σL Lewis con L = 63,84 a parità di y [MPa]', sigmaSameY(f1.Fc / (63.84 * 4 * f1.yLewis), f1.yLewis, 0.41), 400, 0.005);
+  // 13/7/2023: z 23/76, m 4, L 80, 750 rpm, σ_FL 1250, h 2000; poi creatore mn 6, z 12/40, α 38° dall'interasse 198 mm
+  rel('2023-07-13  σH corretta per 2000 h [MPa]', sigLife(1250, 750, 2000), 899, 0.001);
+  rel('2023-07-13  W_max Hertz, denti diritti [W]', wmax({ m_input: 4, L_mm: 80, z1: 23, z2: 76, n1: 750, sigmaH_lim: 899 }).P_kW_H * 1000, 75861, 0.005);
+  rel('2023-07-13  elicoidale: α dall\'interasse 198 mm [°]', Math.acos(6 * 52 / (2 * 198)) * 180 / Math.PI, 38, 0.002);
+  rel('2023-07-13  elicoidale mn 6, α 38°, L 48,3: stessa potenza [W]', wmax({ toothType: 'helical', m_input: 6, L_mm: 48.3, z1: 12, z2: 40, n1: 750, alphaDeg: 38, sigmaH_lim: 899 }).P_kW_H * 1000, 75861, 0.01);
+  {
+    const h = getHelicalFactors(38, 12, 40), y = getLewisFactor(12 / Math.pow(Math.cos(38 * Math.PI / 180), 3), 0);
+    const Fc = 2 * 75861 / (omega(750) * 0.0912);
+    rel('2023-07-13  σL Lewis elicoidale [MPa]', Fc / (48.3 * 6 * y) * (h.Psi / h.Gamma_T), 184, 0.015, 'a mano Ψ = 1,085 letto');
+  }
+  // 12/1/2024: elicoidale z 15/50, mn 5, α 24°, L 80, σ_FL 1350, h 3000; riusata come II stadio a 250 rpm; I stadio dritto z 14/56, x 0,18/0,4
+  rel('2024-01-12  σH corretta a 1000 rpm [MPa]', sigLife(1350, 1000, 3000), 875, 0.001);
+  rel('2024-01-12  W_max elicoidale a 1000 rpm [kW]', wmax({ toothType: 'helical', m_input: 5, L_mm: 80, z1: 15, z2: 50, n1: 1000, alphaDeg: 24, sigmaH_lim: 875 }).P_kW_H, 127.2, 0.01,
+    'a mano scritto 120 kW: con gli stessi dati la formula dà 127 kW, e il II stadio (48 kW) torna solo con 127');
+  rel('2024-01-12  σH corretta a 250 rpm [MPa]', sigLife(1350, 250, 3000), 1077, 0.001);
+  rel('2024-01-12  W_max come II stadio a 250 rpm [kW]', wmax({ toothType: 'helical', m_input: 5, L_mm: 80, z1: 15, z2: 50, n1: 250, alphaDeg: 24, sigmaH_lim: 1077 }).P_kW_H, 48, 0.005);
+  const c1 = design({ z1: 14, z2: 56, n1: 1000, W_kW: 48, sigmaH: 875, m: 5, xr1: 0.18 });
+  rel('2024-01-12  I stadio dritto: ϕ al limite di Hertz', c1.phi, 0.95, 0.005);
+  rel('2024-01-12  I stadio: Fc [N]', c1.Fc, 13100, 0.002);
+  rel('2024-01-12  I stadio: σL Lewis a parità di y [MPa]', sigmaSameY(c1.sigma_L, c1.yLewis, 0.365), 108, 0.01);
+}
+// letture dei diagrammi negli appelli 2015–2024 (Φ, Γt, Ψ e y): tolleranza di lettura a occhio
+for (const [a, z1, z2, phi, g1, g2, psi, where] of [
+  [23.5, 15, 27, 0.88, 0.68, 0.72, null, '2015-01-10'],
+  [24.6, 15, 27, null, null, null, 1.02, '2015-01-10'],
+  [34, 10, 17, 0.74, 0.54, 0.60, null, '2015-06-06'],
+  [24.62, 10, 17, 0.85, 0.60, 0.68, null, '2015-06-06'],
+  [16.48, 10, 25, 0.94, 0.66, 0.78, null, '2015-02-12'],
+  [22.55, 10, 25, 0.88, 0.62, 0.74, null, '2015-02-12'],
+  [35, 10, 25, 0.72, 0.54, null, null, '2015-02-12'],      // Γt2 letto 0,66; la curva dà 0,62, e nel 2022 per α = 35°, z = 24 si legge 0,62
+  [27.27, 12, 28, 0.83, 0.62, null, null, '2017-01-10'],   // Γt2 letto 0,74; la curva dà 0,70 (come per z = 25 nel 2015: le letture a mano di Γt2 sulle curve basse sono alte)
+  [38, 12, 40, 0.68, 0.54, 0.61, 1.085, '2023-07-13'],
+  [24, 15, 50, 0.86, 0.66, 0.77, null, '2024-01-12'],
+]) {
+  const h = getHelicalFactors(a, z1, z2), tag = `${where} α=${a}° z=${z1}/${z2}`;
+  if (phi !== null) abs(`diagramma ${tag}: Φ`, h.Phi, phi, 0.015);
+  if (g1 !== null) abs(`diagramma ${tag}: Γt1`, h.Gamma_T1, g1, 0.02);
+  if (g2 !== null) abs(`diagramma ${tag}: Γt2`, h.Gamma_T2, g2, 0.025);
+  if (psi !== null) abs(`diagramma ${tag}: Ψ`, h.Psi, psi, 0.015);
+}
+for (const [z, x, yHand, where] of [
+  [15 / Math.pow(Math.cos(24.6 * Math.PI / 180), 3), 0, 0.35, '2015-01-10'],
+  [12 / Math.pow(Math.cos(38 * Math.PI / 180), 3), 0, 0.375, '2023-07-13'],
+  [14, 0.18, 0.365, '2024-01-12'],
+  [19, 0, 0.355, '2017-06-09'],
+  [40, 0, 0.41, '2017-07-12'],
+  [38, 0, 0.41, '2017-07-12'],
+]) abs(`diagramma Lewis z'=${z.toFixed(1)} x=${x}: y  (${where})`, getLewisFactor(z, x), yHand, 0.025, 'lettura a mano');
+
+// ---------------------------------------------------------------------------
 // Lewis, dentature elicoidali: σL = Fc / (L mn y(z', x)) · Ψ / Γt   (z' = z / cos³α)
 // ---------------------------------------------------------------------------
 {
