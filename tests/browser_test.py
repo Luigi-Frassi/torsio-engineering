@@ -562,7 +562,7 @@ with sync_playwright() as p:
     check('  la relazione dell\'albero cita l\'acciaio della tabella', '42CrMo4 +QT' in rm.evaluate("document.body.textContent")); rm.close(); pm.close()
     pmet = new_page(); pmet.goto(HOME + 'metodo.html?lang=it'); pmet.wait_for_timeout(800)
     mt_it = pmet.evaluate("[document.title, document.querySelectorAll('.katex').length, [...document.querySelectorAll('.tbl tbody tr')].length, document.querySelector('.tbl tfoot .n').innerText]")
-    check('pagina metodo: titolo, formule KaTeX, tabella dei moduli, totale casi', 'Metodo' in mt_it[0] and mt_it[1] >= 8 and mt_it[2] == 9 and mt_it[3] == '416', str(mt_it))
+    check('pagina metodo: titolo, formule KaTeX, tabella dei moduli, totale casi', 'Metodo' in mt_it[0] and mt_it[1] >= 8 and mt_it[2] == 9 and mt_it[3] == '491', str(mt_it))
     pmet.click('.lang button[data-lang="en"]'); pmet.wait_for_timeout(200)
     check('  versione inglese', pmet.evaluate("document.title.startsWith('Method') && document.querySelector('h1').innerText === 'Method and validation' && document.querySelector('[data-app]').href.endsWith('lang=en')"))
     pmet.close()
@@ -570,7 +570,7 @@ with sync_playwright() as p:
     check('home: i vecchi link ai bulloni vanno al calcolatore', 'app.html?m=bolts' in ph.url, ph.url)
     ph.goto(HOME); ph.wait_for_timeout(300)
     meta = ph.evaluate("[document.querySelector('meta[property=\"og:image\"]')?.content, [...document.querySelectorAll('a')].some(a => a.getAttribute('href') === 'metodo.html'), document.querySelector('.facts .n').innerText]")
-    check('  anteprima per i social, link alla pagina metodo, 416 casi', meta[0].endswith('og-image.png') and meta[1] and meta[2] == '416', str(meta)); ph.close()
+    check('  anteprima per i social, link alla pagina metodo, 491 casi', meta[0].endswith('og-image.png') and meta[1] and meta[2] == '491', str(meta)); ph.close()
 
     # --- phone (390 px): report menu inside the screen, report without sideways overflow
     mctx = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
