@@ -150,6 +150,13 @@ function sumFrames(t) {
 function sumDiscs(t) {
   const s = typeof lastDiscState !== 'undefined' ? lastDiscState : null;
   if (!s) return { status: 'na', cards: [] };
+  if (s.jn) {
+    const tb = s.a.res.find(r => r.mb.kind === 'tube'), w = s.a.res[s.a.worst.k];
+    const cards = [{ k: 'Q₀', v: sumNum(tb.F * 1000, 0), u: 'N/m', sub: `M₀ ${sumNum(tb.M, 1)} N·m/m`, tone: 'y' },
+      { k: t.ds.seq, v: sumNum(w.crit.seq, 1), u: 'MPa', sub: s.anySy ? `X ${sumNum(s.a.Xmin, 2)} · ${t.req} ${sumNum(s.X, 2)}` : '', tone: s.anySy ? (s.ok ? 'b' : 'r') : 'k', bar: s.anySy ? { x: s.a.Xmin, req: s.X } : undefined }];
+    if (s.wmax) cards.push({ k: 'ω max', v: sumNum(s.wmax * 60 / (2 * Math.PI), 0), u: 'rpm', sub: `${sumNum(s.wmax, 0)} rad/s`, tone: 'k' });
+    return { status: s.anySy ? (s.ok ? 'ok' : 'ko') : 'info', cards };
+  }
   if (s.uni) return { status: 'info', cards: [
     { k: t.ds.h0, v: sumNum(s.r.h0, 1), u: 'mm', sub: t.ds.uni, tone: 'y' }, { k: t.ds.he, v: sumNum(s.r.hE, 1), u: 'mm', sub: `R ${sumNum(s.Re, 0)} mm`, tone: 'k' },
     { k: t.ds.mass, v: sumNum(s.r.mass, 1), u: 'kg', sub: `${sumNum(s.U.n, 0)} rpm`, tone: 'k' }] };

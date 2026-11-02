@@ -160,7 +160,7 @@ function applyShareState(q) {
     if (typeof setBoltMode === 'function') setBoltMode(['design', 'torque', 'screw'].includes(bm) ? bm : 'design');
   } else if (m === 'discs') {
     if (q.get('dsm') && typeof dsDecode === 'function') { const M = dsDecode(q.get('dsm')); if (M) dsModel = M; if (typeof dsRenderInputs === 'function') dsRenderInputs(); }
-    if (typeof setDiscMode === 'function') setDiscMode(q.get('dsmode') === 'uni' ? 'uni' : 'stack');
+    if (typeof setDiscMode === 'function') setDiscMode(['uni', 'jn'].includes(q.get('dsmode')) ? q.get('dsmode') : 'stack');
   } else if (m === 'frames') {
     if (q.get('fs') && typeof frDecodeModel === 'function') frDecodeModel(q.get('fs'));
   } else if (m === 'shafts') {

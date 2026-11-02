@@ -16,7 +16,7 @@ const START_TXT = {
       shafts: ['Alberi', 'Carichi, reazioni e momenti; diametro a fatica e snervamento; profilo per il CAD.'],
       frames: ['Strutture (FEM)', 'Telai e tralicci piani: sforzi, frecce, instabilità; sezione più leggera a catalogo.'],
       bolts: ['Collegamenti bullonati', 'Numero di viti, precarico e coppia di serraggio; carico esterno e vite di manovra.'],
-      discs: ['Dischi e calettamenti', 'Dischi rotanti, tubi spessi, calettamenti: pressione, velocità di distacco, coppia, con i passaggi.']
+      discs: ['Dischi e calettamenti', 'Dischi rotanti, tubi spessi e sottili, piastre, calettamenti e giunzioni, con tutti i passaggi.']
     }
   },
   en: {
@@ -29,7 +29,7 @@ const START_TXT = {
       shafts: ['Shafts', 'Loads, reactions and moments; diameter for fatigue and yield; profile for CAD.'],
       frames: ['Structures (FEM)', 'Plane frames and trusses: forces, deflections, buckling; lightest catalogue section.'],
       bolts: ['Bolted joints', 'Number of bolts, preload and tightening torque; external load and power screw.'],
-      discs: ['Discs and shrink fits', 'Rotating discs, thick tubes, shrink fits: pressure, separation speed, torque, with the steps.']
+      discs: ['Discs and shrink fits', 'Rotating discs, thick and thin tubes, plates, shrink fits and junctions, with every step.']
     }
   }
 };

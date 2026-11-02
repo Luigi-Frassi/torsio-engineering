@@ -70,6 +70,8 @@ const VAL_RULES = {
   dsR0: NONNEG, dsN: NONNEG, dsBandS: NONNEG, dsBandT: NONNEG, dsBladeF: NONNEG, dsXreq: SX, dsTqT: NONNEG, dsTqP: NONNEG, dsTqF: FRIC, dsTqX: SX,
   duD: POS, duSa: POS, duN: NONNEG, duRho: NONNEG, duF: NONNEG, duHe: NONNEG
 };
+Object.assign(VAL_RULES, { jn_R: POS, jn_n: NONNEG, jn_rhoInc: NONNEG, jn_rInc: NONNEG, jn_Xreq: SX, jn_d_rOther: NONNEG, jn_d_i: NONNEG });
+for (const k of ['tL', 'tR', 'd']) Object.assign(VAL_RULES, { [`jn_${k}_h`]: POS, [`jn_${k}_E`]: POS, [`jn_${k}_nu`]: { min: 0, max: 0.49 }, [`jn_${k}_rho`]: NONNEG, [`jn_${k}_sy`]: NONNEG });
 for (let k = 0; k < 4; k++) {
   Object.assign(VAL_RULES, { ['dsRe' + k]: POS, ['dsH' + k]: POS, ['dsE' + k]: POS, ['dsNu' + k]: { min: 0, max: 0.49 }, ['dsRho' + k]: NONNEG });
 }
@@ -98,6 +100,7 @@ function valRelevant(el, sec) {
 // message for one field, or '' when it is fine
 function valField(el) {
   const t = valT(), raw = el.value;
+  if ((raw === '' || raw == null) && el.dataset.optional) return '';   // optional field left empty
   if (raw === '' || raw == null) return t.empty;                    // also "abc": a number input reads it as ''
   const v = Number(raw);
   if (!Number.isFinite(v)) return t.empty;

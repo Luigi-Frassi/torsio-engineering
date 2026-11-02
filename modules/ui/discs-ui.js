@@ -6,7 +6,7 @@
 
 const DS_TXT = {
   it: {
-    tabs: { stack: '1 · Dischi, tubi e calettamenti', uni: '2 · Disco a uniforme resistenza' },
+    tabs: { stack: '1 · Dischi, tubi e calettamenti', jn: '2 · Tubi, piastre e giunzioni', uni: '3 · Disco a uniforme resistenza' },
     intro: 'Elementi concentrici dall\'interno verso l\'esterno: albero, mozzo, anelli. Ogni elemento è un disco di spessore costante (stato piano di tensione). Un solo elemento = disco rotante o tubo spesso in pressione.',
     example: 'Esempio', exPick: 'Carica un esempio…',
     ex: { ex2015: 'Due dischi calettati, distacco in rotazione (esame 11/7/2015)', ex2017: 'Disco d\'alluminio su albero d\'acciaio (esame 10/2/2017)', ex2017b: '… con fascia di composito pretesa (esame 10/2/2017)',
@@ -37,7 +37,7 @@ const DS_TXT = {
     uH0: 'Spessore al centro h(0)', uHe2: 'Spessore al bordo h_e', uMass: 'Massa del disco', uRatio: 'Rapporto h(0)/h_e', uProfile: 'Profilo del disco (sezione)'
   },
   en: {
-    tabs: { stack: '1 · Discs, tubes and shrink fits', uni: '2 · Disc of uniform strength' },
+    tabs: { stack: '1 · Discs, tubes and shrink fits', jn: '2 · Tubes, plates and junctions', uni: '3 · Disc of uniform strength' },
     intro: 'Concentric elements from the inside out: shaft, hub, rings. Each element is a disc of constant thickness (plane stress). A single element = rotating disc or thick tube under pressure.',
     example: 'Example', exPick: 'Load an example…',
     ex: { ex2015: 'Two shrink-fitted discs, separation when spinning (exam 11/7/2015)', ex2017: 'Aluminium disc on a steel shaft (exam 10/2/2017)', ex2017b: '… with a prestressed composite band (exam 10/2/2017)',
@@ -86,7 +86,8 @@ function dsDefaultModel() {
     ifs: [{ mode: 'iR', v: 0.001, fit: 'H7/s6', which: 'max' }],
     n: 3000, dT: 0, Pi: 0, ext: 'none', Pe: 0, bandS: 500, bandT: 20, bladeF: 100, closed: false, Xreq: 1.5,
     tq: { on: false, k: 0, mode: 'T', T: 2000, P: 50, f: 0.15, X: 2 },
-    uni: { D: 800, sa: 200, n: 6000, rho: 7800, load: 'F', F: 500, he: 20 }
+    uni: { D: 800, sa: 200, n: 6000, rho: 7800, load: 'F', F: 500, he: 20 },
+    jn: typeof jnDefault === 'function' ? jnDefault() : null
   };
 }
 // names of the example elements, in the language of the page when they are loaded
@@ -160,7 +161,7 @@ function dsEncode() {
   const M = dsModel;
   const o = { d: M.dim, r0: M.r0, R: M.rings.map(r => [r.name || '', r.Re, r.h, r.mat, r.E, r.nu, r.rho, r.alpha, r.sy, r.noI ? 1 : 0]),
     I: M.ifs.slice(0, M.rings.length - 1).map(f => [f.mode, f.v, f.fit, f.which]), n: M.n, dT: M.dT, Pi: M.Pi, x: M.ext, Pe: M.Pe, bS: M.bandS, bT: M.bandT, bF: M.bladeF, c: M.closed ? 1 : 0, X: M.Xreq,
-    t: [M.tq.on ? 1 : 0, M.tq.k, M.tq.mode, M.tq.T, M.tq.P, M.tq.f, M.tq.X], u: [M.uni.D, M.uni.sa, M.uni.n, M.uni.rho, M.uni.load, M.uni.F, M.uni.he] };
+    t: [M.tq.on ? 1 : 0, M.tq.k, M.tq.mode, M.tq.T, M.tq.P, M.tq.f, M.tq.X], u: [M.uni.D, M.uni.sa, M.uni.n, M.uni.rho, M.uni.load, M.uni.F, M.uni.he], j: M.jn };
   try { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
 }
 function dsDecode(s) {
@@ -173,6 +174,7 @@ function dsDecode(s) {
     while (M.ifs.length < M.rings.length - 1) M.ifs.push({ mode: 'iR', v: 0.001, fit: 'H7/s6', which: 'max' });
     Object.assign(M, { n: num(o.n, 0), dT: num(o.dT, 0), Pi: num(o.Pi, 0), ext: ['none', 'p', 'band', 'blades'].includes(o.x) ? o.x : 'none', Pe: num(o.Pe, 0), bandS: num(o.bS, 500), bandT: num(o.bT, 20), bladeF: num(o.bF, 100), closed: !!o.c, Xreq: num(o.X, 1.5) });
     if (Array.isArray(o.t)) M.tq = { on: !!o.t[0], k: num(o.t[1], 0), mode: o.t[2] === 'P' ? 'P' : 'T', T: num(o.t[3], 1000), P: num(o.t[4], 50), f: num(o.t[5], 0.15), X: num(o.t[6], 2) };
+    if (o.j && typeof jnSanitize === 'function') M.jn = jnSanitize(o.j);
     if (Array.isArray(o.u)) M.uni = { D: num(o.u[0], 800), sa: num(o.u[1], 200), n: num(o.u[2], 6000), rho: num(o.u[3], 7800), load: o.u[4] === 'he' ? 'he' : 'F', F: num(o.u[5], 500), he: num(o.u[6], 20) };
     return M;
   } catch (e) { return null; }
@@ -400,7 +402,7 @@ function dsTabs() {
   dsEl('dsTabs').innerHTML = Object.keys(t.tabs).map(k => `<button type="button" data-mode="${k}" id="dsMode_${k}" class="${k === dsMode ? on : off}">${t.tabs[k]}</button>`).join('');
 }
 function setDiscMode(mode) {
-  dsMode = mode === 'uni' ? 'uni' : 'stack';
+  dsMode = ['uni', 'jn'].includes(mode) ? mode : 'stack';
   dsBuild(); dsTabs(); calculateDiscs();
   if (typeof syncShareUrl === 'function') syncShareUrl();
 }
@@ -413,7 +415,9 @@ function calculateDiscs() {
   const t = dsT(), M = dsModel;
   dsEl('dsStack').classList.toggle('hidden', dsMode !== 'stack');
   dsEl('dsUni').classList.toggle('hidden', dsMode !== 'uni');
+  if (typeof jnShow === 'function') jnShow(dsMode === 'jn');
   if (dsMode === 'uni') return calculateDiscUniform();
+  if (dsMode === 'jn') return calculateJunction();
   const inp = dsCoreInput();
   const { r0 } = dsRadii();
   dsEl('dsR0Lbl').textContent = `${M.dim === 'd' ? 'Ø' : 'R'} ${t.r0}`;

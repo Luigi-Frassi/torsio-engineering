@@ -16,7 +16,7 @@ const vm = require('vm');
 
 const ctx = { Math, console };
 vm.createContext(ctx);
-for (const f of ['core/gears-core.js', 'core/fits-core.js', 'core/belts-core.js', 'core/shafts-core.js', 'core/frames-core.js', 'core/dxf-core.js', 'core/bolts-core.js', 'core/materials-core.js', 'core/discs-core.js']) {
+for (const f of ['core/gears-core.js', 'core/fits-core.js', 'core/belts-core.js', 'core/shafts-core.js', 'core/frames-core.js', 'core/dxf-core.js', 'core/bolts-core.js', 'core/materials-core.js', 'core/discs-core.js', 'core/shells-core.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'modules', f), 'utf8'), ctx, { filename: f });
 }
 const { computeGearWmax, computeGearDesign, getHelicalFactors, getLewisFactor } =
@@ -1135,6 +1135,102 @@ for (const [a, z1, z2, phi, g1, g2, psi] of [
   rel('orale  pressione massima con il mozzo al limite [MPa]', o1.iMax[0].pOut, 145.3, 0.005);
   rel('orale  iR = 9,33·10⁻⁴ dà p = 70 MPa', o1.rest.pairs[0].pOut, 70, 0.002);
   rel('orale  coppia trasmissibile con L = 68,6 mm [N·m]', o1.torqueAt(o1.rest, 0, 0.15) / 1000, 2830, 0.003);
+}
+
+// ---------------------------------------------------------------------------
+// Tubi sottili con effetti di bordo, piastre e giunzioni (Costruzione di Macchine, fase 2)
+// ---------------------------------------------------------------------------
+{
+  const S = vm.runInContext('({ junctionAnalyze, junctionMaxSpeed, tubeConst, memberResponse, discsAnalyze })', ctx);
+  const fe = { E: 200000, nu: 0.3, rho: 7800, alpha: 12e-6 }, alv = { E: 70000, nu: 0.3, rho: 2700, alpha: 23e-6 };
+  const edge = (r, f) => r.field.edge[f], last = r => r.field.prof[r.field.prof.length - 1], first = r => r.field.prof[0];
+  // esercizio 2 (p. 48 della raccolta): due tubi d'acciaio saldati, R = 150, h = 10 e 5 mm, p = 40 bar, fondi chiusi
+  {
+    const a = S.junctionAnalyze([{ kind: 'tube', side: 'L', R: 150, h: 10, ...fe }, { kind: 'tube', side: 'R', R: 150, h: 5, ...fe }], { p: 4, closed: true });
+    const k5 = S.tubeConst({ R: 150, h: 5, ...fe });
+    rel('tubi saldati  D tubo sottile [N·m]', k5.D / 1000, 2289, 0.001);
+    rel('tubi saldati  λ tubo sottile [1/m]', k5.lam * 1000, 47, 0.003);
+    rel('tubi saldati  forza di bordo |Q0| [N/m]', Math.abs(a.res[1].F) * 1000, 16733, 0.03, 'a mano coefficienti arrotondati a 2 cifre');
+    rel('tubi saldati  momento di bordo |M0| [N·m/m]', Math.abs(a.res[1].M), 114, 0.035, 'idem');
+    rel('tubi saldati  tubo sottile, fibra esterna al bordo: σeq [MPa]', edge(a.res[1], 'outer').seq, 69.5, 0.015);
+    rel('tubi saldati  tubo sottile, fibra interna al bordo: σeq [MPa]', edge(a.res[1], 'inner').seq, 92, 0.005);
+    rel('tubi saldati  tubo sottile lontano dal bordo: σeq [MPa]', a.res[1].field.far.seq, 104, 0.001);
+    rel('tubi saldati  tubo spesso al bordo, fibra esterna: σeq [MPa]', edge(a.res[0], 'outer').seq, 69.4, 0.005);
+    rel('tubi saldati  tubo spesso al bordo, fibra interna: σeq [MPa]', edge(a.res[0], 'inner').seq, 71.1, 0.005);
+  }
+  // serbatoio d'alluminio R = 250, mantello h = 10, fondelli pieni h = 8 forzati con iR = 0,002 (trattati come saldati)
+  {
+    const mem = [{ kind: 'tube', side: 'R', R: 250, h: 10, ...alv }, { kind: 'disc', pos: 'inside', R: 250, rOther: 0, h: 8, ...alv, bend: true, tubeSide: 'R', i: 0.5 }];
+    const a = S.junctionAnalyze(mem, { p: 0, closed: true });
+    rel('serbatoio scarico  Q0 [N/m]', a.res[0].F * 1000, 106838, 0.003);
+    rel('serbatoio scarico  |M0| [N·m/m]', Math.abs(a.res[0].M), 192, 0.015);
+    rel('serbatoio scarico  w mantello [m]', a.res[0].w / 1000, 4.7e-4, 0.01);
+    rel('serbatoio scarico  mantello fibra esterna: σeq [MPa]', edge(a.res[0], 'outer').seq, 128.7, 0.002);
+    rel('serbatoio scarico  mantello fibra interna: σeq [MPa]', edge(a.res[0], 'inner').seq, 134, 0.005);
+    rel('serbatoio scarico  fondello, faccia compressa: σeq [MPa]', last(a.res[1]).b.seq, 31.4, 0.01);
+    const b = S.junctionAnalyze(mem, { p: 0.2, closed: true });
+    rel('serbatoio a 2 bar  Q0 [N/m]', b.res[0].F * 1000, 68151, 0.006);
+    rel('serbatoio a 2 bar  |M0| [N·m/m]', Math.abs(b.res[0].M), 1258, 0.03, 'a mano rotazione della piastra arrotondata a −0,09');
+    rel('serbatoio a 2 bar  mantello fibra esterna: σeq [MPa]', edge(b.res[0], 'outer').seq, 160.8, 0.015);
+    rel('serbatoio a 2 bar  mantello fibra interna: σeq [MPa]', edge(b.res[0], 'inner').seq, 135.6, 0.015);
+    rel('serbatoio a 2 bar  mantello lontano: σeq [MPa]', b.res[0].field.far.seq, 4.3, 0.01);
+    rel('serbatoio a 2 bar  fondello al bordo, lato teso: σeq [MPa]', last(b.res[1]).b.seq, 106, 0.025);
+    rel('serbatoio a 2 bar  fondello al bordo, lato compresso: σeq [MPa]', last(b.res[1]).a.seq, 116.2, 0.025);
+    rel('serbatoio a 2 bar  fondello al centro: σeq [MPa]', first(b.res[1]).b.seq, 131.5, 0.025);
+    rel('serbatoio a 2 bar  fondello al centro, altra faccia: σeq [MPa]', first(b.res[1]).a.seq, 115.2, 0.03);
+  }
+  // esame 12/1/2016: centrifuga, mantello R 350 h 8 saldato a un disco rigido a flessione (Ri 50, h 40), materiale incoerente ρ = 2000
+  {
+    const mem = [{ kind: 'tube', side: 'R', R: 350, h: 8, ...fe, sy: 600 }, { kind: 'disc', pos: 'inside', R: 350, rOther: 50, h: 40, ...fe, bend: false, tubeSide: 'R' }];
+    const st = { rhoInc: 2000, rInc: 50, closed: false };
+    const r1 = S.memberResponse(mem[1], { omega: 1 }), r0 = S.memberResponse(mem[0], { omega: 1, ...st });
+    rel('2016-01-12  centrifuga  u disco per la rotazione [m/ω²]', r1.w0 / 1000, 3.2e-10, 0.005);
+    rel('2016-01-12  centrifuga  cedevolezza del disco [m per N/m]', r1.cwF / 1e6, 3.24e-11, 0.005);
+    rel('2016-01-12  centrifuga  w mantello: rotazione + materiale [m/ω²]', r0.w0 / 1000, 1.67e-9 + 6.23e-9, 0.002);
+    const a = S.junctionAnalyze(mem, { ...st, omega: 1 });
+    rel('2016-01-12  centrifuga  Q0 [N/m per ω²]', -a.res[0].F * 1000, 3.88, 0.035, 'a mano 1/(4Dλ³) = 1,86·10⁻⁹ arrotondato a 1,8·10⁻⁹');
+    rel('2016-01-12  centrifuga  M0 [N·m/m per ω²]', a.res[0].M, 0.077, 0.075, 'idem, e λ = 24,23 invece di 24,29');
+    rel('2016-01-12  centrifuga  velocità massima per il mantello [rad/s]', S.junctionMaxSpeed(mem, st, 1, 0), 305, 0.04, 'idem');
+    const d = S.discsAnalyze({ rings: [{ Ri: 0, Re: 50, h: 40, ...fe, sy: 0 }, { Ri: 50, Re: 350, h: 40, ...fe, sy: 0 }], iRad: [0.01], n: 305 * 60 / (2 * Math.PI), torque: { k: 0, T: 4136.5 * 50, f: 0.15, X: 1 } });
+    rel('2016-01-12  centrifuga  pressione per non scivolare a ω_max [MPa]', d.design.pReqOut, 2.2, 0.005);
+    rel('2016-01-12  centrifuga  σr^ω(Ro) del disco pieno equivalente [MPa]', d.design.loss / 40, 36, 0.003);
+    rel('2016-01-12  centrifuga  interferenza relativa necessaria', d.design.iRNeed, 3.8e-4, 0.025);
+  }
+  // esame 6/6/2015 (es. 2): rotore di dischi (Ri 150, Re 450, h 40) e distanziali (h 10), 3000 giri/min
+  {
+    const a = S.junctionAnalyze([{ kind: 'tube', side: 'L', R: 150, h: 10, ...fe }, { kind: 'tube', side: 'R', R: 150, h: 10, ...fe }, { kind: 'disc', pos: 'outside', R: 150, rOther: 450, h: 40, ...fe, bend: false, tubeSide: 'R' }], { omega: 314, closed: false });
+    rel('2015-06-06  rotore a dischi  Q0 per distanziale [N/m]', a.res[1].F * 1000, 196024, 0.015);
+    rel('2015-06-06  rotore a dischi  |M0| [N·m/m]', Math.abs(a.res[1].M), 2940, 0.02);
+    rel('2015-06-06  rotore a dischi  distanziale, fibra esterna: σeq [MPa]', edge(a.res[1], 'outer').seq, 172.33, 0.016);
+    rel('2015-06-06  rotore a dischi  distanziale, fibra interna: σeq [MPa]', edge(a.res[1], 'inner').seq, 214.4, 0.016);
+    rel('2015-06-06  rotore a dischi  distanziale lontano: σc = ρω²R² [MPa]', a.res[1].field.far.sc, 17.3, 0.002);
+    rel('2015-06-06  rotore a dischi  disco al foro: σc [MPa]', first(a.res[2]).a.sc, 118.75, 0.005, 'a mano σr = −9,8 MPa: il distanziale tira il disco verso l\'asse, σr è di trazione (+9,9)');
+  }
+  // setti d'alluminio forzati in un tubo d'acciaio (R 250, h 5; setti Ri 100, h 8; iR = 0,0015)
+  {
+    const mem = [{ kind: 'tube', side: 'L', R: 250, h: 5, ...fe }, { kind: 'tube', side: 'R', R: 250, h: 5, ...fe }, { kind: 'disc', pos: 'inside', R: 250, rOther: 100, h: 8, ...alv, alpha: 24e-6, bend: false, tubeSide: 'R', i: 0.375 }];
+    const a = S.junctionAnalyze(mem, { closed: false });
+    rel('setti  montaggio: Q0 [N/m]', a.res[1].F * 1000, 117371, 0.015);
+    rel('setti  montaggio: |M0| [N·m/m]', Math.abs(a.res[1].M), 1643, 0.035, 'a mano 1/(2λ) arrotondato a 0,014');
+    rel('setti  montaggio: tubo fibra esterna σeq [MPa]', edge(a.res[1], 'outer').seq, 365, 0.025);
+    rel('setti  montaggio: tubo fibra interna σeq [MPa]', edge(a.res[1], 'inner').seq, 446, 0.02);
+    rel('setti  montaggio: setto al foro σeq [MPa]', first(a.res[2]).a.seq, 70, 0.02);
+    const b = S.junctionAnalyze(mem, { closed: false, omega: 209.4, dT: 50 });
+    rel('setti  ΔT 50 °C e 2000 giri/min: Q0 [N/m]', b.res[1].F * 1000, 158435, 0.015);
+    rel('setti  ΔT 50 °C e 2000 giri/min: tubo fibra esterna σeq [MPa]', edge(b.res[1], 'outer').seq, 500, 0.02);
+    rel('setti  ΔT 50 °C e 2000 giri/min: tubo fibra interna σeq [MPa]', edge(b.res[1], 'inner').seq, 615, 0.016);
+    rel('setti  ΔT 50 °C e 2000 giri/min: tubo lontano σc [MPa]', b.res[1].field.far.sc, 21.4, 0.003);
+    rel('setti  ΔT 50 °C e 2000 giri/min: setto al foro σeq [MPa]', first(b.res[2]).a.seq, 88, 0.015);
+  }
+  // esercizio in classe: tubo d'acciaio (R 125, h 10) con salto di temperatura fra le due metà; a mano αΔT·R = 1,35·10⁻⁴ m (ΔT = 90 °C)
+  {
+    const a = S.junctionAnalyze([{ kind: 'tube', side: 'L', R: 125, h: 10, ...fe, dT: 0 }, { kind: 'tube', side: 'R', R: 125, h: 10, ...fe, dT: 90 }], { closed: false });
+    rel('tubo a due temperature  |Q0| [N/m]', Math.abs(a.res[1].F) * 1000, 118850, 0.002);
+    abs('tubo a due temperature  M0 = 0 per antisimmetria', a.res[1].M, 0, 1e-6);
+    rel('tubo a due temperature  σeq al bordo [MPa]', edge(a.res[1], 'inner').seq, 108, 0.002);
+    const f = a.res[1].field, x = Math.PI / (4 * f.lam), pt = f.pts.reduce((b, p) => Math.abs(p.x - x) < Math.abs(b.x - x) ? p : b);
+    rel('tubo a due temperature  |m(π/4λ)| [N·m/m]', Math.abs(pt.m), 1053, 0.003);
+  }
 }
 
 let failed = 0;
