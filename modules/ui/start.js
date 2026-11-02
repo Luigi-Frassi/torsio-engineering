@@ -7,7 +7,7 @@
 
 const START_TXT = {
   it: {
-    title: 'Scegli una stazione', sub: 'Sei moduli indipendenti: ognuno calcola da solo e, se vuoi, passa i risultati al successivo. Ogni calcolo ha la sua relazione in PDF.',
+    title: 'Scegli una stazione', sub: 'Sette moduli indipendenti: ognuno calcola da solo e, se vuoi, passa i risultati al successivo. Ogni calcolo ha la sua relazione in PDF.',
     open: 'Apri', example: 'Esempio', txT: 'Trasmissione completa', txS: 'Cinghia → ruote dentate → albero: un esempio già impostato, con la relazione completa.', txB: 'Apri la demo',
     m: {
       fits: ['Tolleranze e accoppiamenti', 'ISO 286 completa: foro e albero base, IT5–IT11, giochi e interferenze, ricerca per gioco desiderato.'],
@@ -15,11 +15,12 @@ const START_TXT = {
       gears: ['Ruote dentate', 'Modulo e larghezza di fascia da Hertz, verifica a flessione di Lewis.'],
       shafts: ['Alberi', 'Carichi, reazioni e momenti; diametro a fatica e snervamento; profilo per il CAD.'],
       frames: ['Strutture (FEM)', 'Telai e tralicci piani: sforzi, frecce, instabilità; sezione più leggera a catalogo.'],
-      bolts: ['Collegamenti bullonati', 'Numero di viti, precarico e coppia di serraggio; carico esterno e vite di manovra.']
+      bolts: ['Collegamenti bullonati', 'Numero di viti, precarico e coppia di serraggio; carico esterno e vite di manovra.'],
+      discs: ['Dischi e calettamenti', 'Dischi rotanti, tubi spessi, calettamenti: pressione, velocità di distacco, coppia, con i passaggi.']
     }
   },
   en: {
-    title: 'Choose a station', sub: 'Six independent modules: each one calculates on its own and, if you want, passes its results to the next. Every calculation has its PDF report.',
+    title: 'Choose a station', sub: 'Seven independent modules: each one calculates on its own and, if you want, passes its results to the next. Every calculation has its PDF report.',
     open: 'Open', example: 'Example', txT: 'Complete drive', txS: 'Belt → gears → shaft: a ready-made example, with the complete report.', txB: 'Open the demo',
     m: {
       fits: ['Tolerances and fits', 'Full ISO 286: hole and shaft basis, IT5–IT11, clearances and interferences, search by target clearance.'],
@@ -27,11 +28,12 @@ const START_TXT = {
       gears: ['Gears', 'Module and face width from Hertz, Lewis bending check.'],
       shafts: ['Shafts', 'Loads, reactions and moments; diameter for fatigue and yield; profile for CAD.'],
       frames: ['Structures (FEM)', 'Plane frames and trusses: forces, deflections, buckling; lightest catalogue section.'],
-      bolts: ['Bolted joints', 'Number of bolts, preload and tightening torque; external load and power screw.']
+      bolts: ['Bolted joints', 'Number of bolts, preload and tightening torque; external load and power screw.'],
+      discs: ['Discs and shrink fits', 'Rotating discs, thick tubes, shrink fits: pressure, separation speed, torque, with the steps.']
     }
   }
 };
-const START_MODS = [['fits', 'F-01', 'bearingFit'], ['belts', 'B-02', null], ['gears', 'G-03', 'helical50kw'], ['shafts', 'S-04', 'shaftExam'], ['frames', 'T-05', 'frames'], ['bolts', 'J-06', 'boltsExam']];
+const START_MODS = [['fits', 'F-01', 'bearingFit'], ['belts', 'B-02', null], ['gears', 'G-03', 'helical50kw'], ['shafts', 'S-04', 'shaftExam'], ['frames', 'T-05', 'frames'], ['bolts', 'J-06', 'boltsExam'], ['discs', 'D-07', 'discsExam']];
 
 let startOn = false;
 

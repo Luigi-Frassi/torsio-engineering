@@ -72,6 +72,18 @@
     .fit-custom-part { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: #22211f; }
     .fit-custom-part select { border: 1px solid #cfc9bd; border-radius: 6px; padding: 3px 4px; font-family: ui-monospace, monospace; font-size: 13px; min-width: 3.2em; }
     .fit-custom-sep { font-family: ui-monospace, monospace; color: #8a857c; }
+    .ds-kpi { background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; padding: 10px 12px; min-width: 0; }
+    .ds-kpi.ds-y { border-top-color: #e8b321; } .ds-kpi.ds-b { border-top-color: #2f66b3; } .ds-kpi.ds-r { border-top-color: #c0392b; }
+    .ds-k { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #6f6a62; }
+    .ds-v { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600; color: #22211f; margin-top: 2px; overflow-wrap: anywhere; }
+    .ds-s { font-size: 11.5px; color: #5b5750; margin-top: 2px; }
+    .ds-steps { counter-reset: ds; }
+    .ds-step { border-left: 3px solid #e8b321; padding: 2px 0 2px 12px; margin: 0 0 14px; }
+    .ds-step-h { font-size: 13px; font-weight: 700; color: #22211f; margin-bottom: 4px; display: flex; gap: 8px; align-items: baseline; }
+    .ds-step-h span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6f6a62; }
+    .ds-eq { overflow-x: auto; overflow-y: hidden; color: #22211f; font-size: 13px; }
+    .ds-eq .katex-display { margin: 4px 0; text-align: left; } .ds-eq .katex-display > .katex { text-align: left; }
+    .ds-note { font-size: 11.5px; color: #5b5750; margin: 2px 0 0; }
     .start-card { position: relative; background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; transition: border-color .15s; }
     .start-card:hover { border-top-color: #e8b321; }
     .start-main { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; height: 100%; text-align: left; padding: 16px 18px 18px; }
@@ -107,9 +119,9 @@
     window.va('beforeSend', function (event) {
       try {
         var u = new URL(event.url);
-        if (/^\/(app|feedback\/(up|down))\/(fits|belts|gears|shafts|frames|bolts|transmission)(\/(wrong|missing|hard|notwhat))?$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
+        if (/^\/(app|feedback\/(up|down))\/(fits|belts|gears|shafts|frames|bolts|discs|transmission)(\/(wrong|missing|hard|notwhat))?$/.test(u.pathname)) { u.search = ''; u.hash = ''; event.url = u.toString(); return event; }   // module views (switchModule)
         var m = u.searchParams.get('m');
-        u.search = (m === 'fits' || m === 'belts' || m === 'gears' || m === 'shafts' || m === 'frames' || m === 'bolts') ? '?m=' + m : '';
+        u.search = (m === 'fits' || m === 'belts' || m === 'gears' || m === 'shafts' || m === 'frames' || m === 'bolts' || m === 'discs') ? '?m=' + m : '';
         u.hash = '';
         event.url = u.toString();
         return event;
@@ -128,7 +140,7 @@
           <img src="vendor/brand/torsio-mark.svg" alt="" class="w-8 h-8">
           <span class="leading-none"><span class="block text-lg font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></span><span class="block text-[11px] text-slate-400 tracking-wide">Engineering</span></span>
         </a>
-        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.0</span>
+        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.1</span>
       </div>
       <p class="st-head" data-i18n="navStations">Stations</p>
       <nav class="space-y-0">
@@ -156,6 +168,10 @@
           <span data-i18n="navBolts">Bolted Joints</span>
           <span id="dotBolts" class="st-code">J-06</span>
         </button>
+        <button id="navBtnDiscs" class="station">
+          <span data-i18n="navDiscs">Discs & Shrink Fits</span>
+          <span id="dotDiscs" class="st-code">D-07</span>
+        </button>
       </nav>
     </div>
     <div class="text-xs text-slate-500 border-t border-slate-800 pt-4 space-y-3">
@@ -170,9 +186,9 @@
   <div class="md:hidden bg-slate-950 border-b border-slate-800 p-3 sticky top-0 z-50">
     <div class="flex items-center justify-between mb-2.5 px-1">
       <a href="./" class="flex items-center gap-2"><img src="vendor/brand/torsio-mark.svg" alt="" class="w-6 h-6"><span class="text-base font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span> <span class="font-medium text-slate-400" style="font-stretch:100%">Engineering</span></span></a>
-      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.0</span>
+      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.1</span>
     </div>
-    <div class="grid grid-cols-6 gap-1">
+    <div class="grid grid-cols-7 gap-1">
       <button id="navBtnFitsMobile" class="m-station m-station-on">
         <span data-i18n="navFits">Tolerances</span>
       </button>
@@ -190,6 +206,9 @@
       </button>
       <button id="navBtnBoltsMobile" class="m-station">
         <span data-i18n="navBoltsShort">Bolts</span>
+      </button>
+      <button id="navBtnDiscsMobile" class="m-station">
+        <span data-i18n="navDiscsShort">Discs</span>
       </button>
     </div>
   </div>
@@ -234,6 +253,10 @@
         <button id="demoBoltsBtn" onclick="loadDemoPreset('boltsExam')"
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
           <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v4H8z"/><path d="M10 8v12h4V8"/><path d="M10 11l4 1.5M10 14l4 1.5M10 17l4 1.5"/></svg> <span data-i18n="demoBolts">Flanged coupling (bolts)</span>
+        </button>
+        <button id="demoDiscsBtn" onclick="loadDemoPreset('discsExam')"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
+          <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg> <span data-i18n="demoDiscs">Shrink-fitted discs (exam)</span>
         </button>
         <button id="demoShaftBtn" onclick="loadDemoPreset('shaftExam')" 
           class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium transition-all flex items-center gap-1.5">
@@ -2007,6 +2030,7 @@
 
     <!-- ==================== MODULE 6: BOLTED JOINTS (method of the Machine Elements notes) ==================== -->
     <div id="moduleBoltsSection" class="hidden"></div>
+    <div id="moduleDiscsSection" class="hidden"></div>
 
     <!-- Feedback (modules/ui/feedback.js) -->
     <div id="fbBar" class="bg-slate-800/40 rounded-xl border border-slate-700/60 p-4 mb-6"></div>
@@ -2045,6 +2069,11 @@
         pageTitleBolts: "Bolted joints",
         pageSubtitleBolts: "Friction joints and flanges: number of bolts, preload and tightening torque, external axial load with the tightening diagram, power screws.",
         demoBolts: "Flanged coupling (bolts)",
+        navDiscs: "Discs & Shrink Fits",
+        navDiscsShort: "Discs",
+        pageTitleDiscs: "Discs, thick tubes and shrink fits",
+        pageSubtitleDiscs: "Rotating discs, thick-walled tubes and shrink fits: contact pressure at rest and in service, separation speed, stresses along the radius, transmissible torque, with every step of the calculation.",
+        demoDiscs: "Shrink-fitted discs (exam)",
         projectBtn: "Project",
         projectTitle: "Project data, save and open",
         dxfTitle: "Download the drawing for CAD (DXF)",
@@ -2513,6 +2542,11 @@
         pageTitleBolts: "Collegamenti bullonati",
         pageSubtitleBolts: "Giunzioni ad attrito e flange: numero di viti, precarico e coppia di serraggio, carico esterno con il diagramma di serraggio, viti di manovra.",
         demoBolts: "Giunto a flange (bulloni)",
+        navDiscs: "Dischi e Calettamenti",
+        navDiscsShort: "Dischi",
+        pageTitleDiscs: "Dischi, tubi spessi e calettamenti",
+        pageSubtitleDiscs: "Dischi rotanti, tubi a forte spessore e calettamenti: pressione a fermo e in esercizio, velocità di distacco, tensioni lungo il raggio, coppia trasmissibile, con tutti i passaggi del calcolo.",
+        demoDiscs: "Dischi calettati (esame)",
         projectBtn: "Progetto",
         projectTitle: "Dati del progetto, salva e apri",
         dxfTitle: "Scarica il disegno per il CAD (DXF)",
@@ -3030,24 +3064,25 @@
       const sShafts = document.getElementById('moduleShaftsSection');
       const sFrames = document.getElementById('moduleFramesSection');
       const sBolts = document.getElementById('moduleBoltsSection');
+      const bDiscs = document.getElementById('navBtnDiscs'), bDiscsM = document.getElementById('navBtnDiscsMobile'), dDiscs = document.getElementById('dotDiscs'), sDiscs = document.getElementById('moduleDiscsSection');
 
       const titleEl = document.getElementById('moduleTitle');
       const subEl = document.getElementById('moduleSubtitle');
       const t = translations[currentLang];
 
-      [bFits, bBelts, bGears, bShafts, bFrames, bBolts].forEach(b => {
+      [bFits, bBelts, bGears, bShafts, bFrames, bBolts, bDiscs].forEach(b => {
         if (b) b.className = "station";
       });
-      [bFitsM, bBeltsM, bGearsM, bShaftsM, bFramesM, bBoltsM].forEach(b => {
+      [bFitsM, bBeltsM, bGearsM, bShaftsM, bFramesM, bBoltsM, bDiscsM].forEach(b => {
         if (b) b.className = "m-station";
       });
-      [dFits, dBelts, dGears, dShafts, dFrames, dBolts].forEach(d => { if (d) d.className = "st-code"; });
-      [sFits, sBelts, sGears, sShafts, sFrames, sBolts].forEach(s => { if (s) s.classList.add('hidden'); });
+      [dFits, dBelts, dGears, dShafts, dFrames, dBolts, dDiscs].forEach(d => { if (d) d.className = "st-code"; });
+      [sFits, sBelts, sGears, sShafts, sFrames, sBolts, sDiscs].forEach(s => { if (s) s.classList.add('hidden'); });
 
       const unitBox = document.getElementById('unitToggleContainer');
       const gearBadge = document.getElementById('gearUnitBadge');
 
-      if (mod === 'gears' || mod === 'shafts' || mod === 'frames' || mod === 'bolts') {   // metric-only modules
+      if (mod === 'gears' || mod === 'shafts' || mod === 'frames' || mod === 'bolts' || mod === 'discs') {   // metric-only modules
         if (unitBox) unitBox.classList.add('hidden');
         if (gearBadge) gearBadge.classList.remove('hidden');
       } else {
@@ -3103,6 +3138,13 @@
         titleEl.innerText = t.pageTitleBolts;
         subEl.innerText = t.pageSubtitleBolts;
         if (typeof calculateBolts === 'function') calculateBolts();
+      } else if (mod === 'discs') {
+        bDiscs.className = "station station-on";
+        bDiscsM.className = "m-station m-station-on";
+        sDiscs.classList.remove('hidden');
+        titleEl.innerText = t.pageTitleDiscs;
+        subEl.innerText = t.pageSubtitleDiscs;
+        if (typeof calculateDiscs === 'function') calculateDiscs();
       }
     }
 
@@ -3227,6 +3269,8 @@
         if (typeof calculateFrames === 'function') calculateFrames();
       } else if (activeModule === 'bolts') {
         if (typeof calculateBolts === 'function') calculateBolts();
+      } else if (activeModule === 'discs') {
+        if (typeof calculateDiscs === 'function') calculateDiscs();
       }
     }
 
@@ -3272,6 +3316,9 @@
       } else if (activeModule === 'bolts') {
         document.getElementById('moduleTitle').innerText = t.pageTitleBolts;
         document.getElementById('moduleSubtitle').innerText = t.pageSubtitleBolts;
+      } else if (activeModule === 'discs') {
+        document.getElementById('moduleTitle').innerText = t.pageTitleDiscs;
+        document.getElementById('moduleSubtitle').innerText = t.pageSubtitleDiscs;
       } else {
         document.getElementById('moduleTitle').innerText = t.pageTitleGears;
         document.getElementById('moduleSubtitle').innerText = t.pageSubtitleGears;
@@ -3292,6 +3339,8 @@
         if (typeof calculateFrames === 'function') calculateFrames();
       } else if (activeModule === 'bolts') {
         if (typeof calculateBolts === 'function') calculateBolts();
+      } else if (activeModule === 'discs') {
+        if (typeof calculateDiscs === 'function') calculateDiscs();
       }
     }
 
@@ -3308,6 +3357,8 @@
     document.getElementById('navBtnFramesMobile').addEventListener('click', () => switchModule('frames'));
     document.getElementById('navBtnBolts').addEventListener('click', () => switchModule('bolts'));
     document.getElementById('navBtnBoltsMobile').addEventListener('click', () => switchModule('bolts'));
+    document.getElementById('navBtnDiscs').addEventListener('click', () => switchModule('discs'));
+    document.getElementById('navBtnDiscsMobile').addEventListener('click', () => switchModule('discs'));
 
     // Shafts: mode tabs and every input recalculate (visibility is handled inside calculateShafts)
     document.getElementById('shaftModeBeam').addEventListener('click', () => setShaftMode('beam'));
@@ -3494,6 +3545,8 @@
       if (btnFr) btnFr.className = (activeKey === 'frames') ? activeClass : inactiveClass;
       const btnBt = document.getElementById('demoBoltsBtn');
       if (btnBt) btnBt.className = (activeKey === 'boltsExam') ? activeClass : inactiveClass;
+      const btnDs = document.getElementById('demoDiscsBtn');
+      if (btnDs) btnDs.className = (activeKey === 'discsExam') ? activeClass : inactiveClass;
       const btnTx = document.getElementById('demoTxBtn');
       if (btnTx) btnTx.className = (activeKey === 'transmission') ? activeClass : inactiveClass;
     }
@@ -3610,6 +3663,11 @@
         set('btLoad', 'torque'); set('btMt', 32); set('btDc', 210); set('btMint', 1); set('btF0', 0.14); set('btX', 1.5);
         set('btCls', '12.9'); set('btSize', 'M30'); set('btFt', 0.14); set('btM', 0); set('btPe', -110); set('btH', 65); set('btE', 200);
         setBoltMode('design');
+      } else if (presetKey === 'discsExam') {
+        // Exam of 11 July 2015: two steel discs shrink-fitted with i_R = 0.0012, at rest and at 5000 rpm (they separate)
+        switchModule('discs');
+        if (typeof setDiscMode === 'function') setDiscMode('stack');
+        if (typeof dsLoad === 'function') dsLoad(DS_PRESETS.ex2015());
       } else if (presetKey === 'transmission') {
         // Complete drive, every module linked to the previous one:
         // motor 7.5 kW 1450 rpm -> HTD 8M belt 28/56 (725 rpm) -> spur pair tau = 1/4 -> pinion (input) shaft -> fit of the gear seat.
@@ -3712,10 +3770,13 @@
   <script src="modules/ui/frames-ui.js"></script>
   <script src="modules/core/bolts-core.js"></script>
   <script src="modules/ui/bolts-ui.js"></script>
+  <script src="modules/core/discs-core.js"></script>
+  <script src="modules/ui/discs-ui.js"></script>
   <script src="modules/ui/report.js"></script>
   <script src="modules/ui/report-transmission.js"></script>
   <script src="modules/ui/report-frames.js"></script>
   <script src="modules/ui/report-bolts.js"></script>
+  <script src="modules/ui/report-discs.js"></script>
   <script src="modules/ui/share.js"></script>
   <script src="modules/ui/project.js"></script>
   <script src="modules/core/dxf-core.js"></script>
@@ -3749,6 +3810,7 @@
     try { if (typeof calculateShafts === 'function') calculateShafts(); } catch(e) { console.error(e); }
     try { if (typeof calculateFrames === 'function') calculateFrames(); } catch(e) { console.error(e); }
     try { if (typeof calculateBolts === 'function') calculateBolts(); } catch(e) { console.error(e); }
+    try { if (typeof calculateDiscs === 'function') calculateDiscs(); } catch(e) { console.error(e); }
     try { if (typeof initProjects === 'function') initProjects(); } catch(e) { console.error(e); }
     try { if (typeof initDxf === 'function') initDxf(); } catch(e) { console.error(e); }
     try { if (typeof initShareLinks === 'function') initShareLinks(); } catch(e) { console.error(e); }

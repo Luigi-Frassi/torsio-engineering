@@ -20,7 +20,7 @@ const VAL_TXT = {
     fitRange: 'Campo coperto dalla ISO 286: 1–500 mm', gearZ: 'Almeno 9 denti', helix: 'Angolo d\'elica tra 0° e 45°',
     pressure: 'Angolo di pressione tra 10° e 30°', share: 'Quota della coppia tra 0 e 100 %', cyc: 'Vita a termine: tra 10³ e 10⁶ cicli',
     beltZ: 'Almeno 10 denti', dd: 'D/d deve essere almeno 1', notInShaft: 'Fuori dall\'albero (0 … L)', sameBearings: 'I due cuscinetti non possono coincidere',
-    pitch: 'Il passo deve essere minore del diametro', table: 'tabella'
+    pitch: 'Il passo deve essere minore del diametro', dsOrder: 'Deve essere maggiore della quota dell\'elemento interno', table: 'tabella'
   },
   en: {
     empty: 'Enter a value', gt: v => `Must be greater than ${v}`, min: v => `Minimum ${v}`, max: v => `Maximum ${v}`,
@@ -33,7 +33,7 @@ const VAL_TXT = {
     fitRange: 'Range covered by ISO 286: 1–500 mm', gearZ: 'At least 9 teeth', helix: 'Helix angle between 0° and 45°',
     pressure: 'Pressure angle between 10° and 30°', share: 'Torque share between 0 and 100 %', cyc: 'Finite life: between 10³ and 10⁶ cycles',
     beltZ: 'At least 10 teeth', dd: 'D/d must be at least 1', notInShaft: 'Outside the shaft (0 … L)', sameBearings: 'The two bearings cannot coincide',
-    pitch: 'The pitch must be smaller than the diameter', table: 'table'
+    pitch: 'The pitch must be smaller than the diameter', dsOrder: 'Must be larger than the dimension of the element inside', table: 'table'
   }
 };
 function valT() { return VAL_TXT[typeof currentLang !== 'undefined' ? currentLang : 'en'] || VAL_TXT.en; }
@@ -65,8 +65,14 @@ const VAL_RULES = {
   // bolts
   btF: POS, btMt: POS, btDc: POS, btMs: POS, btMint: { int: true, min: 1 }, btF0: FRIC, btX: SX, btFt: FRIC,
   btM: { int: true, min: 0 }, btH: POS, btE: POS,   // btPe: any sign (negative = compression)
-  bsD: POS, bsP: POS, bsH: NONNEG, bsF: { min: 0, max: 1, msg: 'fr' }, bsN: POS, bsSy: POS
+  bsD: POS, bsP: POS, bsH: NONNEG, bsF: { min: 0, max: 1, msg: 'fr' }, bsN: POS, bsSy: POS,
+  // discs (the ring rows are numbered 0…3)
+  dsR0: NONNEG, dsN: NONNEG, dsBandS: NONNEG, dsBandT: NONNEG, dsBladeF: NONNEG, dsXreq: SX, dsTqT: NONNEG, dsTqP: NONNEG, dsTqF: FRIC, dsTqX: SX,
+  duD: POS, duSa: POS, duN: NONNEG, duRho: NONNEG, duF: NONNEG, duHe: NONNEG
 };
+for (let k = 0; k < 4; k++) {
+  Object.assign(VAL_RULES, { ['dsRe' + k]: POS, ['dsH' + k]: POS, ['dsE' + k]: POS, ['dsNu' + k]: { min: 0, max: 0.49 }, ['dsRho' + k]: NONNEG });
+}
 for (let i = 1; i <= 4; i++) {
   VAL_RULES['shaftEl' + i + 'D'] = POS;
   VAL_RULES['shaftEl' + i + 'Helix'] = { min: 0, max: 45, msg: 'helix' };
@@ -74,7 +80,7 @@ for (let i = 1; i <= 4; i++) {
   for (const f of ['X', 'D', 'DD', 'R']) VAL_RULES['shaftRs' + i + f] = NONNEG;
 }
 
-const VAL_SECTIONS = { fits: 'moduleFitsSection', belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection', bolts: 'moduleBoltsSection' };
+const VAL_SECTIONS = { discs: 'moduleDiscsSection', fits: 'moduleFitsSection', belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection', bolts: 'moduleBoltsSection' };
 
 function valFmt(x) { return typeof x === 'number' ? x.toLocaleString(currentLang === 'it' ? 'it-IT' : 'en-GB', { maximumFractionDigits: 4 }) : x; }
 
@@ -131,6 +137,11 @@ function valCross(mod, sec, out) {
     if (Number.isFinite(num('shaftXA')) && Math.abs(num('shaftXA') - num('shaftXB')) < 1e-9) add('shaftXB', t.sameBearings);
   }
   if (mod === 'bolts' && num('bsP') >= num('bsD')) add('bsP', t.pitch);
+  if (mod === 'discs') {
+    // each element must be larger than the one inside it
+    let prev = num('dsR0') || 0;
+    for (let k = 0; k < 4 && get('dsRe' + k); k++) { const v = num('dsRe' + k); if (Number.isFinite(v) && v <= prev + 1e-9) add('dsRe' + k, t.dsOrder); if (Number.isFinite(v)) prev = v; }
+  }
 }
 
 // all invalid fields of a module: [{ el, msg }]

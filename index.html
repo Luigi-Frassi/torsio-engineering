@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Torsio Engineering — preliminary sizing of machine elements</title>
-  <meta name="description" content="Shafts, gears, timing belts, ISO fits, FEM frames and bolted joints: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 387 hand-worked cases.">
+  <meta name="description" content="Shafts, gears, timing belts, ISO fits, FEM frames, bolted joints, discs and shrink fits: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 416 hand-worked cases.">
   <link rel="canonical" href="https://torsio.app/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Torsio Engineering">
   <meta property="og:title" content="Torsio Engineering — preliminary sizing of machine elements">
-  <meta property="og:description" content="Shafts, gears, timing belts, ISO fits, FEM frames and bolted joints: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 387 hand-worked cases.">
+  <meta property="og:description" content="Shafts, gears, timing belts, ISO fits, FEM frames, bolted joints, discs and shrink fits: free preliminary sizing in the browser, with a full calculation report (PDF) and a DXF drawing for CAD. Checked against 416 hand-worked cases.">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="it_IT">
   <meta property="og:url" content="https://torsio.app/">
@@ -27,7 +27,7 @@
     // Old shared links pointed at the root (/?m=shafts&...): send them to the calculator
     (function () {
       var q = window.location.search;
-      if (/[?&]m=(fits|belts|gears|shafts|frames|bolts)\b/.test(q)) window.location.replace('app.html' + q + window.location.hash);
+      if (/[?&]m=(fits|belts|gears|shafts|frames|bolts|discs)\b/.test(q)) window.location.replace('app.html' + q + window.location.hash);
     })();
   </script>
   <link rel="stylesheet" href="vendor/fonts/fonts.css">
@@ -186,13 +186,13 @@
       <div class="hero">
         <div>
           <h1 data-t="h1">Dimensiona gli organi di macchine. Consegna la relazione di calcolo.</h1>
-          <p class="lead" data-t="lead">Alberi, ruote dentate, bulloni, cinghie, accoppiamenti ISO e telai (FEM). Ogni risultato arriva con la sua relazione in PDF: formule con i tuoi numeri, diagrammi e quote per il CAD.</p>
+          <p class="lead" data-t="lead">Alberi, ruote dentate, bulloni, cinghie, accoppiamenti ISO, telai (FEM), dischi e calettamenti. Ogni risultato arriva con la sua relazione in PDF: formule con i tuoi numeri, diagrammi e quote per il CAD.</p>
           <div class="ctas">
             <a class="btn go" href="app.html" data-href="app" data-t="openApp">Apri il calcolatore</a>
             <a class="btn alt" href="app.html?demo=transmission" data-href="demo" data-t="tryDemo">Prova una trasmissione completa</a>
           </div>
-          <div class="jump"><p data-t="jump">Oppure vai direttamente a</p><div><a href="app.html?m=shafts" data-href="shafts"><b>S-04</b><span data-t="jShafts">Alberi</span></a><a href="app.html?m=gears" data-href="gears"><b>G-03</b><span data-t="jGears">Ruote dentate</span></a><a href="app.html?m=bolts" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bulloni</span></a><a href="app.html?m=frames" data-href="frames"><b>T-05</b><span data-t="jFrames">Telai e tralicci</span></a><a href="app.html?m=belts" data-href="belts"><b>B-02</b><span data-t="jBelts">Cinghie</span></a><a href="app.html?m=fits" data-href="fits"><b>F-01</b><span data-t="jFits">Accoppiamenti</span></a></div></div>
-          <p class="note" data-t="free">Gratuito, senza registrazione, verificato su 387 casi d'esame svolti a mano. I dati non escono dal tuo computer.</p>
+          <div class="jump"><p data-t="jump">Oppure vai direttamente a</p><div><a href="app.html?m=shafts" data-href="shafts"><b>S-04</b><span data-t="jShafts">Alberi</span></a><a href="app.html?m=gears" data-href="gears"><b>G-03</b><span data-t="jGears">Ruote dentate</span></a><a href="app.html?m=bolts" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bulloni</span></a><a href="app.html?m=frames" data-href="frames"><b>T-05</b><span data-t="jFrames">Telai e tralicci</span></a><a href="app.html?m=belts" data-href="belts"><b>B-02</b><span data-t="jBelts">Cinghie</span></a><a href="app.html?m=fits" data-href="fits"><b>F-01</b><span data-t="jFits">Accoppiamenti</span></a><a href="app.html?m=discs" data-href="discs"><b>D-07</b><span data-t="jDiscs">Dischi e calettamenti</span></a></div></div>
+          <p class="note" data-t="free">Gratuito, senza registrazione, verificato su 416 casi d'esame svolti a mano. I dati non escono dal tuo computer.</p>
         </div>
 
         <!-- The pinion shaft of the demo transmission, drawn as a sheet with its title block -->
@@ -378,7 +378,7 @@
       <h2 data-t="metH">Il metodo del corso, controllato sui temi d'esame</h2>
       <p class="intro" data-t="metP">I calcoli seguono la Costruzione di Macchine: coefficienti dai diagrammi del corso, Goodman per la fatica, Hertz e Lewis per le ruote, ISO 286 per le tolleranze. Ogni modifica passa da una suite di prove con risultati svolti a mano.</p>
       <div class="facts">
-        <div><div class="n">387</div><p data-t="f1">casi di prova automatici, ripetuti a ogni modifica del codice</p></div>
+        <div><div class="n">416</div><p data-t="f1">casi di prova automatici, ripetuti a ogni modifica del codice</p></div>
         <div><div class="n">13</div><p data-t="f2">temi d'esame sugli alberi rifatti per intero, dalle reazioni al diametro</p></div>
         <div><div class="n">4</div><p data-t="f3">moduli collegati in una sola relazione, in italiano o in inglese</p></div>
       </div>
@@ -406,9 +406,9 @@
       en: {
         navMods: 'Modules', navRep: 'Report', navMethod: 'Method', openApp: 'Open the calculator', tryDemo: 'Try a complete drive',
         h1: 'Size machine elements. Hand in the calculation report.',
-        lead: 'Shafts, gears, bolted joints, timing belts, ISO fits and 2D frames (FEM). Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
-        free: 'Free, no sign-up, checked against 387 hand-solved exam cases. Your data never leaves your computer.',
-        jump: 'Or jump straight to', jShafts: 'Shafts', jGears: 'Gears', jBolts: 'Bolted joints', jFrames: 'Frames & trusses', jBelts: 'Timing belts', jFits: 'ISO fits',
+        lead: 'Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
+        free: 'Free, no sign-up, checked against 416 hand-solved exam cases. Your data never leaves your computer.',
+        jump: 'Or jump straight to', jShafts: 'Shafts', jGears: 'Gears', jBolts: 'Bolted joints', jFrames: 'Frames & trusses', jBelts: 'Timing belts', jFits: 'ISO fits', jDiscs: 'Discs & shrink fits',
         flowH: 'Follow the power from the motor to the last fit',
         flowP: 'The modules are the stages of a drive. Calculate them one at a time, then generate a single report that checks that speeds, torques and diameters match from one stage to the next.',
         m0h: 'Motor', m0p: 'Input power and speed. Torque and speed of every stage start here.',
@@ -438,7 +438,7 @@
     document.querySelectorAll('[data-t]').forEach(function (el) { IT[el.getAttribute('data-t')] = el.textContent; });
     document.querySelectorAll('[data-t-svg]').forEach(function (el) { IT[el.getAttribute('data-t-svg')] = el.textContent; });
     document.querySelectorAll('[data-t-html]').forEach(function (el) { IT[el.getAttribute('data-t-html')] = el.innerHTML; });
-    var HREF = { boltDemo: 'app.html?demo=boltsExam', frames: 'app.html?m=frames', femDemo: 'app.html?demo=frames', app: 'app.html', demo: 'app.html?demo=transmission', belts: 'app.html?m=belts', gears: 'app.html?m=gears', shafts: 'app.html?m=shafts', fits: 'app.html?m=fits', bolts: 'app.html?m=bolts' };
+    var HREF = { boltDemo: 'app.html?demo=boltsExam', frames: 'app.html?m=frames', femDemo: 'app.html?demo=frames', app: 'app.html', demo: 'app.html?demo=transmission', belts: 'app.html?m=belts', gears: 'app.html?m=gears', shafts: 'app.html?m=shafts', fits: 'app.html?m=fits', bolts: 'app.html?m=bolts', discs: 'app.html?m=discs' };
     var goodman = {
       it: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143{,}44}{0{,}811 \\cdot 0{,}875 \\cdot 450} + \\dfrac{11{,}73}{900} \\;\\Rightarrow\\; X = 2{,}163',
       en: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143.44}{0.811 \\cdot 0.875 \\cdot 450} + \\dfrac{11.73}{900} \\;\\Rightarrow\\; X = 2.163'

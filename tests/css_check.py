@@ -43,9 +43,9 @@ with sync_playwright() as p:
     b = p.chromium.launch(); ctx = b.new_context(viewport={'width': 1400, 'height': 900})
     ctx.route('**/*', lambda r: r.continue_() if r.request.url.startswith(B.rsplit('/', 1)[0]) else r.abort())
     pg = ctx.new_page()
-    for q in ['', '?demo=transmission', '?demo=frames', '?demo=boltsExam', '?demo=shaftExam', '?demo=bearingFit']:
+    for q in ['', '?demo=transmission', '?demo=frames', '?demo=boltsExam', '?demo=shaftExam', '?demo=bearingFit', '?demo=discsExam']:
         pg.goto(B + q); pg.wait_for_timeout(1000); toks |= set(pg.evaluate(GET))
-    for m in ['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts']:
+    for m in ['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs']:
         pg.goto(B + '?m=' + m); pg.wait_for_timeout(800)
         n = pg.evaluate(f"m=>[...document.querySelectorAll(({SEC})(m)+' button')].filter(b=>b.offsetParent&&!b.closest('table')).length", m)
         for i in range(min(n, 40)):
@@ -53,7 +53,7 @@ with sync_playwright() as p:
             pg.wait_for_timeout(120); toks |= set(pg.evaluate(GET))
         for sid, opts in pg.evaluate(f"m=>[...document.querySelectorAll(({SEC})(m)+' select')].filter(s=>s.id).map(s=>[s.id,[...s.options].map(o=>o.value)])", m):
             for o in opts[:8]:
-                pg.evaluate("([id,v])=>{const e=document.getElementById(id);e.value=v;e.dispatchEvent(new Event('change',{bubbles:true}))}", [sid, o])
+                pg.evaluate("([id,v])=>{const e=document.getElementById(id);if(!e)return;e.value=v;e.dispatchEvent(new Event('change',{bubbles:true}))}", [sid, o])
                 pg.wait_for_timeout(60); toks |= set(pg.evaluate(GET))
     b.close()
 srv.shutdown()

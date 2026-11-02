@@ -19,10 +19,12 @@ const LINK_TXT = {
     frameBolts: n => `Bulloni al vincolo del nodo ${n}`, frameBoltsSub: (T, Pe, M) => `taglio ${T} kN · sollevamento ${Pe} kN` + (M ? ' · momento escluso' : ''), frameNone: 'Nessuna reazione: calcola prima la struttura',
     from: 'Dati presi da', close: 'Chiudi', undo: 'Annulla', undone: 'Valori precedenti ripristinati.',
     src: { beltGears: 'Cinghia sincrona → ruote', beltShaft: 'Cinghia sincrona → albero', gearPinion: 'Ruote dentate → albero del pignone', gearWheel: 'Ruote dentate → albero della ruota',
-      shaftFits: 'Albero → accoppiamento', shaftBolts: 'Albero → giunto a flange', frameBolts: n => `Strutture → vincolo del nodo ${n}` },
+      shaftFits: 'Albero → accoppiamento', shaftBolts: 'Albero → giunto a flange', frameBolts: n => `Strutture → vincolo del nodo ${n}`, fitDiscs: 'Accoppiamento → calettamento' },
     noteBeltShaft: 'La forza della cinghia sull\'albero non è trasferita: inseriscila come forza generica nella posizione della puleggia.',
     noteGear: 'Posizione della ruota, cuscinetti e lunghezza restano quelli dell\'albero: controllali.',
     noteBolts: 'Diametro della corona, classe e attriti restano quelli del modulo Bulloni: controllali.',
+    fitDiscs: 'Calettamento con questo accoppiamento', fitDiscsSub: (d, f, i) => `Ø${d} ${f} · interferenza max ${i} µm: pressione, tensioni, coppia`, fitNoInt: 'Serve un accoppiamento con interferenza (es. H7/s6)',
+    noteDiscs: 'Albero e mozzo prendono il diametro dell\'accoppiamento; diametro esterno del mozzo, spessore e materiali restano quelli del modulo Dischi: controllali.',
     noteFrameM: M => `Il vincolo trasmette anche un momento di ${M} kN·m, che la giunzione ad attrito non considera: va verificato a parte (piastra di base).`,
     noteFrame: 'Taglio = |Rx| (piastra orizzontale); il sollevamento (Ry < 0) diventa il carico esterno assiale Pe.'
   },
@@ -36,10 +38,12 @@ const LINK_TXT = {
     frameBolts: n => `Bolts at the support of node ${n}`, frameBoltsSub: (T, Pe, M) => `shear ${T} kN · uplift ${Pe} kN` + (M ? ' · moment excluded' : ''), frameNone: 'No reactions: calculate the structure first',
     from: 'Data taken from', close: 'Close', undo: 'Undo', undone: 'Previous values restored.',
     src: { beltGears: 'Timing belt → gears', beltShaft: 'Timing belt → shaft', gearPinion: 'Gears → pinion shaft', gearWheel: 'Gears → wheel shaft',
-      shaftFits: 'Shaft → fit', shaftBolts: 'Shaft → flange coupling', frameBolts: n => `Frames → support of node ${n}` },
+      shaftFits: 'Shaft → fit', shaftBolts: 'Shaft → flange coupling', frameBolts: n => `Frames → support of node ${n}`, fitDiscs: 'Fit → shrink fit' },
     noteBeltShaft: 'The belt pull on the shaft is not transferred: add it as a generic force at the pulley position.',
     noteGear: 'Gear position, bearings and length stay those of the shaft: check them.',
     noteBolts: 'Bolt circle diameter, class and friction stay those of the Bolts module: check them.',
+    fitDiscs: 'Shrink fit with this fit', fitDiscsSub: (d, f, i) => `Ø${d} ${f} · max interference ${i} µm: pressure, stresses, torque`, fitNoInt: 'Needs an interference fit (e.g. H7/s6)',
+    noteDiscs: 'Shaft and hub take the diameter of the fit; hub outer diameter, thickness and materials stay those of the Discs module: check them.',
     noteFrameM: M => `The support also carries a moment of ${M} kN·m, which the friction joint does not consider: check it separately (base plate).`,
     noteFrame: 'Shear = |Rx| (horizontal plate); the uplift (Ry < 0) becomes the external axial load Pe.'
   }
@@ -79,6 +83,12 @@ function linkShaftData() {
   return { Mt, d: s && s.d > 0 ? s.d : null };
 }
 
+function linkFitData() {
+  const s = typeof lastFitState !== 'undefined' ? lastFitState : null;
+  if (!s || !s.a) return null;
+  return { d: s.dMm, fit: s.fit, delta: -s.a.minPlay };   // largest diametral interference [µm]
+}
+
 function linkFrameReactions() {
   if (typeof frResults === 'undefined' || !frResults) return [];
   const sel = frSelFamily && frResults.byFamily[frSelFamily];
@@ -87,7 +97,7 @@ function linkFrameReactions() {
 }
 
 // ---- the bar ---------------------------------------------------------------------------------------------
-const LINK_SECTIONS = { belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection' };
+const LINK_SECTIONS = { fits: 'moduleFitsSection', belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection', discs: 'moduleDiscsSection' };
 
 function linkButton(action, arg, title, sub, enabled = true) {
   const cls = enabled
@@ -106,7 +116,11 @@ function linkBarHtml(mod) {
       `<h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${t.bar}</h3>` +
       `<p class="text-sm text-rose-400">${valT().blocked}</p></div>`;
   }
-  if (mod === 'belts') {
+  if (mod === 'fits') {
+    const d = linkFitData();
+    if (!d) return '';
+    b.push(d.delta > 0 ? linkButton('fitDiscs', '', t.fitDiscs, t.fitDiscsSub(linkNum(d.d, d.d % 1 ? 2 : 0), d.fit, linkNum(d.delta, 0))) : linkButton('fitDiscs', '', t.fitDiscs, t.fitNoInt, false));
+  } else if (mod === 'belts') {
     const d = linkBeltData();
     b.push(d ? linkButton('beltGears', '', t.beltGears, t.beltGearsSub(linkNum(d.P, 2), linkNum(d.n2, 0))) : linkButton('beltGears', '', t.beltGears, t.beltGeom, false));
     b.push(d ? linkButton('beltShaft', '', t.beltShaft, t.beltShaftSub(linkNum(d.P, 2), linkNum(d.n2, 0))) : linkButton('beltShaft', '', t.beltShaft, t.beltGeom, false));
@@ -260,6 +274,20 @@ function linkClick(ev) {
     linkSet('btM', 0);
     linkGo('bolts');
     linkBanner('bolts', t.src.shaftBolts, [`Mt = ${linkNum(d.Mt, 1)} N·m`], [t.noteBolts]);
+  } else if (act === 'fitDiscs') {
+    const d = linkFitData(); if (!d || !(d.delta > 0) || typeof dsModel === 'undefined') return;
+    linkUndoList.push({ discModel: JSON.parse(JSON.stringify(dsModel)) });
+    // shaft and hub with this diameter; the ISO fit gives the interference
+    const M = JSON.parse(JSON.stringify(dsModel)), R = d.d / 2, k = M.dim === 'd' ? 2 : 1;
+    if (M.rings.length < 2) { M.rings = [dsRingFrom('steel', R * k, 50), dsRingFrom('steel', 2 * R * k, 50)]; M.r0 = 0; }
+    M.rings[0].Re = R * k;
+    if ((+M.r0 || 0) >= R * k) M.r0 = 0;
+    if ((+M.rings[1].Re || 0) <= R * k) M.rings[1].Re = 2 * R * k;
+    M.ifs[0] = { mode: 'iso', v: 0, fit: d.fit, which: 'max' };
+    if (typeof setDiscMode === 'function') setDiscMode('stack');
+    dsLoad(M);
+    linkGo('discs');
+    linkBanner('discs', t.src.fitDiscs, [`Ø = ${linkNum(d.d, 2)} mm`, d.fit, `δ max = ${linkNum(d.delta, 0)} µm`], [t.noteDiscs]);
   } else if (act === 'frameBolts') {
     const r = linkFrameReactions()[parseInt(arg)]; if (!r) return;
     const T = Math.abs(r.Rx) / 1000, Pe = Math.max(0, -r.Ry) / 1000, M = Math.abs(r.M) / 1e6;
@@ -284,10 +312,11 @@ function linkUndo(mod) {
     if (u.el) { u.el.value = u.old; u.el.dispatchEvent(new Event(u.el.tagName === 'SELECT' ? 'change' : 'input', { bubbles: true })); }
     else if (u.radio) { u.radio.checked = true; u.radio.dispatchEvent(new Event('change', { bubbles: true })); }
   }
-  const sm = list.find(u => u.shaftMode), bm = list.find(u => u.boltMode);
+  const sm = list.find(u => u.shaftMode), bm = list.find(u => u.boltMode), dm = list.find(u => u.discModel);
+  if (mod === 'discs' && dm && typeof dsLoad === 'function') dsLoad(dm.discModel);
   if (mod === 'shafts' && sm && typeof setShaftMode === 'function') setShaftMode(sm.shaftMode);
   if (mod === 'bolts' && bm && typeof setBoltMode === 'function') setBoltMode(bm.boltMode);
-  const calc = { fits: 'calculateFits', belts: 'calculateBelts', gears: 'calculateGears', shafts: 'calculateShafts', frames: 'frScheduleCalc', bolts: 'calculateBolts' }[mod];
+  const calc = { fits: 'calculateFits', belts: 'calculateBelts', gears: 'calculateGears', shafts: 'calculateShafts', frames: 'frScheduleCalc', bolts: 'calculateBolts', discs: 'calculateDiscs' }[mod];
   if (calc && typeof window[calc] === 'function') window[calc]();
   if (typeof syncShareUrl === 'function') syncShareUrl();
   const b = linkEl('linkBanner');
