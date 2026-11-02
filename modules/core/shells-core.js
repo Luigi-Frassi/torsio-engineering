@@ -170,8 +170,10 @@ function discField(mb, F, Mg, st) {
  */
 function junctionAnalyze(members, st) {
   const J = junctionSolve(members, st);
+  // same axial length for every tube (the longest decay length 2π/λ), so the plots line up
+  const Lc = Math.max(0, ...members.filter(m => m.kind === 'tube').map(m => 2 * Math.PI / tubeConst(m).lam));
   const res = J.members.map(m => {
-    const f = m.mb.kind === 'tube' ? tubeField(m.mb, m.F, m.M, st) : discField(m.mb, m.F, m.M, st);
+    const f = m.mb.kind === 'tube' ? tubeField(m.mb, m.F, m.M, st, Lc) : discField(m.mb, m.F, m.M, st);
     return { ...m, field: f, crit: f.crit, X: m.mb.sy > 0 ? m.mb.sy / f.crit.seq : Infinity };
   });
   const worst = res.reduce((b, r, k) => (r.crit.seq > (b ? b.seq : -1) ? { k, seq: r.crit.seq } : b), null);

@@ -40,7 +40,7 @@ function buildDiscReportHtml() {
     body += reportTable([D.geo, J.h + ' [mm]', 'E · ν · ρ · α', J.sy, ''], mm.map(x => [jnName(x), N(x.h, 1), `${N(x.E / 1000, 0)} GPa · ${N(x.nu, 2)} · ${N(x.rho, 0)} · ${N(x.alpha * 1e6, 1)}·10⁻⁶`, x.sy > 0 ? `${N(x.sy, 0)} MPa` : '—',
       x.kind === 'disc' ? `${x.pos === 'inside' ? J.posIn : J.posOut} · ${J.links[st.J.d.link]}${x.i ? ` · i = ${N(x.i * 1000, 1)} µm` : ''}` : (x.dT !== undefined ? `ΔT ${N(x.dT, 0)} °C` : '')]));
     const sk = document.getElementById('jnSketch'), c1 = document.getElementById('jnChartT'), c2 = document.getElementById('jnChartD');
-    body += H(D.s2) + (sk ? `<div class="fig" style="max-width:320px">${reportSvgForPrint(sk.outerHTML)}</div>` : '') + (c1 ? `<div class="fig">${reportSvgForPrint(c1.outerHTML)}</div>` : '') + (c2 && mm.some(x => x.kind === 'disc') ? `<div class="fig">${reportSvgForPrint(c2.outerHTML)}</div>` : '');
+    body += H(D.s2) + (sk ? `<div class="fig" style="max-width:320px">${reportSvgForPrint(sk.outerHTML)}</div>` : '') + (c1 ? `<div class="fig">${reportSvgForPrint(c1.outerHTML)}</div>` : '') + (document.getElementById('jnChartW') ? `<div class="fig">${reportSvgForPrint(document.getElementById('jnChartW').outerHTML)}</div>` : '') + (c2 && mm.some(x => x.kind === 'disc') ? `<div class="fig">${reportSvgForPrint(c2.outerHTML)}</div>` : '');
     const tb = document.getElementById('jnTable');
     body += H(D.s3) + (tb ? tb.innerHTML.replace(/class="[^"]*"/g, '') : '');
     body += H(D.s4) + jnStepsData(st).map(s => `<p><b>${s.h}</b></p>` + reportEq(s.eq) + s.txt.map(x => `<p class="small">${reportTexify(x)}</p>`).join('')).join('');

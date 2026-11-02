@@ -16,7 +16,7 @@ const JN_TXT = {
     link: 'Collegamento al tubo', links: { weld: 'saldato: piastra che si flette', rigid: 'disco rigido a flessione (φ = 0)', free: 'forzato, sottile: niente momento (M₀ = 0)' }, iRad: 'Interferenza radiale i', iHint: 'disco più grande del tubo di i (forzamento)',
     face: 'Pressione sulla faccia', faces: { p: 'sì (fondello di un recipiente)', none: 'no' },
     res: 'Risultato', Q0: 'Forza alla giunzione Q₀', M0: 'Momento alla giunzione M₀', w: 'Spostamento radiale', phi: 'Rotazione', crit: 'σeq massima', at: 'in', wmax: 'Velocità massima ammissibile', wmaxNone: 'nessun elemento con σs',
-    chartT: 'Tubi: tensioni lungo l\'asse', chartD: 'Disco o piastra: tensioni lungo il raggio', inner: 'fibra interna', outer: 'fibra esterna', faceA: 'faccia lato tubo', faceB: 'faccia opposta',
+    chartT: 'Tubi: tensioni lungo l\'asse', dashT: 'σa della stessa fibra', dashD: 'σr della stessa faccia', chartW: 'Deformata del tubo', wLbl: 'spostamento radiale w [µm], + verso l\'esterno', undeformed: 'indeformato', deformed: 'deformato (amplificato)', wFree: 'senza la giunzione', chartD: 'Disco o piastra: tensioni lungo il raggio', inner: 'fibra interna', outer: 'fibra esterna', faceA: 'faccia lato tubo', faceB: 'faccia opposta',
     table: 'Punti significativi', colPt: 'Punto', colSa: 'σa / σr', colSc: 'σc', colSeq: 'σeq', far: 'lontano dal bordo', edge: 'al bordo', bore: 'al foro / centro', rim: 'alla giunzione', maxAt: 'massimo, x =',
     steps: 'Passaggi del calcolo', ok: 'VERIFICATO', ko: 'NON VERIFICATO', noSy: 'σs non indicata: tensioni senza verifica', need2: 'Servono almeno due elementi alla giunzione.',
     note: 'Convenzioni: Q₀ positiva verso l\'esterno sul tubo, w positivo verso l\'esterno, fibra interna = lato interno del tubo. Per un disco forzato e sottile il momento non passa; per un disco spesso o saldato sì.'
@@ -31,7 +31,7 @@ const JN_TXT = {
     link: 'Connection to the tube', links: { weld: 'welded: plate that bends', rigid: 'disc rigid in bending (φ = 0)', free: 'press-fitted, thin: no moment (M₀ = 0)' }, iRad: 'Radial interference i', iHint: 'disc larger than the tube by i (press fit)',
     face: 'Pressure on the face', faces: { p: 'yes (end plate of a vessel)', none: 'no' },
     res: 'Result', Q0: 'Junction force Q₀', M0: 'Junction moment M₀', w: 'Radial displacement', phi: 'Rotation', crit: 'Max σeq', at: 'at', wmax: 'Maximum allowable speed', wmaxNone: 'no element with σy',
-    chartT: 'Tubes: stresses along the axis', chartD: 'Disc or plate: stresses along the radius', inner: 'inner fibre', outer: 'outer fibre', faceA: 'tube-side face', faceB: 'opposite face',
+    chartT: 'Tubes: stresses along the axis', dashT: 'σa of the same fibre', dashD: 'σr of the same face', chartW: 'Deformed tube', wLbl: 'radial displacement w [µm], + outwards', undeformed: 'undeformed', deformed: 'deformed (magnified)', wFree: 'without the junction', chartD: 'Disc or plate: stresses along the radius', inner: 'inner fibre', outer: 'outer fibre', faceA: 'tube-side face', faceB: 'opposite face',
     table: 'Significant points', colPt: 'Point', colSa: 'σa / σr', colSc: 'σc', colSeq: 'σeq', far: 'far from the edge', edge: 'at the edge', bore: 'at the bore / centre', rim: 'at the junction', maxAt: 'maximum, x =',
     steps: 'Calculation steps', ok: 'VERIFIED', ko: 'NOT VERIFIED', noSy: 'σy not given: stresses without check', need2: 'At least two elements are needed at the junction.',
     note: 'Conventions: Q₀ positive outwards on the tube, w positive outwards, inner fibre = inner side of the tube. A thin press-fitted disc takes no moment; a thick or welded one does.'
@@ -148,6 +148,7 @@ function jnBuild(box) {
     ${jnMemberCard('tL')}${jnMemberCard('tR')}${jnMemberCard('d')}
     <div class="${DS_CARD}"><h3 class="text-sm font-semibold text-white mb-3" data-jn="res"></h3><div id="jnRes"></div></div>
     <div class="${DS_CARD}" id="jnChartTCard"><h3 class="text-sm font-semibold text-white mb-2" data-jn="chartT"></h3><div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2"><svg id="jnChartT" viewBox="0 0 640 300" class="w-full h-auto" font-family="Archivo, Arial, sans-serif"></svg></div></div>
+    <div class="${DS_CARD}" id="jnChartWCard"><h3 class="text-sm font-semibold text-white mb-2" data-jn="chartW"></h3><div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2"><svg id="jnChartW" viewBox="0 0 640 300" class="w-full h-auto" font-family="Archivo, Arial, sans-serif"></svg></div></div>
     <div class="${DS_CARD}" id="jnChartDCard"><h3 class="text-sm font-semibold text-white mb-2" data-jn="chartD"></h3><div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2"><svg id="jnChartD" viewBox="0 0 640 300" class="w-full h-auto" font-family="Archivo, Arial, sans-serif"></svg></div></div>
     <div class="${DS_CARD} overflow-x-auto"><h3 class="text-sm font-semibold text-white mb-3" data-jn="table"></h3><div id="jnTable"></div></div>
     <div class="${DS_CARD}"><h3 class="text-sm font-semibold text-white mb-3" data-jn="steps"></h3><div id="jnSteps" class="ds-steps"></div><p class="text-[11px] text-slate-500 mt-2" data-jn="note"></p></div>`;
@@ -263,6 +264,7 @@ function jnCharts(S) {
   const series = [];
   tubes.forEach(r => { const s = r.mb.side === 'L' ? -1 : 1; for (const f of ['inner', 'outer']) series.push({ f, pts: r.field.pts.map(p => ({ x: s * p.x, v: p[f].seq, sa: p[f].sa, sc: p[f].sc })) }); });
   jnPlot(dsEl('jnChartT'), series, -(tubes.some(r => r.mb.side === 'L') ? L : 0), tubes.some(r => r.mb.side === 'R') ? L : 0, 'x [mm]', t);
+  jnDeformed(S, tubes, L);
   const disc = S.a.res.find(r => r.mb.kind === 'disc');
   dsEl('jnChartDCard').classList.toggle('hidden', !disc);
   if (disc) {
@@ -292,7 +294,7 @@ function jnPlot(svg, series, x0, x1, xl, t, disc = false) {
   const L1 = disc ? t.faceA : t.inner, L2 = disc ? t.faceB : t.outer;
   g += `<g transform="translate(${X0 + 6},${Y0 + 28})"><line x1="0" y1="0" x2="18" y2="0" stroke="#c0392b" stroke-width="2.4"/><text x="23" y="4" font-size="10.5" fill="#22211f">σeq ${L1}</text></g>` +
     `<g transform="translate(${X0 + 190},${Y0 + 28})"><line x1="0" y1="0" x2="18" y2="0" stroke="#2f66b3" stroke-width="2.4"/><text x="23" y="4" font-size="10.5" fill="#22211f">σeq ${L2}</text></g>` +
-    `<g transform="translate(${X0 + 370},${Y0 + 28})"><line x1="0" y1="0" x2="18" y2="0" stroke="#6f6a62" stroke-width="1" stroke-dasharray="4 3"/><text x="23" y="4" font-size="10.5" fill="#22211f">${disc ? 'σr' : 'σa'}</text></g>`;
+    `<g transform="translate(${X0 + 360},${Y0 + 28})"><line x1="0" y1="0" x2="9" y2="0" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="3 2"/><line x1="9" y1="0" x2="18" y2="0" stroke="#2f66b3" stroke-width="1.2" stroke-dasharray="3 2"/><text x="23" y="4" font-size="10.5" fill="#22211f">${disc ? t.dashD : t.dashT}</text></g>`;
   svg.innerHTML = g;
 }
 
@@ -358,4 +360,38 @@ function jnSteps(S) {
     if (!dsKatexCss) { dsKatexCss = true; const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'vendor/katex/katex.min.css'; document.head.appendChild(l); }
     reportLoadKatex().then(ok => { if (ok) draw(); });
   }
+}
+
+// deformed shape of the tubes: total radial displacement w(x) (edge effect + membrane), the wall drawn
+// magnified around its undeformed position, and the displacement each tube would have without the junction
+function jnDeformed(S, tubes, L) {
+  const svg = dsEl('jnChartW'); if (!svg) return;
+  const t = jnT();
+  const lines = tubes.map(r => { const s = r.mb.side === 'L' ? -1 : 1, w0 = r.field.m0.w; return { r, s, w0, pts: r.field.pts.map(p => ({ x: s * p.x, w: (p.w + w0) * 1000 })) }; });
+  const all = lines.flatMap(l => l.pts.map(p => p.w).concat([l.w0 * 1000]));
+  let lo = Math.min(0, ...all), hi = Math.max(0, ...all); if (hi - lo < 1e-6) { hi += 1; lo -= 1; }
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const x0 = lines.some(l => l.s < 0) ? -L : 0, x1 = lines.some(l => l.s > 0) ? L : 0;
+  const X0 = 58, X1 = 620, Y0 = 250, Y1 = 18, x = v => X0 + (v - x0) / Math.max(x1 - x0, 1e-9) * (X1 - X0), y = v => Y0 - (v - lo) / (hi - lo) * (Y0 - Y1);
+  let g = '';
+  const st = dsNiceStep((hi - lo) / 6);
+  for (let v = Math.ceil(lo / st) * st; v <= hi; v += st) g += `<line x1="${X0}" y1="${y(v)}" x2="${X1}" y2="${y(v)}" stroke="#ddd8cd" stroke-width="0.6"/><text x="${X0 - 6}" y="${y(v) + 4}" text-anchor="end" font-size="10" fill="#6f6a62">${dsNum(v, Math.abs(st) < 1 ? 1 : 0)}</text>`;
+  const xs = dsNiceStep((x1 - x0) / 6);
+  for (let v = Math.ceil(x0 / xs) * xs; v <= x1 + 1e-9; v += xs) g += `<text x="${x(v)}" y="${Y0 + 16}" text-anchor="middle" font-size="10" fill="#6f6a62">${dsNum(v, 0)}</text>`;
+  // undeformed wall (w = 0) and the wall thickness drawn around the deformed line
+  const hpx = 7;
+  g += `<rect x="${X0}" y="${y(0) - hpx / 2}" width="${X1 - X0}" height="${hpx}" fill="#b5afa3" opacity="0.35"/><line x1="${X0}" y1="${y(0)}" x2="${X1}" y2="${y(0)}" stroke="#8a857c" stroke-dasharray="6 4"/>`;
+  lines.forEach(l => {
+    const top = l.pts.map(p => `${x(p.x).toFixed(1)},${(y(p.w) - hpx / 2).toFixed(1)}`), bot = l.pts.slice().reverse().map(p => `${x(p.x).toFixed(1)},${(y(p.w) + hpx / 2).toFixed(1)}`);
+    g += `<polygon points="${top.concat(bot).join(' ')}" fill="#8a9bb0" stroke="#22211f" stroke-width="0.8"/>`;
+    g += `<line x1="${x(l.pts[0].x)}" y1="${y(l.w0 * 1000)}" x2="${x(l.pts[l.pts.length - 1].x)}" y2="${y(l.w0 * 1000)}" stroke="#b7791f" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+  });
+  if (x0 < 0 && x1 > 0) g += `<line x1="${x(0)}" y1="${Y1}" x2="${x(0)}" y2="${Y0}" stroke="#8a857c" stroke-dasharray="4 3"/>`;
+  const wJ = S.a.J.uJ * 1000;
+  g += `<circle cx="${x(0)}" cy="${y(wJ)}" r="4" fill="#c0392b"/><text x="${x(0) + 8}" y="${y(wJ) - 8}" font-size="11" font-weight="600" fill="#c0392b">w = ${dsNum(wJ, 1)} µm</text>`;
+  g += `<text x="${X1}" y="${Y0 + 32}" text-anchor="end" font-size="10.5" fill="#6f6a62">x [mm]</text><text x="${X0 - 6}" y="${Y1 - 4}" text-anchor="end" font-size="10.5" fill="#6f6a62">µm</text>`;
+  g += `<g transform="translate(${X0 + 6},${Y0 + 28})"><rect x="0" y="-4" width="18" height="8" fill="#8a9bb0" stroke="#22211f" stroke-width="0.6"/><text x="23" y="4" font-size="10.5" fill="#22211f">${t.deformed}</text></g>` +
+    `<g transform="translate(${X0 + 190},${Y0 + 28})"><line x1="0" y1="0" x2="18" y2="0" stroke="#8a857c" stroke-dasharray="6 4"/><text x="23" y="4" font-size="10.5" fill="#22211f">${t.undeformed}</text></g>` +
+    `<g transform="translate(${X0 + 330},${Y0 + 28})"><line x1="0" y1="0" x2="18" y2="0" stroke="#b7791f" stroke-width="1.2" stroke-dasharray="3 3"/><text x="23" y="4" font-size="10.5" fill="#22211f">${t.wFree}</text></g>`;
+  svg.innerHTML = g;
 }
