@@ -5,7 +5,8 @@
 
 const REPORT_DS_TXT = {
   it: {
-    title: 'Dischi, tubi spessi e calettamenti', titleUni: 'Disco a uniforme resistenza',
+    title: 'Dischi, tubi spessi e calettamenti', titleUni: 'Disco a uniforme resistenza', titleJn: 'Tubi sottili, piastre e giunzioni',
+    hypJn: ['Tubi sottili ($h \\ll R$) semi-infiniti: gli effetti di bordo si smorzano entro circa $2\\pi/\\lambda$; se due giunzioni sono più vicine si influenzano e il calcolo va fatto con un modello completo.', 'Piastre assialsimmetriche di Kirchhoff, dischi in stato piano di tensione, materiale elastico lineare.', 'Alla giunzione: stesso spostamento radiale (meno l\'interferenza) e, se il collegamento lo trasmette, stessa rotazione; somma di forze e momenti nulla.', 'Von Mises sulle due fibre (interna ed esterna) con $\\sigma_r$ trascurata nel tubo.'],
     disclaimer: 'Calcolo con il metodo degli appunti di Costruzione di Macchine: dischi di spessore costante in stato piano di tensione, congruenza all\'interfaccia, von Mises. Non considera concentrazioni di tensione ai bordi del mozzo, effetti di bordo di tubi sottili, plasticizzazione e fatica. Per il progetto esecutivo verificare con DIN 7190 (accoppiamenti forzati) o con un modello agli elementi finiti.',
     s1: 'Dati', s2: 'Sezione e andamento delle tensioni', s3: 'Tensioni nei punti significativi', s4: 'Passaggi del calcolo', s5: 'Ipotesi e note',
     geo: 'Elemento', ri: 'R interno', re: 'R esterno', h: 'Spessore', mat: 'E · ν · ρ · α · σs', loads: 'Esercizio', interf: 'Interferenza',
@@ -15,7 +16,8 @@ const REPORT_DS_TXT = {
       'Tensione equivalente di von Mises; X = σs/σeq negli elementi con σs indicata.']
   },
   en: {
-    title: 'Discs, thick tubes and shrink fits', titleUni: 'Disc of uniform strength',
+    title: 'Discs, thick tubes and shrink fits', titleUni: 'Disc of uniform strength', titleJn: 'Thin tubes, plates and junctions',
+    hypJn: ['Semi-infinite thin tubes ($h \\ll R$): edge effects die out within about $2\\pi/\\lambda$; if two junctions are closer they interact and a full model is needed.', 'Kirchhoff axisymmetric plates, discs in plane stress, linear elastic material.', 'At the junction: same radial displacement (minus the interference) and, if the connection carries it, same rotation; forces and moments sum to zero.', 'Von Mises on both fibres (inner and outer) with $\\sigma_r$ neglected in the tube.'],
     disclaimer: 'Calculation with the method of the Machine Design notes: discs of constant thickness in plane stress, congruence at the interface, von Mises. Stress concentrations at the hub edges, edge effects of thin tubes, yielding and fatigue are not considered. For the final design check with DIN 7190 (interference fits) or a finite element model.',
     s1: 'Data', s2: 'Section and stress distribution', s3: 'Stresses at the significant points', s4: 'Calculation steps', s5: 'Assumptions and notes',
     geo: 'Element', ri: 'Inner R', re: 'Outer R', h: 'Thickness', mat: 'E · ν · ρ · α · σy', loads: 'Service', interf: 'Interference',
@@ -32,6 +34,20 @@ function buildDiscReportHtml() {
   const R_ = REPORT_TXT[currentLang] || REPORT_TXT.en, D = REPORT_DS_TXT[currentLang] || REPORT_DS_TXT.en, t = dsT(), N = reportNum;
   let body = '', sec = 0;
   const H = title => `<h3><span class="n">${++sec}.</span>${title}</h3>`;
+  if (st.jn) {
+    const J = jnT(), mm = st.m;
+    body += H(D.s1) + reportKV([[J.R, `${N(+st.J.R, 1)} mm`], [J.p, `${N(+st.J.p, 2)} MPa${st.J.closed ? ' · ' + J.closed : ''}`], [J.n, `${N(+st.J.n, 0)} rpm`], [J.dT, `${N(+st.J.dT, 0)} °C`]].concat(st.J.inc ? [[J.inc, `ρ_i = ${N(+st.J.rhoInc, 0)} kg/m³, r_i = ${N(+st.J.rInc, 0)} mm`]] : []));
+    body += reportTable([D.geo, J.h + ' [mm]', 'E · ν · ρ · α', J.sy, ''], mm.map(x => [jnName(x), N(x.h, 1), `${N(x.E / 1000, 0)} GPa · ${N(x.nu, 2)} · ${N(x.rho, 0)} · ${N(x.alpha * 1e6, 1)}·10⁻⁶`, x.sy > 0 ? `${N(x.sy, 0)} MPa` : '—',
+      x.kind === 'disc' ? `${x.pos === 'inside' ? J.posIn : J.posOut} · ${J.links[st.J.d.link]}${x.i ? ` · i = ${N(x.i * 1000, 1)} µm` : ''}` : (x.dT !== undefined ? `ΔT ${N(x.dT, 0)} °C` : '')]));
+    const sk = document.getElementById('jnSketch'), c1 = document.getElementById('jnChartT'), c2 = document.getElementById('jnChartD');
+    body += H(D.s2) + (sk ? `<div class="fig" style="max-width:320px">${reportSvgForPrint(sk.outerHTML)}</div>` : '') + (c1 ? `<div class="fig">${reportSvgForPrint(c1.outerHTML)}</div>` : '') + (c2 && mm.some(x => x.kind === 'disc') ? `<div class="fig">${reportSvgForPrint(c2.outerHTML)}</div>` : '');
+    const tb = document.getElementById('jnTable');
+    body += H(D.s3) + (tb ? tb.innerHTML.replace(/class="[^"]*"/g, '') : '');
+    body += H(D.s4) + jnStepsData(st).map(s => `<p><b>${s.h}</b></p>` + reportEq(s.eq) + s.txt.map(x => `<p class="small">${reportTexify(x)}</p>`).join('')).join('');
+    body += H(D.s5) + '<ul>' + D.hypJn.map(h => `<li>${reportTexify(h)}</li>`).join('') + '</ul>';
+    const tube = st.a.res.find(r => r.mb.kind === 'tube');
+    return reportShell(D.titleJn, `Q₀ = ${N(tube.F * 1000, 0)} N/m · M₀ = ${N(tube.M, 1)} N·m/m · σeq max = ${N(st.a.worst.seq, 1)} MPa`, body, R_, D.disclaimer);
+  }
   if (st.uni) {
     const U = st.U, r = st.r;
     body += H(D.s1) + reportKV([[t.uRe, `${N(+U.D, 0)} mm`], [t.uSa, `${N(+U.sa, 0)} MPa`], [t.uN, `${N(+U.n, 0)} rpm`], [t.uRho, `${N(+U.rho, 0)} kg/m³`], [t.uLoad, U.load === 'F' ? `${t.uF}: ${N(+U.F, 1)} kN` : `${t.uHe}: ${N(+U.he, 2)} mm`]]);
