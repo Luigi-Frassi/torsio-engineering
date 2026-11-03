@@ -248,7 +248,7 @@ function dsBuild() {
     <div class="${DS_CARD}" id="dsResCard"><h3 class="text-sm font-semibold text-white mb-3" data-ds="res"></h3><div id="dsRes"></div></div>
     <div class="${DS_CARD}" id="dsChartCard">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-2"><h3 class="text-sm font-semibold text-white" data-ds="chart"></h3><div id="dsViewBtns" class="flex gap-1"></div></div>
-      <div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2"><svg id="dsChart" viewBox="0 0 640 300" class="w-full h-auto" font-family="Archivo, Arial, sans-serif" role="img" aria-label="Stresses"></svg></div>
+      <div class="rounded-lg bg-slate-950/70 border border-slate-800 p-2 overflow-x-auto"><svg id="dsChart" viewBox="0 0 640 300" class="w-full h-auto min-w-[560px]" font-family="Archivo, Arial, sans-serif" role="img" aria-label="Stresses"></svg></div>
     </div>
     <div class="${DS_CARD} overflow-x-auto" id="dsTableCard"><h3 class="text-sm font-semibold text-white mb-3" data-ds="table"></h3><div id="dsTable"></div></div>
     <div class="${DS_CARD}" id="dsDesignCard"><h3 class="text-sm font-semibold text-white mb-3" data-ds="design"></h3><div id="dsDesign"></div></div>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+  <meta charset="UTF-8">
+  <script>
+    // Italian page: ?lang= of old links and the language buttons go to the other version
+    (function () {
+      var other = '/', q = new URLSearchParams(location.search).get('lang'), saved = null;
+      try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
+      if (q && q !== 'it') { var p = new URLSearchParams(location.search); p.delete('lang'); var s = p.toString(); location.replace(other + (s ? '?' + s : '') + location.hash); return; }
+      
+      document.addEventListener('click', function (ev) { var b = ev.target.closest && ev.target.closest('.lang button'); if (!b) return; var l = b.getAttribute('data-lang');
+        try { localStorage.setItem('torsioLang', l); } catch (e) { /* private mode */ }
+        if (l !== 'it') { ev.stopImmediatePropagation(); location.href = other; } }, true);
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torsio Engineering — dimensionamento di massima di organi di macchine</title>
+  <meta name="description" content="Alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, telai FEM, bulloni, dischi, tubi e calettamenti: dimensionamento di massima gratuito nel browser, con la relazione di calcolo in PDF e il disegno DXF per il CAD. Verificato su 544 casi svolti a mano.">
+  <link rel="canonical" href="https://torsio.app/it/">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="Torsio Engineering — dimensionamento di massima di organi di macchine">
+  <meta property="og:description" content="Alberi, ruote dentate, cinghie sincrone, accoppiamenti ISO, telai FEM, bulloni, dischi, tubi e calettamenti: dimensionamento di massima gratuito nel browser, con la relazione di calcolo in PDF e il disegno DXF per il CAD. Verificato su 544 casi svolti a mano.">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:url" content="https://torsio.app/it/">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="icon" href="/vendor/brand/favicon-96.png" sizes="96x96" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <script>
+    // Old shared links pointed at the root (/?m=shafts&...): send them to the calculator
+    (function () {
+      var q = window.location.search;
+      if (/[?&]m=(fits|belts|gears|shafts|frames|bolts|discs)\b/.test(q)) window.location.replace('/app.html' + q + window.location.hash);
+    })();
+  </script>
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <style>
+    :root {
+      --paper: #f1efea;        /* warm drafting paper */
+      --sheet: #fbfaf7;
+      --ink: #22211f;          /* graphite */
+      --ink-2: #5b5750;
+      --line: #d6d1c6;
+      --blue: #21497f;        /* Prussian blue ink */
+      --blue-2: #3f7fd0;
+      --signal: #e8b321;       /* safety yellow: dimensions and the one action that matters */
+      --measure: 34rem;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* top bar */
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.alt { background: transparent; color: var(--ink); }
+    .btn.alt:hover { background: var(--sheet); }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    /* hero */
+    .hero { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr); gap: 48px; align-items: center; padding: 40px 0 72px; }
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 52px); line-height: 1.04; letter-spacing: -0.02em; margin: 0 0 22px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0 0 30px; }
+    .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 18px; }
+    .jump { margin-top: 24px; }
+    .jump p { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); }
+    .jump div { display: flex; flex-wrap: wrap; gap: 8px; }
+    .jump a { display: inline-flex; align-items: baseline; gap: 7px; padding: 7px 11px; background: var(--sheet); border: 1px solid var(--line); border-top: 2px solid var(--ink); color: var(--ink); text-decoration: none; font-size: 14.5px; font-weight: 600; }
+    .jump a b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; font-weight: 500; color: var(--ink-2); letter-spacing: .04em; }
+    .jump a:hover { border-top-color: var(--signal); }
+
+    /* the drawing sheet */
+    .sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 1px 0 var(--line), 0 18px 40px -24px rgba(34, 33, 31, .30); padding: 10px; }
+    .sheet svg { display: block; width: 100%; height: auto; }
+
+    /* sections */
+    section { padding: 72px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(28px, 3vw, 38px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 14px; max-width: 26ch; }
+    .intro { color: var(--ink-2); max-width: var(--measure); margin: 0 0 40px; }
+
+    /* power flow */
+    .chain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); counter-reset: st; }
+    .chain li { position: relative; padding: 0 22px 0 0; }
+    .chain .head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .chain .num { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); display: grid; place-items: center; font-weight: 800; font-size: 14px; background: var(--sheet); }
+    .chain li:first-child .num { background: var(--ink); color: var(--sheet); }
+    .chain .shaftline { flex: 1; height: 2px; background: var(--ink); position: relative; }
+    .chain li:last-child .shaftline { background: repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 14px, var(--ink) 14px 16px, transparent 16px 20px); }
+    .chain h3 { font-size: 19px; font-stretch: 105%; margin: 0 0 6px; }
+    .chain p { margin: 0 0 10px; font-size: 15px; color: var(--ink-2); }
+    .chain .method { font-size: 13.5px; color: var(--blue); font-weight: 600; }
+    .chain a { font-size: 15px; font-weight: 600; }
+
+    /* report */
+    .report { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+    .report ul { margin: 0; padding: 0; list-style: none; }
+    .report li { padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .report li b { display: block; font-size: 17px; }
+    .report li span { color: var(--ink-2); font-size: 15.5px; }
+    .page { background: #fff; border: 1px solid var(--line); box-shadow: 10px 10px 0 -1px var(--sheet), 10px 10px 0 0 var(--line); padding: 28px 30px; font-size: 13.5px; line-height: 1.45; }
+    .page .bar { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+    .page .bar img { width: 16px; height: 16px; }
+    .page h4 { font-size: 20px; margin: 0 0 2px; font-stretch: 105%; }
+    .page .sub { color: var(--ink-2); margin: 0 0 16px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+    .page h5 { font-size: 14px; margin: 14px 0 6px; }
+    .page h5 i { font-style: normal; color: var(--blue); margin-right: 6px; }
+    .page .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 4px 12px; overflow-x: auto; }
+    .page .eq .katex-display { margin: 6px 0; text-align: left; }
+    .page .eq .katex { font-size: 0.98em; }
+    .page .res { border: 1.5px solid var(--ink); border-radius: 5px; padding: 8px 10px; margin-top: 12px; }
+    .page .ok { color: #1f5fa8; font-weight: 700; }
+    .page .chk { margin: 0; padding: 0; list-style: none; }
+    .page .chk li { padding: 4px 0; border-bottom: 1px solid #e6e2d9; }
+    .page .chk .w { color: #a3720a; font-weight: 700; margin-right: 6px; }
+    .page .chk .v { color: #1f5fa8; font-weight: 700; margin-right: 6px; }
+
+    /* method */
+    .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+    .facts .n { font-size: 46px; font-weight: 800; font-stretch: 112%; line-height: 1; margin-bottom: 8px; }
+    .facts p { margin: 0; color: var(--ink-2); font-size: 15.5px; max-width: 30ch; }
+    .limits { margin-top: 44px; max-width: var(--measure); padding-left: 16px; border-left: 3px solid var(--signal); color: var(--ink-2); font-size: 15.5px; }
+
+    .fem { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 32px; align-items: center; padding: 24px; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; }
+    .fem h3 { font-size: 21px; font-stretch: 105%; margin: 0 0 8px; }
+    .fem p { margin: 0 0 12px; color: var(--ink-2); font-size: 15.5px; max-width: 60ch; }
+    .fem a { font-weight: 600; font-size: 15px; }
+    .fem svg { width: 100%; height: auto; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 16px; }
+      .chain { grid-template-columns: 1fr; gap: 26px; }
+      .chain li { padding: 0 0 0 0; }
+      .chain .shaftline { display: none; }
+      .report { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+      .facts { grid-template-columns: 1fr; gap: 28px; }
+      .fem { grid-template-columns: 1fr; }
+      .fem svg { max-width: 240px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .top { padding: 14px 0; }
+      .page { padding: 20px 16px; }
+      section { padding: 52px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/it/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"></path></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigazione">
+        <span class="links">
+          <a href="#moduli" data-t="navMods">Moduli</a>
+          <a href="#relazione" data-t="navRep">Relazione</a>
+          <a href="/it/metodo.html" data-t="navMethod">Metodo</a>
+        </span>
+        <span class="lang" role="group" aria-label="Lingua"><button type="button" data-lang="it" aria-pressed="true">IT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+        <a class="btn go small" href="/app.html?lang=it" data-href="app" data-t="openApp">Apri il calcolatore</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <h1 data-t="h1">Dimensiona gli organi di macchine. Consegna la relazione di calcolo.</h1>
+          <p class="lead" data-t="lead">Alberi, ruote dentate, bulloni, cinghie, accoppiamenti ISO, telai (FEM), dischi e calettamenti. Ogni risultato arriva con la sua relazione in PDF: formule con i tuoi numeri, diagrammi e quote per il CAD.</p>
+          <div class="ctas">
+            <a class="btn go" href="/app.html?lang=it" data-href="app" data-t="openApp">Apri il calcolatore</a>
+            <a class="btn alt" href="/app.html?demo=transmission&amp;lang=it" data-href="demo" data-t="tryDemo">Prova una trasmissione completa</a>
+          </div>
+          <div class="jump"><p data-t="jump">Oppure vai direttamente a</p><div><a href="/app.html?m=shafts&amp;lang=it" data-href="shafts"><b>S-04</b><span data-t="jShafts">Alberi</span></a><a href="/app.html?m=gears&amp;lang=it" data-href="gears"><b>G-03</b><span data-t="jGears">Ruote dentate</span></a><a href="/app.html?m=bolts&amp;lang=it" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bulloni</span></a><a href="/app.html?m=frames&amp;lang=it" data-href="frames"><b>T-05</b><span data-t="jFrames">Telai e tralicci</span></a><a href="/app.html?m=belts&amp;lang=it" data-href="belts"><b>B-02</b><span data-t="jBelts">Cinghie</span></a><a href="/app.html?m=fits&amp;lang=it" data-href="fits"><b>F-01</b><span data-t="jFits">Accoppiamenti</span></a><a href="/app.html?m=discs&amp;lang=it" data-href="discs"><b>D-07</b><span data-t="jDiscs">Dischi e calettamenti</span></a></div></div>
+          <p class="note" data-t="free">Gratuito, senza registrazione, verificato su 544 casi d'esame svolti a mano. I dati non escono dal tuo computer.</p>
+        </div>
+
+        <!-- The pinion shaft of the demo transmission, drawn as a sheet with its title block -->
+        <figure class="sheet" style="margin:0" aria-labelledby="sheetCap">
+          <svg viewBox="18 40 624 358" role="img" aria-labelledby="sheetCap" font-family="Archivo, Helvetica Neue, Arial, sans-serif">
+            <title id="sheetCap" data-t-svg="sheetCap">Albero-pignone della trasmissione di esempio: Ø35 sui cuscinetti, Ø42 sugli spallamenti, pignone z = 20, m = 2,25 di pezzo con l'albero.</title>
+            <defs>
+              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#22211f" stroke-width="0.9"></line></pattern>
+              <marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 Z" fill="#22211f"></path></marker>
+              <marker id="ary" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L10 5 L0 9 Z" fill="#b8860b"></path></marker>
+            </defs>
+            <!-- frame -->
+            <rect x="24" y="46" width="612" height="346" fill="none" stroke="#22211f" stroke-width="1.6"></rect>
+            <!-- shaft, scale 2.3 px/mm, axis at y = 170, x0 = 46 -->
+            <g stroke="#22211f" stroke-width="1.8" fill="#fff">
+              <rect x="46" y="135.5" width="92" height="69"></rect>            <!-- Ø30, 0-40: pulley seat -->
+              <rect x="138" y="132" width="23" height="76"></rect>             <!-- Ø33 -->
+              <rect x="161" y="129.75" width="46" height="80.5"></rect>        <!-- Ø35 bearing, 50-70 -->
+              <rect x="207" y="121.7" width="103.5" height="96.6"></rect>      <!-- Ø42, 70-115 -->
+              <rect x="310.5" y="113.1" width="115" height="113.85"></rect>    <!-- pinion tip Ø49.5, 115-165 -->
+              <rect x="425.5" y="121.7" width="103.5" height="96.6"></rect>    <!-- Ø42 -->
+              <rect x="529" y="129.75" width="46" height="80.5"></rect>        <!-- Ø35 bearing -->
+              <rect x="575" y="132" width="23" height="76"></rect>             <!-- Ø33 end -->
+            </g>
+            <!-- teeth: root lines and partial section -->
+            <line x1="310.5" y1="124.7" x2="425.5" y2="124.7" stroke="#22211f" stroke-width="0.9" stroke-dasharray="5 3"></line>
+            <line x1="310.5" y1="215.3" x2="425.5" y2="215.3" stroke="#22211f" stroke-width="0.9" stroke-dasharray="5 3"></line>
+            <line x1="310.5" y1="118.9" x2="425.5" y2="118.9" stroke="#22211f" stroke-width="0.6" stroke-dasharray="12 3 2 3"></line>
+            <!-- keyway on the pulley seat -->
+            <rect x="58" y="135.5" width="64" height="9" fill="url(#hatch)" stroke="#22211f" stroke-width="1.2"></rect>
+            <!-- bearings (symbol) -->
+            <g stroke="#22211f" stroke-width="1.2" fill="none">
+              <rect x="166" y="104" width="36" height="22"></rect><circle cx="184" cy="115" r="6"></circle>
+              <rect x="166" y="214" width="36" height="22"></rect><circle cx="184" cy="225" r="6"></circle>
+              <rect x="534" y="104" width="36" height="22"></rect><circle cx="552" cy="115" r="6"></circle>
+              <rect x="534" y="214" width="36" height="22"></rect><circle cx="552" cy="225" r="6"></circle>
+            </g>
+            <!-- centre line -->
+            <line x1="30" y1="170" x2="614" y2="170" stroke="#22211f" stroke-width="0.7" stroke-dasharray="18 4 3 4"></line>
+            <!-- critical section at x = 140 mm -->
+            <line x1="368" y1="96" x2="368" y2="244" stroke="#b8860b" stroke-width="1.4" stroke-dasharray="6 4"></line>
+            <g font-size="12.5" fill="#22211f">
+              <rect x="374" y="74" width="168" height="38" fill="#e8b321" stroke="#22211f" stroke-width="1.2"></rect>
+              <text x="382" y="89" font-weight="700" data-t-svg="crit">Sezione critica E</text>
+              <text x="382" y="104" data-t-svg="critX">X fatica 2,16 · snerv. 4,51</text>
+            </g>
+            <!-- dimensions -->
+            <g stroke="#22211f" stroke-width="0.8" fill="none">
+              <line x1="46" y1="214" x2="46" y2="270"></line><line x1="598" y1="214" x2="598" y2="270"></line>
+              <line x1="46" y1="262" x2="598" y2="262" marker-start="url(#ar)" marker-end="url(#ar)"></line>
+              <line x1="184" y1="129.75" x2="184" y2="210.25" marker-start="url(#ar)" marker-end="url(#ar)" stroke="#b8860b" stroke-width="1.2"></line>
+              <line x1="258" y1="121.7" x2="258" y2="218.3" marker-start="url(#ar)" marker-end="url(#ar)"></line>
+              <line x1="92" y1="135.5" x2="92" y2="204.5" marker-start="url(#ar)" marker-end="url(#ar)"></line>
+            </g>
+            <g font-size="13" fill="#22211f">
+              <text x="322" y="257" text-anchor="middle">240</text>
+              <text x="189" y="160" font-weight="700" fill="#8a6408">Ø35 k6</text>
+              <text x="263" y="160">Ø42</text>
+              <text x="97" y="160">Ø30</text>
+              <text x="374" y="242" font-size="12">z = 20 · m = 2,25 · Ø49,5</text>
+              <text x="60" y="128" font-size="12" data-t-svg="key">linguetta</text>
+            </g>
+            <!-- title block -->
+            <g font-size="11" fill="#22211f">
+              <rect x="360" y="296" width="272" height="96" fill="#fff" stroke="#22211f" stroke-width="1.4"></rect>
+              <line x1="360" y1="322" x2="632" y2="322" stroke="#22211f"></line><line x1="360" y1="346" x2="632" y2="346" stroke="#22211f"></line><line x1="360" y1="370" x2="632" y2="370" stroke="#22211f"></line>
+              <line x1="490" y1="322" x2="490" y2="392" stroke="#22211f"></line>
+              <text x="368" y="314" font-size="15" font-weight="800" data-t-svg="tbTitle">Albero-pignone</text>
+              <text x="624" y="314" font-size="10.5" text-anchor="end" fill="#5b5750">Torsio Engineering</text>
+              <text x="368" y="338" data-t-svg="tbMat">39NiCrMo3 bonificato</text>
+              <text x="498" y="338">σR 900 · σs 700 MPa</text>
+              <text x="368" y="362">7,5 kW · 725 rpm</text>
+              <text x="498" y="362" data-t-svg="tbLife">Vita infinita · X ≥ 2</text>
+              <text x="368" y="386" data-t-svg="tbScale">Quote in mm</text>
+              <text x="498" y="386" data-t-svg="tbSheet">Foglio 1 di 1</text>
+            </g>
+            <!-- loads -->
+            <g stroke="#21497f" stroke-width="2" fill="none">
+              <line x1="92" y1="58" x2="92" y2="100" marker-end="url(#ar)"></line>
+              <line x1="368" y1="290" x2="368" y2="248" marker-end="url(#ar)"></line>
+            </g>
+            <g font-size="12" fill="#21497f" font-weight="600">
+              <text x="100" y="62" data-t-svg="pull">tiro cinghia 1660 N</text>
+              <text x="360" y="286" text-anchor="end" data-t-svg="ft">Ft 4390 N · Fr 1598 N</text>
+            </g>
+          </svg>
+        </figure>
+      </div>
+    </main>
+  </div>
+
+  <section id="moduli">
+    <div class="wrap">
+      <h2 data-t="flowH">Segui la potenza dal motore all'ultimo accoppiamento</h2>
+      <p class="intro" data-t="flowP">I moduli sono gli stadi di una trasmissione. Calcolali uno alla volta, poi genera un'unica relazione che controlla che velocità, coppie e diametri tornino da uno stadio all'altro.</p>
+      <ol class="chain">
+        <li>
+          <div class="head"><span class="num">1</span><span class="shaftline"></span></div>
+          <h3 data-t="m0h">Motore</h3>
+          <p data-t="m0p">Potenza e velocità di ingresso. Da qui partono coppia e giri di ogni stadio.</p>
+          <span class="method">M = P / ω</span>
+        </li>
+        <li>
+          <div class="head"><span class="num">2</span><span class="shaftline"></span></div>
+          <h3 data-t="m1h">Cinghia sincrona</h3>
+          <p data-t="m1p">Pulegge, lunghezza della cinghia, interasse esatto, denti in presa e larghezza.</p>
+          <span class="method">GT2 · HTD 3M/5M/8M · T5</span><br>
+          <a href="/app.html?m=belts&amp;lang=it" data-href="belts" data-t="open">Calcola la cinghia</a>
+        </li>
+        <li>
+          <div class="head"><span class="num">3</span><span class="shaftline"></span></div>
+          <h3 data-t="m2h">Ruote dentate</h3>
+          <p data-t="m2p">Modulo e fascia a usura, verifica a flessione, potenza trasmissibile di una coppia esistente.</p>
+          <span class="method" data-t="m2m">Hertz · Lewis · denti diritti ed elicoidali</span><br>
+          <a href="/app.html?m=gears&amp;lang=it" data-href="gears" data-t="open2">Calcola le ruote</a>
+        </li>
+        <li>
+          <div class="head"><span class="num">4</span><span class="shaftline"></span></div>
+          <h3 data-t="m3h">Albero</h3>
+          <p data-t="m3p">Reazioni, diagrammi, diametro minimo a fatica, sezioni reali, vita, cuscinetti.</p>
+          <span class="method">Goodman · Miner · Manson</span><br>
+          <a href="/app.html?m=shafts&amp;lang=it" data-href="shafts" data-t="open3">Calcola l'albero</a>
+        </li>
+        <li>
+          <div class="head"><span class="num">5</span><span class="shaftline"></span></div>
+          <h3 data-t="m4h">Accoppiamenti</h3>
+          <p data-t="m4p">Scostamenti, giochi e interferenze, lavorazioni e indicazione a disegno.</p>
+          <span class="method">ISO 286 · IT5–IT11</span><br>
+          <a href="/app.html?m=fits&amp;lang=it" data-href="fits" data-t="open4">Scegli l'accoppiamento</a>
+        </li>
+      </ol>
+      <div class="fem">
+        <div>
+          <h3 data-t="femH">E per tutto il resto: strutture a elementi finiti</h3>
+          <p data-t="femP">Travi, telai e tralicci piani: disegni le travi sulla griglia, metti vincoli e carichi con un clic e ottieni reazioni, diagrammi N, T, M e deformata. Poi Torsio sceglie la sezione più leggera in sei famiglie (tondo, tubo, rettangolare, scatolato, IPE, HEA) verificando resistenza, instabilità di Eulero e freccia.</p>
+          <a href="/app.html?m=frames&amp;lang=it" data-href="frames" data-t="femA">Apri il modulo Strutture</a> · <a href="/app.html?demo=frames&amp;lang=it" data-href="femDemo" data-t="femDemo">prova la torre radio</a>
+          <p style="margin-top:14px" data-t="boltP">E per i collegamenti: giunzioni bullonate ad attrito e a flange, coppia di serraggio, carico esterno con il diagramma di serraggio, viti di manovra.</p>
+          <a href="/app.html?demo=boltsExam&amp;lang=it" data-href="boltDemo" data-t="boltA">Prova il giunto a flange</a>
+        </div>
+        <svg viewBox="0 0 220 165" aria-hidden="true">
+          <g stroke="#22211f" stroke-width="2.4" stroke-linecap="round" fill="none">
+            <path d="M30 130 L60 30 L90 130 L120 30 L150 130 L180 30 L210 130"></path><path d="M60 30 L180 30"></path><path d="M30 130 L210 130"></path>
+          </g>
+          <g stroke="#21497f" stroke-width="1.6" fill="#21497f" fill-opacity=".14"><path d="M30 130 Q120 168 210 130 Z"></path></g>
+          <g fill="#e8b321" stroke="#22211f" stroke-width="1"><path d="M30 130 l-8 13 h16 z"></path><path d="M210 130 l-8 13 h16 z"></path></g>
+          <g stroke="#b8860b" stroke-width="1.6"><path d="M120 6 v18"></path><path d="M115 18 l5 7 l5 -7" fill="#b8860b"></path></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="relazione">
+    <div class="wrap report">
+      <div>
+        <h2 data-t="repH">Una relazione che si può firmare e consegnare</h2>
+        <p class="intro" data-t="repP">Il calcolo non resta sullo schermo. Con un clic ottieni un documento A4 da salvare in PDF, con il logo e il cartiglio del tuo studio, le firme e lo storico delle revisioni.</p>
+        <ul>
+          <li><b data-t="r1b">Formule con i numeri sostituiti</b><span data-t="r1s">Frazioni e radici vere, passaggio per passaggio, come in un compito svolto.</span></li>
+          <li><b data-t="r2b">Diagrammi e viste delle forze</b><span data-t="r2s">Momenti nei due piani, retta di Goodman, schemi delle ruote e della cinghia.</span></li>
+          <li><b data-t="r3b">Controlli tra gli stadi</b><span data-t="r3s">Velocità e potenze che non tornano, pignoni troppo piccoli per essere calettati.</span></li>
+          <li><b data-t="r4b">Disegno DXF per il CAD</b><span data-t="r4s">Profilo dell'albero quotato con cave e raccordi, strutture, ruote e cinghie, con lo stesso cartiglio.</span></li>
+        </ul>
+      </div>
+      <div class="page" aria-label="Estratto di una relazione di calcolo">
+        <div class="bar"><img src="/vendor/brand/torsio-mark.svg" alt="">Torsio Engineering</div>
+        <h4 data-t="pTitle">Trasmissione completa</h4>
+        <p class="sub" data-t="pSub">Cinghia sincrona, ruote dentate, albero, accoppiamenti</p>
+        <h5><i>1</i><span data-t="pCheck">Coerenza tra i moduli</span></h5>
+        <ul class="chk">
+          <li><span class="v">✓</span><span data-t="c1">Uscita della cinghia 725 rpm, pignone 725 rpm</span></li>
+          <li><span class="v">✓</span><span data-t="c2">Potenza sull'albero 7,50 kW, stadio a monte 7,50 kW</span></li>
+          <li><span class="w">⚠</span><span data-t="c3">Spessore sotto il dente 2,2 mm &lt; 2,5·m: pignone di pezzo con l'albero</span></li>
+        </ul>
+        <h5><i>4.6</i><span data-t="pGood">Retta di Goodman</span></h5>
+        <div class="eq" id="formula">1/X = 143,44/(0,811 · 0,875 · 450) + 11,73/900 ⇒ X = 2,163</div>
+        <div class="res" data-t-html="pRes">d = <b>35 mm</b> · D = 42 mm · r = 1,5 mm<br>X fatica <b>2,16</b> <span class="ok">VERIFICATO</span> (X ≥ 2)</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="metodo">
+    <div class="wrap">
+      <h2 data-t="metH">Il metodo del corso, controllato sui temi d'esame</h2>
+      <p class="intro" data-t="metP">I calcoli seguono la Costruzione di Macchine: coefficienti dai diagrammi del corso, Goodman per la fatica, Hertz e Lewis per le ruote, ISO 286 per le tolleranze. Ogni modifica passa da una suite di prove con risultati svolti a mano.</p>
+      <div class="facts">
+        <div><div class="n">544</div><p data-t="f1">casi di prova automatici, ripetuti a ogni modifica del codice</p></div>
+        <div><div class="n">13</div><p data-t="f2">temi d'esame sugli alberi rifatti per intero, dalle reazioni al diametro</p></div>
+        <div><div class="n">4</div><p data-t="f3">moduli collegati in una sola relazione, in italiano o in inglese</p></div>
+      </div>
+      <p style="margin-top:36px"><a href="/it/metodo.html" data-t="metLink" style="font-weight:700">Metodo e validazione, modulo per modulo →</a></p>
+      <p class="limits" data-t="limits">È un dimensionamento di massima: dà le prime quote per il CAD. Il progetto esecutivo va verificato con le norme (ISO 6336, DIN 743), con i cataloghi dei produttori o con un'analisi FEM.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap closing">
+      <h2 style="margin:0" data-t="endH">Parti dalla trasmissione di esempio e cambia i numeri.</h2>
+      <a class="btn go" href="/app.html?demo=transmission&amp;lang=it" data-href="demo" data-t="tryDemo">Prova una trasmissione completa</a>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <footer>
+      <span><span data-t="foot">Torsio Engineering · un progetto di Luigi Frassi</span><br><span class="calcs"><a href="/it/dimensionamento-albero/" data-t="fShaft" data-href-it="/it/dimensionamento-albero/" data-href-en="/shaft-calculator/">Dimensionamento alberi</a> · <a href="/it/calcolo-bulloni/" data-t="fBolts" data-href-it="/it/calcolo-bulloni/" data-href-en="/bolted-joint-calculator/">Dimensionamento bulloni</a> · <a href="/it/calcolo-telaio-traliccio/" data-t="fFrames" data-href-it="/it/calcolo-telaio-traliccio/" data-href-en="/frame-truss-calculator/">Telai e tralicci (FEM)</a></span></span>
+      <span><a href="/it/metodo.html" data-t="fMet">Metodo</a> · <a href="/it/novita.html" data-t="fNews">Novità</a> · <a href="/it/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&amp;lang=it" target="_blank" rel="noopener" data-t="fContact" data-contact="">Contatti</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener" data-t="code">Codice sorgente</a></span>
+    </footer>
+  </div>
+
+  <script>
+    var T = {
+      en: {
+        navMods: 'Modules', navRep: 'Report', navMethod: 'Method', openApp: 'Open the calculator', tryDemo: 'Try a complete drive',
+        h1: 'Size machine elements. Hand in the calculation report.',
+        lead: 'Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
+        free: 'Free, no sign-up, checked against 544 hand-solved exam cases. Your data never leaves your computer.',
+        jump: 'Or jump straight to', jShafts: 'Shafts', jGears: 'Gears', jBolts: 'Bolted joints', jFrames: 'Frames & trusses', jBelts: 'Timing belts', jFits: 'ISO fits', jDiscs: 'Discs & shrink fits',
+        flowH: 'Follow the power from the motor to the last fit',
+        flowP: 'The modules are the stages of a drive. Calculate them one at a time, then generate a single report that checks that speeds, torques and diameters match from one stage to the next.',
+        m0h: 'Motor', m0p: 'Input power and speed. Torque and speed of every stage start here.',
+        m1h: 'Timing belt', m1p: 'Pulleys, belt length, exact centre distance, teeth in mesh and width.', open: 'Size the belt',
+        m2h: 'Gears', m2p: 'Module and face width for pitting, bending check, power capacity of an existing pair.', m2m: 'Hertz · Lewis · spur and helical', open2: 'Size the gears',
+        m3h: 'Shaft', m3p: 'Reactions, diagrams, minimum diameter for fatigue, real sections, life, bearings.', open3: 'Size the shaft',
+        m4h: 'Fits', m4p: 'Deviations, clearances and interferences, machining and drawing callout.', open4: 'Choose the fit',
+        repH: 'A report you can sign and hand in', repP: 'The calculation does not stay on the screen. One click gives an A4 document to save as PDF, with your logo and title block, signatures and revision history.',
+        r1b: 'Formulas with the numbers substituted', r1s: 'Real fractions and roots, step by step, like a worked exam.',
+        r2b: 'Diagrams and force views', r2s: 'Moments in both planes, Goodman line, gear and belt layouts.',
+        r3b: 'Checks between stages', r3s: 'Speeds and powers that do not match, pinions too small to be keyed.',
+        r4b: 'DXF drawing for CAD', r4s: 'Dimensioned shaft profile with keyways and fillets, structures, gears and belts, with the same title block.',
+        pTitle: 'Complete transmission', pSub: 'Timing belt, gears, shaft, fits', pCheck: 'Consistency between modules',
+        c1: 'Belt output 725 rpm, pinion 725 rpm', c2: 'Power on the shaft 7.50 kW, upstream stage 7.50 kW', c3: 'Rim under the teeth 2.2 mm < 2.5·m: pinion integral with the shaft',
+        pGood: 'Goodman line', pRes: 'd = <b>35 mm</b> · D = 42 mm · r = 1.5 mm<br>X fatigue <b>2.16</b> <span class="ok">VERIFIED</span> (X ≥ 2)',
+        metH: 'The course method, checked against exam problems', metP: 'The calculations follow the Machine Design course: coefficients from the course charts, Goodman for fatigue, Hertz and Lewis for gears, ISO 286 for tolerances. Every change runs through a test suite of hand-worked results.',
+        metLink: 'Method and validation, module by module →',
+        f1: 'automatic test cases, run at every code change', f2: 'shaft exam problems redone in full, from the reactions to the diameter', f3: 'modules linked in a single report, in Italian or English',
+        limits: 'This is preliminary sizing: it gives the first dimensions for CAD. The final design must be checked with the standards (ISO 6336, DIN 743), the manufacturers’ catalogs or an FEM analysis.',
+        boltP: 'And for the joints: friction and flanged bolted joints, tightening torque, external load with the tightening diagram, power screws.', boltA: 'Try the flanged coupling',
+        femH: 'And for everything else: finite element structures', femP: 'Plane beams, frames and trusses: draw the members on the grid, add supports and loads with a click and get reactions, N, V, M diagrams and the deformed shape. Then Torsio picks the lightest section in six families (round, tube, rectangle, hollow square, IPE, HEA), checking strength, Euler buckling and deflection.', femA: 'Open the Structures module', femDemo: 'try the radio tower',
+        endH: 'Start from the example drive and change the numbers.', foot: 'Torsio Engineering · a project by Luigi Frassi', code: 'Source code', issue: 'Report a problem', fMet: 'Method', fNews: "What's new", fContact: 'Contact', fShaft: 'Shaft calculator', fBolts: 'Bolted joint calculator', fFrames: 'Frame & truss calculator',
+        crit: 'Critical section E', critX: 'X fatigue 2.16 · yield 4.51', key: 'key', tbTitle: 'Pinion shaft', tbMat: '39NiCrMo3 Q+T', tbLife: 'Infinite life · X ≥ 2', tbScale: 'Dimensions in mm', sheetCap: 'Pinion shaft of the example drive: Ø35 at the bearings, Ø42 at the shoulders, pinion z = 20, m = 2.25 integral with the shaft.', tbSheet: 'Sheet 1 of 1', pull: 'belt pull 1660 N', ft: 'Ft 4390 N · Fr 1598 N'
+      }
+    };
+    var IT = {};
+    document.querySelectorAll('[data-t]').forEach(function (el) { IT[el.getAttribute('data-t')] = el.textContent; });
+    document.querySelectorAll('[data-t-svg]').forEach(function (el) { IT[el.getAttribute('data-t-svg')] = el.textContent; });
+    document.querySelectorAll('[data-t-html]').forEach(function (el) { IT[el.getAttribute('data-t-html')] = el.innerHTML; });
+    var HREF = { boltDemo: '/app.html?demo=boltsExam', frames: '/app.html?m=frames', femDemo: '/app.html?demo=frames', app: '/app.html', demo: '/app.html?demo=transmission', belts: '/app.html?m=belts', gears: '/app.html?m=gears', shafts: '/app.html?m=shafts', fits: '/app.html?m=fits', bolts: '/app.html?m=bolts', discs: '/app.html?m=discs' };
+    var goodman = {
+      it: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143{,}44}{0{,}811 \\cdot 0{,}875 \\cdot 450} + \\dfrac{11{,}73}{900} \\;\\Rightarrow\\; X = 2{,}163',
+      en: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143.44}{0.811 \\cdot 0.875 \\cdot 450} + \\dfrac{11.73}{900} \\;\\Rightarrow\\; X = 2.163'
+    };
+    var lang = 'it';
+    function drawFormula() {
+      var f = document.getElementById('formula');
+      if (window.katex) try { window.katex.render(goodman[lang], f, { displayMode: true, throwOnError: false }); } catch (e) { /* keep the plain text */ }
+    }
+    function setLang(l) {
+      lang = l === 'en' ? 'en' : 'it';
+      var d = lang === 'en' ? T.en : IT;
+      document.documentElement.lang = lang;
+      document.title = lang === 'en' ? 'Torsio Engineering — preliminary sizing of machine elements' : 'Torsio Engineering — dimensionamento di massima di organi di macchine';
+      document.querySelectorAll('[data-t]').forEach(function (el) { var k = el.getAttribute('data-t'); if (d[k] != null) el.textContent = d[k]; });
+      document.querySelectorAll('[data-t-svg]').forEach(function (el) { var k = el.getAttribute('data-t-svg'); if (d[k] != null) el.textContent = d[k]; });
+      document.querySelectorAll('[data-t-html]').forEach(function (el) { var k = el.getAttribute('data-t-html'); if (d[k] != null) el.innerHTML = d[k]; });
+      document.querySelectorAll('[data-href]').forEach(function (el) { var h = HREF[el.getAttribute('data-href')]; el.href = h + (h.indexOf('?') < 0 ? '?' : '&') + 'lang=' + lang; });
+      document.querySelectorAll('[data-contact]').forEach(function (el) { el.href = 'https://tally.so/r/Gev5gZ?module=contact&lang=' + lang; });
+      document.querySelectorAll('[data-href-en]').forEach(function (el) { el.href = el.getAttribute(lang === 'en' ? 'data-href-en' : 'data-href-it'); });
+      document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+      drawFormula();
+      try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
+    }
+    document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
+    var saved = null;
+    try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
+    setLang('it');
+    var ks = document.createElement('script');
+    ks.src = '/vendor/katex/katex.min.js'; ks.onload = drawFormula; document.head.appendChild(ks);
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer="" src="/_vercel/insights/script.js"></script>
+
+
+</body></html>

@@ -9,7 +9,7 @@ import json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://torsio.app'
 TALLY = 'https://tally.so/r/Gev5gZ'
-metodo = open(os.path.join(ROOT, 'metodo.html')).read()
+metodo = open(os.path.join(ROOT, 'tools', 'site-src', 'metodo.html')).read()
 STYLE = metodo[metodo.index('  <style>'):metodo.index('  </style>')]
 GEAR = re.search(r'<svg class="gear-o".*?</svg>', metodo, re.S).group(0)
 STYLE += '''    .guide section { padding: 44px 0; }
@@ -219,7 +219,7 @@ def page(P, lang):
            'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'author': {'@type': 'Person', 'name': 'Luigi Frassi'}},
           {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in d['faq']]}]
     others = ''.join(f'<a href="/{Q[lang]["path"]}">{Q[lang]["short"]}<span>{Q[lang]["card"]}</span></a>' for Q in PAGES if Q is not P)
-    others += f'<a href="/metodo.html?lang={lang}">{t["method"]}<span>{"544 hand-worked test cases" if lang == "en" else "544 casi di prova svolti a mano"}</span></a>'
+    others += f'<a href="{"/metodo.html" if lang == "en" else "/it/metodo.html"}">{t["method"]}<span>{"544 hand-worked test cases" if lang == "en" else "544 casi di prova svolti a mano"}</span></a>'
     h = f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -252,9 +252,9 @@ def page(P, lang):
 <body class="guide">
   <div class="wrap">
     <div class="top">
-      <a class="brand" href="/?lang={lang}"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T{GEAR}rsio</span></b><span>Engineering</span></a>
+      <a class="brand" href="{"/" if lang == "en" else "/it/"}"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T{GEAR}rsio</span></b><span>Engineering</span></a>
       <nav class="nav" aria-label="{'Navigation' if lang == 'en' else 'Navigazione'}">
-        <span class="links"><a href="/?lang={lang}">{t['home']}</a><a href="/metodo.html?lang={lang}">{t['method']}</a><a href="/{other['path']}" hreflang="{'it' if lang == 'en' else 'en'}">{t['langname']}</a></span>
+        <span class="links"><a href="{"/" if lang == "en" else "/it/"}">{t['home']}</a><a href="{"/metodo.html" if lang == "en" else "/it/metodo.html"}">{t['method']}</a><a href="/{other['path']}" hreflang="{'it' if lang == 'en' else 'en'}">{t['langname']}</a></span>
         <a class="btn go small" href="{app}">{t['open']}</a>
       </nav>
     </div>
@@ -276,7 +276,7 @@ def page(P, lang):
   <div class="wrap">
     <footer>
       <span>Torsio Engineering · {t['by']}</span>
-      <span><a href="/metodo.html?lang={lang}">{t['method']}</a> · <a href="/novita.html?lang={lang}">{t['news']}</a> · <a href="/privacy.html?lang={lang}">{t['privacy']}</a> · <a href="{TALLY}?module=contact&lang={lang}" target="_blank" rel="noopener">{t['contact']}</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">{t['src']}</a></span>
+      <span><a href="{"/metodo.html" if lang == "en" else "/it/metodo.html"}">{t['method']}</a> · <a href="{"/novita.html" if lang == "en" else "/it/novita.html"}">{t['news']}</a> · <a href="{"/privacy.html" if lang == "en" else "/it/privacy.html"}">{t['privacy']}</a> · <a href="{TALLY}?module=contact&lang={lang}" target="_blank" rel="noopener">{t['contact']}</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">{t['src']}</a></span>
     </footer>
   </div>
   <script>

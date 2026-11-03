@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+  <meta charset="UTF-8">
+  <script>
+    // Italian page: ?lang= of old links and the language buttons go to the other version
+    (function () {
+      var other = '/metodo.html', q = new URLSearchParams(location.search).get('lang'), saved = null;
+      try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
+      if (q && q !== 'it') { var p = new URLSearchParams(location.search); p.delete('lang'); var s = p.toString(); location.replace(other + (s ? '?' + s : '') + location.hash); return; }
+      
+      document.addEventListener('click', function (ev) { var b = ev.target.closest && ev.target.closest('.lang button'); if (!b) return; var l = b.getAttribute('data-lang');
+        try { localStorage.setItem('torsioLang', l); } catch (e) { /* private mode */ }
+        if (l !== 'it') { ev.stopImmediatePropagation(); location.href = other; } }, true);
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metodo e validazione — Torsio Engineering</title>
+  <meta name="description" content="Metodi, formule, fonti e 544 casi di prova svolti a mano: cosa calcola Torsio e dove si ferma.">
+  <link rel="canonical" href="https://torsio.app/it/metodo.html">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/metodo.html">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/metodo.html">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/metodo.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="Metodo e validazione — Torsio Engineering">
+  <meta property="og:description" content="Metodi, formule, fonti e 544 casi di prova svolti a mano: cosa calcola Torsio e dove si ferma.">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:url" content="https://torsio.app/it/metodo.html">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="icon" href="/vendor/brand/favicon-96.png" sizes="96x96" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/it/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"></path></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigazione">
+        <span class="links">
+          <a href="/it/"><span data-l="it">Home</span></a>
+          <a href="#moduli"><span data-l="it">Moduli</span></a>
+          <a href="#limiti"><span data-l="it">Limiti</span></a>
+        </span>
+        <span class="lang" role="group" aria-label="Lingua"><button type="button" data-lang="it" aria-pressed="true">IT</button><button type="button" data-lang="en" aria-pressed="false">EN</button></span>
+        <a class="btn go small" href="/app.html?lang=it" data-app=""><span data-l="it">Apri il calcolatore</span></a>
+      </nav>
+    </div>
+
+    <header class="page-head">
+      <h1><span data-l="it">Metodo e validazione</span></h1>
+      <p class="lead" data-l="it">Ogni modulo usa un metodo dichiarato, con le sue fonti, ed è controllato contro risultati svolti a mano. Qui trovi cosa calcola, con quali formule, quanto è stato verificato e dove si ferma.</p>
+      
+    </header>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2><span data-l="it">Come viene verificato</span></h2>
+      <ol class="steps" style="margin-top:28px">
+        <li data-l="it"><b>Risultati svolti a mano</b><span>Temi d'esame del corso di Costruzione di Macchine ed esercizi di Elementi Costruttivi, risolti a mano dall'inizio alla fine: reazioni, momenti, coefficienti letti dai diagrammi, diametri.</span></li>
+        <li data-l="it"><b>Una tolleranza per ogni caso</b><span>1 % per i risultati che dipendono solo dalle formule, 2 % dove entrano i diagrammi del corso letti a occhio, tolleranze assolute per le letture dei grafici.</span></li>
+        <li data-l="it"><b>Ripetuti a ogni modifica</b><span>544 casi automatici sui calcoli e un test che apre la pagina vera nel browser (link condivisi, progetti, relazioni, DXF). Se un caso non torna, la modifica non va online.</span></li>
+        
+        
+        
+      </ol>
+      <p class="muted" style="margin-top:28px" data-l="it">Quando il risultato non coincide con la soluzione svolta, la differenza viene ricostruita passo per passo e annotata accanto al caso di prova. Finora 16 differenze, quasi tutte sviste di trascrizione nella soluzione a mano (un coefficiente copiato da un altro esercizio, un braccio sbagliato nelle reazioni) o letture dei diagrammi diverse di qualche centesimo.</p>
+      
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span data-l="it">Quadro dei moduli</span></h2>
+      <div class="scroll" style="margin-top:24px">
+        <table class="tbl">
+          <thead><tr>
+            <th><span data-l="it">Modulo</span></th>
+            <th><span data-l="it">Metodo</span></th>
+            <th><span data-l="it">Controllato su</span></th>
+            <th style="text-align:right"><span data-l="it">Casi</span></th>
+            <th><span data-l="it">Passo successivo</span></th>
+          </tr></thead>
+          <tbody>
+            <tr><td><a href="#alberi"><span data-l="it">Alberi</span></a></td>
+              <td><span data-l="it">Goodman con Kt, q, b₁, b₂ dai diagrammi del corso; Wöhler e Miner; cuscinetti</span></td>
+              <td><span data-l="it">13 temi d'esame (2002–2023) rifatti per intero</span></td><td class="n">283</td><td>DIN 743 · FKM</td></tr>
+            <tr><td><a href="#ruote"><span data-l="it">Ruote dentate</span></a></td>
+              <td><span data-l="it">Hertz (pitting) e Lewis (flessione), denti diritti ed elicoidali</span></td>
+              <td><span data-l="it">15 temi d'esame (2015–2024) e letture dei diagrammi</span></td><td class="n">108</td><td>ISO 6336</td></tr>
+            <tr><td><a href="#bulloni"><span data-l="it">Collegamenti bullonati</span></a></td>
+              <td><span data-l="it">Giunzioni ad attrito, coppia di serraggio, carico esterno, viti di manovra</span></td>
+              <td><span data-l="it">5 esercizi d'esame svolti</span></td><td class="n">30</td><td>VDI 2230</td></tr>
+            <tr><td><a href="#dischi"><span data-l="it">Dischi e calettamenti</span></a></td>
+              <td><span data-l="it">Dischi e tubi spessi (Lamé, rotazione), tubi sottili ed effetti di bordo, piastre, congruenza alle giunzioni</span></td>
+              <td><span data-l="it">4 temi d'esame (2015–2017), 5 esercizi svolti, 2 in classe e una domanda d'orale</span></td><td class="n">82</td><td>DIN 7190 · FEM</td></tr>
+            <tr><td><a href="#strutture"><span data-l="it">Strutture (FEM)</span></a></td>
+              <td><span data-l="it">Telaio piano agli elementi finiti, scelta della sezione a catalogo, instabilità di Eulero</span></td>
+              <td><span data-l="it">Soluzioni chiuse di Scienza delle Costruzioni e un notebook di ottimizzazione</span></td><td class="n">26</td><td><span data-l="it">Eurocodice 3 · FEM completo</span></td></tr>
+            <tr><td><a href="#alberi"><span data-l="it">Disegno DXF e linguette</span></a></td>
+              <td>UNI 6604</td><td><span data-l="it">Tabelle della norma, struttura del file R12</span></td><td class="n">9</td><td>CAD</td></tr>
+            <tr><td><a href="#materiali"><span data-l="it">Materiali degli alberi</span></a></td>
+              <td>EN 10083-2 / -3 (+QT)</td><td><span data-l="it">Valori minimi della norma</span></td><td class="n">6</td><td><span data-l="it">Certificato del materiale</span></td></tr>
+            <tr><td><a href="#accoppiamenti"><span data-l="it">Accoppiamenti ISO</span></a></td>
+              <td>ISO 286-2</td><td><span data-l="it">Tabelle della norma (nessun tema d'esame)</span></td><td class="n">—</td><td>—</td></tr>
+            <tr><td><a href="#cinghie"><span data-l="it">Cinghie sincrone</span></a></td>
+              <td>ISO 5296 · DIN 7721</td><td><span data-l="it">Geometria esatta; larghezza indicativa</span></td><td class="n">—</td><td><span data-l="it">Catalogo del produttore</span></td></tr>
+          </tbody>
+          <tfoot><tr><td colspan="3"><span data-l="it">Totale dei casi automatici</span></td><td class="n">544</td><td></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="moduli">
+    <div class="wrap">
+      <h2><span data-l="it">Metodo, modulo per modulo</span></h2>
+      <div class="mods" style="margin-top:24px">
+
+        <article class="mod" id="alberi">
+          <h3><span data-l="it">Alberi</span></h3>
+          <p class="src"><span data-l="it">Corso di Costruzione di Macchine · 283 casi</span></p>
+          <p data-l="it">Dal modello a trave (reazioni dei cuscinetti, momenti nei due piani, forze delle ruote con la loro direzione) alla sezione critica, poi il diametro minimo a fatica con la retta di Goodman.</p>
+          
+          <div class="eq" data-tex="\dfrac{1}{X} = \dfrac{\sigma_{a,eq}}{b_1\, b_2\, \sigma_N} + \dfrac{\sigma_{m,eq}}{\sigma_R} \qquad K_e = 1 + q\,(K_t - 1)"></div>
+          <ul data-l="it"><li>Kt, q, b₁ (dimensione) e b₂ (finitura) dai diagrammi del corso; linguette con i coefficienti del corso.</li><li>Vita finita con Wöhler e Miner, durata dei cuscinetti con L₁₀ = (C/P)ᵖ.</li><li>Profilo dell'albero proposto per il CAD, linguette UNI 6604, esportazione DXF.</li></ul>
+          
+          <p class="lim" data-l="it">Non calcola deformata, velocità critica né le verifiche della DIN 743.</p>
+          
+        </article>
+
+        <article class="mod" id="ruote">
+          <h3><span data-l="it">Ruote dentate</span></h3>
+          <p class="src"><span data-l="it">Corso di Costruzione di Macchine · 108 casi</span></p>
+          <p data-l="it">Modulo e larghezza di fascia dalla pressione di contatto di Hertz, verifica a flessione di Lewis, potenza trasmissibile di una coppia esistente.</p>
+          
+          <div class="eq" data-tex="W_H = \dfrac{\sigma_H^2\, L\, \omega_1 \sin 2\vartheta\; m_t^2 z_1^2}{8\, K_e\,(1+\tau)}\,\dfrac{\Gamma_t}{\Phi} \qquad \sigma_L = \dfrac{F_c}{L\, m_n\, y}\,\dfrac{\Psi}{\Gamma_t}"></div>
+          <ul data-l="it"><li>y di Lewis e Φ, Ψ, Γₜ delle elicoidali digitalizzati dai diagrammi del corso.</li><li>Ricerca automatica delle combinazioni di denti e moduli unificati.</li></ul>
+          
+          <p class="lim" data-l="it">Nessun fattore di carico dinamico, di distribuzione o di lubrificazione: per quelli serve la ISO 6336.</p>
+          
+        </article>
+
+        <article class="mod" id="bulloni">
+          <h3><span data-l="it">Collegamenti bullonati</span></h3>
+          <p class="src"><span data-l="it">Appunti di Elementi Costruttivi delle Macchine · 30 casi</span></p>
+          <p data-l="it">Numero di viti di una giunzione ad attrito, precarico e coppia di serraggio, carico esterno assiale con il diagramma di serraggio, viti di manovra.</p>
+          
+          <div class="eq" data-tex="N = \dfrac{T\,X}{f} \qquad M_s = N\,\dfrac{d_m}{2}\,\dfrac{\cos\beta\sin\alpha + f\cos\alpha}{\cos\beta\cos\alpha - f\sin\alpha} + \dfrac{N}{2}\,D_m\,f"></div>
+          <ul data-l="it"><li>d_m = 0,9·d, A_res = π(0,8·d)²/4, β = 30°, D_m = (D_c + d)/2.</li><li>Rigidezze della vite e delle flange con il cono a 30°, precarico ottimale P_am·K_f/(K_v + K_f).</li></ul>
+          
+          <p class="lim" data-l="it">Fatica della vite ed effetti termici non inclusi.</p>
+          
+        </article>
+
+        <article class="mod" id="dischi">
+          <h3><span data-l="it">Dischi, tubi spessi e calettamenti</span></h3>
+          <p class="src"><span data-l="it">Appunti di Costruzione di Macchine · 82 casi</span></p>
+          <p data-l="it">Dischi di spessore costante pieni e forati, fermi e rotanti, tubi a forte spessore con o senza fondelli, calettamenti fra elementi di materiale e spessore diversi: pressione a fermo e in esercizio, velocità di distacco, tensioni lungo il raggio, coppia trasmissibile, interferenza necessaria e massima, temperatura di montaggio. Tubi sottili con effetti di bordo, piastre assialsimmetriche e le loro giunzioni (serbatoi con fondelli, tubi saldati, mantelli su dischi, setti forzati): forza e momento alla giunzione dalla congruenza, tensioni sulle due fibre lungo il tubo e nella piastra, velocità massima. Anche il disco a uniforme resistenza.</p>
+          
+          <div class="eq" data-tex="\sigma_r = B_1 + \dfrac{B_2}{r^2} - \dfrac{3+\nu}{8}\rho\omega^2 r^2 \qquad \sigma_c = B_1 - \dfrac{B_2}{r^2} - \dfrac{1+3\nu}{8}\rho\omega^2 r^2 \qquad u_e - u_i = i"></div>
+          <ul data-l="it"><li>Stato piano di tensione, von Mises; fra spessori diversi p_i·h_i = p_e·h_e.</li><li>Velocità di distacco dalla pressione lineare in ω²; coppia T = f·p·2πR²h.</li></ul>
+          
+          <p class="lim" data-l="it">Tubi semi-infiniti (giunzioni lontane fra loro); non include le concentrazioni di tensione ai bordi del mozzo, la plasticizzazione e la fatica.</p>
+          
+        </article>
+
+        <article class="mod" id="strutture">
+          <h3><span data-l="it">Strutture (FEM)</span></h3>
+          <p class="src"><span data-l="it">Metodo degli spostamenti · 26 casi</span></p>
+          <p data-l="it">Travi, telai e tralicci piani: elementi di Eulero-Bernoulli a 3 gradi di libertà per nodo, cerniere interne per condensazione statica, carichi distribuiti.</p>
+          
+          <div class="eq" data-tex="\mathbf{K}\,\mathbf{u} = \mathbf{F} \qquad \sigma = \dfrac{|N|}{A} + \dfrac{|M|}{W} \qquad \sigma_{cr} = \dfrac{\pi^2 E\, I_{min}}{(\beta L)^2 A}"></div>
+          <ul data-l="it"><li>La sezione più leggera in sei famiglie (tondo, tubo, rettangolo, quadro cavo, IPE, HEA) con resistenza, Eulero e freccia.</li><li>Confronto con il notebook di ottimizzazione del peso di una torre radio.</li></ul>
+          
+          <p class="lim" data-l="it">Taglio non verificato, peso proprio trascurato, nessuna combinazione di carico dell'Eurocodice.</p>
+          
+        </article>
+
+        <article class="mod" id="accoppiamenti">
+          <h3><span data-l="it">Accoppiamenti ISO</span></h3>
+          <p class="src">ISO 286-1 / ISO 286-2</p>
+          <p data-l="it">Scostamenti di foro e albero, giochi e interferenze, lavorazione e rugosità indicate, quota da disegno. Gradi IT5–IT11, alberi c–s e fori C–S fino a 500 mm, foro base, albero base o qualsiasi combinazione. Anche al contrario: dal gioco voluto all'accoppiamento.</p>
+          
+          <div class="eq" data-tex="g_{max} = ES - ei \qquad g_{min} = EI - es"></div>
+          <p data-l="it">Fori K–S dalla regola della norma: ES = −ei + Δ, con Δ = IT(n) − IT(n−1).</p>
+          
+          <p class="lim" data-l="it">Non calcola la pressione di un accoppiamento forzato (Lamé).</p>
+          
+        </article>
+
+        <article class="mod" id="cinghie">
+          <h3><span data-l="it">Cinghie sincrone</span></h3>
+          <p class="src">ISO 5296 · DIN 7721</p>
+          <p data-l="it">Diametri primitivi, lunghezza della cinghia arrotondata ai denti, interasse esatto, denti in presa, forza tangenziale e larghezza.</p>
+          
+          <div class="eq" data-tex="L_0 = 2C + \dfrac{\pi}{2}(d_1 + d_2) + \dfrac{(d_2 - d_1)^2}{4C} \qquad F_t = \dfrac{P\,c_0}{v}"></div>
+          <p class="lim" data-l="it">La larghezza usa una forza ammissibile media per profilo: va confermata sul catalogo del produttore.</p>
+          
+        </article>
+
+        <article class="mod" id="materiali">
+          <h3><span data-l="it">Materiali degli alberi</span></h3>
+          <p class="src">EN 10083-2 · EN 10083-3</p>
+          <p data-l="it">Acciai da bonifica C40, C45, C55, 41Cr4, 34CrMo4, 42CrMo4, 39NiCrMo3 e 34CrNiMo6 nello stato +QT, per fascia di diametro (fino a 16, 16–40, 40–100 mm).</p>
+          
+          <div class="eq" data-tex="\sigma_R = R_{m,min} \qquad \sigma_s = R_{e,min} \qquad \sigma_{LF} \approx 0{,}5\,R_{m,min}"></div>
+          <p class="lim" data-l="it">σLF è una stima: se il tema d'esame o il fornitore danno il valore, va usato quello.</p>
+          
+        </article>
+
+        <article class="mod" id="collegamenti">
+          <h3><span data-l="it">Moduli collegati</span></h3>
+          <p class="src"><span data-l="it">Relazione della trasmissione completa</span></p>
+          <p data-l="it">I risultati passano da un modulo all'altro con un clic (cinghia → ruote → albero → accoppiamento e bulloni, strutture → bulloni) e la relazione della trasmissione controlla che velocità, potenze e diametri tornino tra gli stadi.</p>
+          
+          <div class="eq" data-tex="n_2 = n_1\,\tau \qquad M = \dfrac{P}{\omega}"></div>
+          <p class="lim" data-l="it">I rendimenti sono trascurati: la potenza è costante lungo la catena.</p>
+          
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="limiti">
+    <div class="wrap">
+      <h2><span data-l="it">Dove si ferma</span></h2>
+      <ul class="limits" data-l="it">
+        <li>È un <b>dimensionamento di massima</b>: dà le prime quote per il CAD e un ordine di grandezza dei coefficienti di sicurezza.</li>
+        <li>Il progetto esecutivo va verificato con le norme (ISO 6336, DIN 743, VDI 2230, Eurocodice 3), con i cataloghi dei produttori o con un'analisi FEM completa.</li>
+        <li>I diagrammi del corso sono digitalizzati: dove la lettura a mano differisce di qualche centesimo, la differenza è dichiarata nei casi di prova.</li>
+        <li>I calcoli girano nel browser: i dati non lasciano il computer, e i link condivisi contengono solo i valori inseriti.</li>
+      </ul>
+      
+      <p class="muted" style="margin-top:24px">
+        <span data-l="it">I casi di prova sono pubblici: </span>
+        <a href="https://github.com/Luigi-Frassi/torsio-engineering/blob/main/tests/validation.test.js" target="_blank" rel="noopener">tests/validation.test.js</a>.
+        <span data-l="it">Hai trovato un risultato che non torna?</span>
+        <a href="https://github.com/Luigi-Frassi/torsio-engineering/issues/new" target="_blank" rel="noopener"><span data-l="it">Segnalalo</span></a>.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap closing">
+      <h2 style="margin:0"><span data-l="it">Prova il metodo su una trasmissione completa.</span></h2>
+      <a class="btn go" href="/app.html?demo=transmission&amp;lang=it" data-app="demo"><span data-l="it">Apri la demo</span></a>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · <span data-l="it">un progetto di Luigi Frassi</span></span>
+      <span><a href="/it/novita.html"><span data-l="it">Novità</span></a> · <a href="/it/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&amp;lang=it" target="_blank" rel="noopener" data-contact=""><span data-l="it">Contatti</span></a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener"><span data-l="it">Codice sorgente</span></a></span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var lang = 'it';
+      function draw() {
+        if (!window.katex) return;
+        document.querySelectorAll('[data-tex]').forEach(function (el) {
+          var tex = el.getAttribute('data-tex');
+          if (lang === 'en') tex = tex.replace(/0\{,\}5/g, '0.5');
+          try { window.katex.render(tex, el, { displayMode: true, throwOnError: false }); } catch (e) { el.textContent = tex; }
+        });
+      }
+      function setLang(l) {
+        lang = l === 'en' ? 'en' : 'it';
+        document.documentElement.lang = lang;
+        document.title = lang === 'en' ? 'Method and validation — Torsio Engineering' : 'Metodo e validazione — Torsio Engineering';
+        document.querySelectorAll('.lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === lang)); });
+        document.querySelectorAll('[data-app]').forEach(function (a) { a.href = (a.getAttribute('data-app') === 'demo' ? '/app.html?demo=transmission&' : '/app.html?') + 'lang=' + lang; });
+        document.querySelectorAll('[data-contact]').forEach(function (a) { a.href = 'https://tally.so/r/Gev5gZ?module=contact&lang=' + lang; });
+        draw();
+        try { localStorage.setItem('torsioLang', lang); } catch (e) { /* private mode */ }
+      }
+      document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); }); });
+      var saved = null;
+      try { saved = localStorage.getItem('torsioLang'); } catch (e) { /* private mode */ }
+      var q = new URLSearchParams(location.search).get('lang');
+      setLang('it');
+      var ks = document.createElement('script');
+      ks.src = '/vendor/katex/katex.min.js'; ks.onload = draw; document.head.appendChild(ks);
+    })();
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer="" src="/_vercel/insights/script.js"></script>
+
+
+</body></html>
