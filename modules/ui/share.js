@@ -19,7 +19,8 @@ const SHARE_FIELDS = {
     ...[1, 2, 3, 4].flatMap(i => ['Type', 'X', 'D', 'Helix', 'Torque', 'Share', 'DirMode', 'Angle', 'FtDir', 'FrDir', 'FaDir', 'Fv', 'Fh', 'Fa', 'E'].map(f => 'shaftEl' + i + f))],
   frames: ['frMat', 'frE', 'frSy', 'frRho', 'frX', 'frXb', 'frBeta', 'frDefl', 'frMode'],
   bolts: ['btLoad', 'btF', 'btMt', 'btDc', 'btMint', 'btF0', 'btX', 'btCls', 'btSize', 'btFt', 'btM', 'btMs', 'btPe', 'btH', 'btE', 'bsD', 'bsP', 'bsH', 'bsBeta', 'bsF', 'bsN', 'bsSy'],
-  discs: []
+  discs: [],
+  trains: []
 };
 // Inputs whose value depends on the unit system: always written when the unit is not metric
 const SHARE_UNIT_FIELDS = ['nominalDiameter', 'reverseTargetVal', 'desiredCenter'];
@@ -64,6 +65,8 @@ function readShareState() {
   } else if (activeModule === 'discs') {
     s.dsmode = typeof dsMode !== 'undefined' ? dsMode : 'stack';
     s.dsm = typeof dsEncode === 'function' ? dsEncode() : '';   // the whole model in one parameter
+  } else if (activeModule === 'trains') {
+    s.trm = typeof trEncode === 'function' ? trEncode() : '';
   }
   return s;
 }
@@ -103,7 +106,7 @@ function syncShareUrl() {
 // Apply a state read from the URL. Unknown keys and invalid values are ignored.
 function applyShareState(q) {
   const m = q.get('m');
-  if (!['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs'].includes(m)) return false;
+  if (!['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs', 'trains'].includes(m)) return false;
 
   const lang = q.get('lang');
   if (lang === 'it' || lang === 'en') updateLanguage(lang);
@@ -158,6 +161,9 @@ function applyShareState(q) {
   } else if (m === 'bolts') {
     const bm = q.get('btm');
     if (typeof setBoltMode === 'function') setBoltMode(['design', 'torque', 'screw'].includes(bm) ? bm : 'design');
+  } else if (m === 'trains') {
+    if (q.get('trm') && typeof trDecode === 'function') { const M = trDecode(q.get('trm')); if (M) { trModel = M; if (typeof trFill === 'function') trFill(); } }
+    if (typeof calculateTrains === 'function') calculateTrains();
   } else if (m === 'discs') {
     if (q.get('dsm') && typeof dsDecode === 'function') { const M = dsDecode(q.get('dsm')); if (M) dsModel = M; if (typeof dsRenderInputs === 'function') dsRenderInputs(); }
     if (typeof setDiscMode === 'function') setDiscMode(['uni', 'jn'].includes(q.get('dsmode')) ? q.get('dsmode') : 'stack');

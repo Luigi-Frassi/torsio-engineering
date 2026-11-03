@@ -511,7 +511,7 @@ function openShaftReport() {
 }
 
 function openReport() {
-  const build = { shafts: buildShaftReportHtml, gears: buildGearReportHtml, belts: buildBeltReportHtml, fits: buildFitReportHtml, frames: typeof buildFrameReportHtml === 'function' ? buildFrameReportHtml : null, bolts: typeof buildBoltReportHtml === 'function' ? buildBoltReportHtml : null, discs: typeof buildDiscReportHtml === 'function' ? buildDiscReportHtml : null }[activeModule];
+  const build = { shafts: buildShaftReportHtml, gears: buildGearReportHtml, belts: buildBeltReportHtml, fits: buildFitReportHtml, frames: typeof buildFrameReportHtml === 'function' ? buildFrameReportHtml : null, bolts: typeof buildBoltReportHtml === 'function' ? buildBoltReportHtml : null, discs: typeof buildDiscReportHtml === 'function' ? buildDiscReportHtml : null, trains: typeof buildTrainReportHtml === 'function' ? buildTrainReportHtml : null }[activeModule];
   if (!build) return;
   // open the tab now (inside the click, so popup blockers allow it), fill it when the formula typesetter is ready
   const w = window.open('', '_blank');
