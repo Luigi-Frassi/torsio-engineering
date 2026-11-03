@@ -42,7 +42,7 @@
     // Old shared links pointed at the root (/?m=shafts&...): send them to the calculator
     (function () {
       var q = window.location.search;
-      if (/[?&]m=(fits|belts|gears|shafts|frames|bolts|discs)\b/.test(q)) window.location.replace('/app.html' + q + window.location.hash);
+      if (/[?&]m=(fits|belts|gears|shafts|frames|bolts|discs|trains)\b/.test(q)) window.location.replace('/app.html' + q + window.location.hash);
     })();
   </script>
   <link rel="stylesheet" href="/vendor/fonts/fonts.css">
@@ -201,12 +201,12 @@
       <div class="hero">
         <div>
           <h1 data-t="h1">Size machine elements. Hand in the calculation report.</h1>
-          <p class="lead" data-t="lead">Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.</p>
+          <p class="lead" data-t="lead">Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits, epicyclic gear trains. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.</p>
           <div class="ctas">
             <a class="btn go" href="/app.html?lang=en" data-href="app" data-t="openApp">Open the calculator</a>
             <a class="btn alt" href="/app.html?demo=transmission&amp;lang=en" data-href="demo" data-t="tryDemo">Try a complete drive</a>
           </div>
-          <div class="jump"><p data-t="jump">Or jump straight to</p><div><a href="/app.html?m=shafts&amp;lang=en" data-href="shafts"><b>S-04</b><span data-t="jShafts">Shafts</span></a><a href="/app.html?m=gears&amp;lang=en" data-href="gears"><b>G-03</b><span data-t="jGears">Gears</span></a><a href="/app.html?m=bolts&amp;lang=en" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bolted joints</span></a><a href="/app.html?m=frames&amp;lang=en" data-href="frames"><b>T-05</b><span data-t="jFrames">Frames &amp; trusses</span></a><a href="/app.html?m=belts&amp;lang=en" data-href="belts"><b>B-02</b><span data-t="jBelts">Timing belts</span></a><a href="/app.html?m=fits&amp;lang=en" data-href="fits"><b>F-01</b><span data-t="jFits">ISO fits</span></a><a href="/app.html?m=discs&amp;lang=en" data-href="discs"><b>D-07</b><span data-t="jDiscs">Discs &amp; shrink fits</span></a></div></div>
+          <div class="jump"><p data-t="jump">Or jump straight to</p><div><a href="/app.html?m=shafts&amp;lang=en" data-href="shafts"><b>S-04</b><span data-t="jShafts">Shafts</span></a><a href="/app.html?m=gears&amp;lang=en" data-href="gears"><b>G-03</b><span data-t="jGears">Gears</span></a><a href="/app.html?m=bolts&amp;lang=en" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bolted joints</span></a><a href="/app.html?m=frames&amp;lang=en" data-href="frames"><b>T-05</b><span data-t="jFrames">Frames &amp; trusses</span></a><a href="/app.html?m=belts&amp;lang=en" data-href="belts"><b>B-02</b><span data-t="jBelts">Timing belts</span></a><a href="/app.html?m=fits&amp;lang=en" data-href="fits"><b>F-01</b><span data-t="jFits">ISO fits</span></a><a href="/app.html?m=discs&amp;lang=en" data-href="discs"><b>D-07</b><span data-t="jDiscs">Discs &amp; shrink fits</span></a><a href="/app.html?m=trains&amp;lang=en" data-href="trains"><b>R-08</b><span data-t="jTrains">Gear trains</span></a></div></div>
           <p class="note" data-t="free">Free, no sign-up, checked against 544 hand-solved exam cases. Your data never leaves your computer.</p>
         </div>
 
@@ -421,9 +421,9 @@
       en: {
         navMods: 'Modules', navRep: 'Report', navMethod: 'Method', openApp: 'Open the calculator', tryDemo: 'Try a complete drive',
         h1: 'Size machine elements. Hand in the calculation report.',
-        lead: 'Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
+        lead: 'Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits, epicyclic gear trains. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
         free: 'Free, no sign-up, checked against 544 hand-solved exam cases. Your data never leaves your computer.',
-        jump: 'Or jump straight to', jShafts: 'Shafts', jGears: 'Gears', jBolts: 'Bolted joints', jFrames: 'Frames & trusses', jBelts: 'Timing belts', jFits: 'ISO fits', jDiscs: 'Discs & shrink fits',
+        jump: 'Or jump straight to', jShafts: 'Shafts', jGears: 'Gears', jBolts: 'Bolted joints', jFrames: 'Frames & trusses', jBelts: 'Timing belts', jFits: 'ISO fits', jDiscs: 'Discs & shrink fits', jTrains: 'Gear trains',
         flowH: 'Follow the power from the motor to the last fit',
         flowP: 'The modules are the stages of a drive. Calculate them one at a time, then generate a single report that checks that speeds, torques and diameters match from one stage to the next.',
         m0h: 'Motor', m0p: 'Input power and speed. Torque and speed of every stage start here.',
@@ -453,7 +453,7 @@
     document.querySelectorAll('[data-t]').forEach(function (el) { IT[el.getAttribute('data-t')] = el.textContent; });
     document.querySelectorAll('[data-t-svg]').forEach(function (el) { IT[el.getAttribute('data-t-svg')] = el.textContent; });
     document.querySelectorAll('[data-t-html]').forEach(function (el) { IT[el.getAttribute('data-t-html')] = el.innerHTML; });
-    var HREF = { boltDemo: '/app.html?demo=boltsExam', frames: '/app.html?m=frames', femDemo: '/app.html?demo=frames', app: '/app.html', demo: '/app.html?demo=transmission', belts: '/app.html?m=belts', gears: '/app.html?m=gears', shafts: '/app.html?m=shafts', fits: '/app.html?m=fits', bolts: '/app.html?m=bolts', discs: '/app.html?m=discs' };
+    var HREF = { boltDemo: '/app.html?demo=boltsExam', frames: '/app.html?m=frames', femDemo: '/app.html?demo=frames', app: '/app.html', demo: '/app.html?demo=transmission', belts: '/app.html?m=belts', gears: '/app.html?m=gears', shafts: '/app.html?m=shafts', fits: '/app.html?m=fits', bolts: '/app.html?m=bolts', discs: '/app.html?m=discs', trains: '/app.html?m=trains' };
     var goodman = {
       it: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143{,}44}{0{,}811 \\cdot 0{,}875 \\cdot 450} + \\dfrac{11{,}73}{900} \\;\\Rightarrow\\; X = 2{,}163',
       en: '\\dfrac{1}{X} = \\dfrac{\\sigma_{a,eq}}{b_1\\, b_2\\, \\sigma_N} + \\dfrac{\\sigma_{m,eq}}{\\sigma_R} = \\dfrac{143.44}{0.811 \\cdot 0.875 \\cdot 450} + \\dfrac{11.73}{900} \\;\\Rightarrow\\; X = 2.163'

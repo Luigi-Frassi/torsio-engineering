@@ -5,7 +5,7 @@
 // (lastShaftSection, lastShaftBeam, lastGearState, lastBeltState, lastFitState, frResults, lastBoltState).
 // ============================================================================
 
-const SUM_CODES = { fits: 'F-01', belts: 'B-02', gears: 'G-03', shafts: 'S-04', frames: 'T-05', bolts: 'J-06', discs: 'D-07' };
+const SUM_CODES = { fits: 'F-01', belts: 'B-02', gears: 'G-03', shafts: 'S-04', frames: 'T-05', bolts: 'J-06', discs: 'D-07', trains: 'R-08' };
 
 const SUM_TXT = {
   it: {
@@ -49,6 +49,7 @@ function sumCards(mod) {
     if (mod === 'frames') return sumFrames(t);
     if (mod === 'bolts') return sumBolts(t);
     if (mod === 'discs') return sumDiscs(t);
+    if (mod === 'trains') return sumTrains(t);
   } catch (e) { /* a module without a state yet */ }
   return { status: 'na', cards: [] };
 }
@@ -145,6 +146,21 @@ function sumFrames(t) {
     { k: t.fr.util, v: sumNum(util * 100, 0), u: '%', sub: '≤ 100 %', tone: util <= 1 + 1e-9 ? 'b' : 'r', bar: { x: 1 / Math.max(util, 1e-6), req: 1 } },
     { k: t.fr.defl, v: sumNum(ev.dmax, 1), u: 'mm', sub: deflMax ? `≤ ${sumNum(deflMax, 1)} mm` : '', tone: deflMax && ev.dmax > deflMax ? 'r' : 'k' }
   ] };
+}
+
+function sumTrains(t) {
+  const s = typeof lastTrainState !== 'undefined' ? lastTrainState : null;
+  if (!s) return { status: 'na', cards: [] };
+  const T = trT(), r = s.r, M = s.M;
+  if (s.tab === 'ord') return { status: 'info', cards: [{ k: T.tau, v: sumNum(r.tau, 4), sub: `${sumNum(r.nOut, 0)} rpm`, tone: 'y' }, { k: T.Mout, v: sumNum(r.Mout, 1), u: 'N·m', sub: '', tone: 'b' }] };
+  const cards = [];
+  if (M.mode === 'fixed') {
+    cards.push({ k: T.tau, v: sumNum(r.tau, 4), sub: `${T.sh[M.input]} → ${T.sh[r.out]}`, tone: 'y' });
+    cards.push({ k: T.nOut, v: sumNum(r.n[r.out], 0), u: 'rpm', sub: T.sh[r.out], tone: 'b' });
+    cards.push({ k: T.Mout, v: sumNum(Math.abs(r.M[r.out]), 1), u: 'N·m', sub: `${T.Mfix} ${sumNum(Math.abs(r.M[M.fixed]), 1)} N·m`, tone: 'b' });
+  } else cards.push({ k: `n ${T.sh[M.unknown]}`, v: sumNum(r.n[M.unknown], 0), u: 'rpm', sub: '', tone: 'y' });
+  cards.push({ k: T.planet, v: sumNum(r.planet.nRel, 0), u: 'rpm', sub: T.planetSub, tone: 'k' });
+  return { status: 'info', cards };
 }
 
 function sumDiscs(t) {

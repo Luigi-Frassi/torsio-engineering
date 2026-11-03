@@ -45,7 +45,7 @@ with sync_playwright() as p:
     pg = ctx.new_page()
     for q in ['', '?demo=transmission', '?demo=frames', '?demo=boltsExam', '?demo=shaftExam', '?demo=bearingFit', '?demo=discsExam']:
         pg.goto(B + q); pg.wait_for_timeout(1000); toks |= set(pg.evaluate(GET))
-    for m in ['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs']:
+    for m in ['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs', 'trains']:
         pg.goto(B + '?m=' + m); pg.wait_for_timeout(800)
         n = pg.evaluate(f"m=>[...document.querySelectorAll(({SEC})(m)+' button')].filter(b=>b.offsetParent&&!b.closest('table')).length", m)
         for i in range(min(n, 40)):

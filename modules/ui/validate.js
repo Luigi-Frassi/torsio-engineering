@@ -70,6 +70,8 @@ const VAL_RULES = {
   dsR0: NONNEG, dsN: NONNEG, dsBandS: NONNEG, dsBandT: NONNEG, dsBladeF: NONNEG, dsXreq: SX, dsTqT: NONNEG, dsTqP: NONNEG, dsTqF: FRIC, dsTqX: SX,
   duD: POS, duSa: POS, duN: NONNEG, duRho: NONNEG, duF: NONNEG, duHe: NONNEG
 };
+Object.assign(VAL_RULES, { tr_zS: { int: true, min: 3 }, tr_zR: { int: true, min: 3 }, tr_m: POS, tr_N: { int: true, min: 1 }, tr_P: NONNEG, tr_Min: NONNEG, tr_f: FRIC, tr_A: POS, tr_RD: POS, to_nIn: NONNEG, to_P: NONNEG, to_Min: NONNEG });
+for (let k = 0; k < 6; k++) Object.assign(VAL_RULES, { ['to_z1_' + k]: { int: true, min: 1 }, ['to_z2_' + k]: { int: true, min: 1 } });
 Object.assign(VAL_RULES, { jn_R: POS, jn_n: NONNEG, jn_rhoInc: NONNEG, jn_rInc: NONNEG, jn_Xreq: SX, jn_d_rOther: NONNEG, jn_d_i: NONNEG });
 for (const k of ['tL', 'tR', 'd']) Object.assign(VAL_RULES, { [`jn_${k}_h`]: POS, [`jn_${k}_E`]: POS, [`jn_${k}_nu`]: { min: 0, max: 0.49 }, [`jn_${k}_rho`]: NONNEG, [`jn_${k}_sy`]: NONNEG });
 for (let k = 0; k < 4; k++) {
@@ -82,7 +84,7 @@ for (let i = 1; i <= 4; i++) {
   for (const f of ['X', 'D', 'DD', 'R']) VAL_RULES['shaftRs' + i + f] = NONNEG;
 }
 
-const VAL_SECTIONS = { discs: 'moduleDiscsSection', fits: 'moduleFitsSection', belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection', bolts: 'moduleBoltsSection' };
+const VAL_SECTIONS = { trains: 'moduleTrainsSection', discs: 'moduleDiscsSection', fits: 'moduleFitsSection', belts: 'moduleBeltsSection', gears: 'moduleGearsSection', shafts: 'moduleShaftsSection', frames: 'moduleFramesSection', bolts: 'moduleBoltsSection' };
 
 function valFmt(x) { return typeof x === 'number' ? x.toLocaleString(currentLang === 'it' ? 'it-IT' : 'en-GB', { maximumFractionDigits: 4 }) : x; }
 
