@@ -745,7 +745,7 @@ with sync_playwright() as p:
 
     # --- landing pages for search (tools/mkguides.py): load, formulas, hreflang pair, links to real modules and demos
     lp = new_page()
-    pairs = [('shaft-calculator/', 'it/dimensionamento-albero/', 'shafts', 'shaftExam'), ('bolted-joint-calculator/', 'it/calcolo-bulloni/', 'bolts', 'boltsExam'), ('frame-truss-calculator/', 'it/calcolo-telaio-traliccio/', 'frames', 'frames')]
+    pairs = [('shaft-calculator/', 'it/dimensionamento-albero/', 'shafts', 'shaftExam'), ('bolted-joint-calculator/', 'it/calcolo-bulloni/', 'bolts', 'boltsExam'), ('frame-truss-calculator/', 'it/calcolo-telaio-traliccio/', 'frames', 'frames'), ('gear-calculator/', 'it/calcolo-ruote-dentate/', 'gears', 'helical50kw'), ('iso-fits-calculator/', 'it/tolleranze-accoppiamenti-iso/', 'fits', 'bearingFit')]
     bad = []
     LP_JS = """([o, m, d, l]) => { const hrefs = [...document.querySelectorAll('a')].map(a => a.getAttribute('href'));
       return [document.documentElement.lang === l, document.querySelectorAll('.katex').length >= 2,
@@ -757,10 +757,18 @@ with sync_playwright() as p:
             lp.goto(HOME + path); lp.wait_for_timeout(500)
             r = lp.evaluate(LP_JS, [other, mod, demo, lang])
             if not all(r): bad.append(path + ' ' + str(r))
-    check('pagine per Google: sei pagine con formule, coppia di lingue, link al modulo e alla demo, dati strutturati', not bad, '; '.join(bad))
+    check('pagine per Google: dieci pagine con formule, coppia di lingue, link al modulo e alla demo, dati strutturati', not bad, '; '.join(bad))
     lp.goto(HOME + 'index.html'); lp.evaluate("setLang('en')")
-    check('  la home linka le pagine dei calcolatori nella lingua scelta', lp.evaluate("[...document.querySelectorAll('.calcs a')].map(a => a.getAttribute('href')).join()") == '/shaft-calculator/,/bolted-joint-calculator/,/frame-truss-calculator/')
+    check('  la home linka le pagine dei calcolatori nella lingua scelta', lp.evaluate("[...document.querySelectorAll('.calcs a')].map(a => a.getAttribute('href')).join()") == '/shaft-calculator/,/bolted-joint-calculator/,/frame-truss-calculator/,/gear-calculator/,/iso-fits-calculator/')
+    lp.goto(HOME + 'it/tolleranze-accoppiamenti-iso/'); lp.wait_for_timeout(300)
+    ft = lp.evaluate("[...document.querySelectorAll('table.iso')].map(t => t.tBodies[0].rows.length).concat([[...document.querySelectorAll('table.iso tr.r td')].map(td => td.textContent).join('|')])")
+    check('  pagina accoppiamenti: 13 accoppiamenti su 30 mm, 13 scaglioni, H7/k6 = +19 / −15 incerto', ft == [13, 13, '+19|−15|incerto'], str(ft))
     lp.close()
+    # the example numbers on the gears page are the ones the demo gives
+    gp = new_page(); gp.goto(BASE + '?demo=helical50kw&lang=it'); gp.wait_for_timeout(1200)
+    gs = gp.evaluate("document.getElementById('sumBar').innerText")
+    check('  esempio della pagina ruote = demo: z 19/78, m 3,50, L 59,9, σL 311', all(k in gs for k in ('19/78', '3,50', '59,9', '311')), gs)
+    gp.close()
 
     # --- start screen: only for a bare calculator link, closed by any choice
     sctx = browser.new_context(); sctx.route('**/*', router)

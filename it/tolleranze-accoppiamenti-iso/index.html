@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tolleranze e accoppiamenti ISO 286 online: H7/g6, H7/k6, H7/p6, giochi e interferenze — Torsio</title>
+  <meta name="description" content="Calcolatore gratuito di tolleranze e accoppiamenti ISO 286: scostamenti di foro e albero, gioco massimo e minimo o interferenza per H7/g6, H7/h6, H7/k6, H7/p6 e qualsiasi combinazione da IT5 a IT11 fino a 500 mm, con tabelle, quota da disegno e relazione in PDF.">
+  <link rel="canonical" href="https://torsio.app/it/tolleranze-accoppiamenti-iso/">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/tolleranze-accoppiamenti-iso/">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/iso-fits-calculator/">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/iso-fits-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="Tolleranze e accoppiamenti ISO 286 online: H7/g6, H7/k6, H7/p6, giochi e interferenze">
+  <meta property="og:description" content="Calcolatore gratuito di tolleranze e accoppiamenti ISO 286: scostamenti di foro e albero, gioco massimo e minimo o interferenza per H7/g6, H7/h6, H7/k6, H7/p6 e qualsiasi combinazione da IT5 a IT11 fino a 500 mm, con tabelle, quota da disegno e relazione in PDF.">
+  <meta property="og:url" content="https://torsio.app/it/tolleranze-accoppiamenti-iso/">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:locale" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .guide section { padding: 44px 0; }
+    .guide h2 { margin-top: 0; }
+    .guide ul { max-width: var(--measure); padding-left: 20px; } .guide li { margin-bottom: 6px; }
+    .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .btn.plain { background: var(--sheet); color: var(--ink); }
+    .ex { width: 100%; max-width: 46rem; border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 15.5px; }
+    .ex th, .ex td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .ex th { width: 46%; font-weight: 500; color: var(--ink-2); }
+    .ex tr.r td, .ex tr.r th { background: #eef3f9; } .ex tr.r td { font-weight: 700; color: var(--blue); }
+    .ex caption { text-align: left; font-size: 13px; color: var(--ink-2); padding: 0 0 8px; }
+    .faq dt { font-weight: 700; margin-top: 18px; } .faq dd { margin: 4px 0 0; max-width: var(--measure); color: var(--ink-2); }
+    .others { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 54rem; }
+    .others a { display: block; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 14px 16px; text-decoration: none; color: var(--ink); font-weight: 700; }
+    .others a span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+    .others a:hover { border-top-color: var(--signal); }
+    .iso { border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+    .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; max-width: var(--measure); }
+    .iso thead th:first-child, .iso tbody th { position: sticky; left: 0; background: var(--sheet); }
+    .iso th, .iso td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    .iso thead th { font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .iso tbody th { text-align: left; font-weight: 500; color: var(--ink-2); }
+    .iso td.k { text-align: left; } .iso tr.r td, .iso tr.r th { background: #eef3f9; } .scroll { overflow-x: auto; }
+    .iso .c { color: var(--blue); } .iso .t { color: #8a6408; } .iso .i { color: #b42318; }
+    .guide h3 { margin: 30px 0 10px; font-size: 19px; }
+    @media (max-width: 760px) { .others { grid-template-columns: 1fr; } .ex th { width: 50%; } }
+  </style>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebApplication", "name": "Tolleranze e accoppiamenti ISO — Torsio Engineering", "url": "https://torsio.app/it/tolleranze-accoppiamenti-iso/", "applicationCategory": "EngineeringApplication", "operatingSystem": "Any (web browser)", "inLanguage": "it", "description": "Calcolatore gratuito di tolleranze e accoppiamenti ISO 286: scostamenti di foro e albero, gioco massimo e minimo o interferenza per H7/g6, H7/h6, H7/k6, H7/p6 e qualsiasi combinazione da IT5 a IT11 fino a 500 mm, con tabelle, quota da disegno e relazione in PDF.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "author": {"@type": "Person", "name": "Luigi Frassi"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Come si legge H7/g6?", "acceptedAnswer": {"@type": "Answer", "text": "Lettera maiuscola e numero sono il foro, quelli minuscoli l'albero. La lettera fissa la posizione della zona di tolleranza (H: scostamento inferiore nullo, g: poco sotto la quota nominale), il numero è il grado IT, cioè l'ampiezza della zona."}}, {"@type": "Question", "name": "Foro base o albero base?", "acceptedAnswer": {"@type": "Answer", "text": "Il foro base (H…) è la scelta abituale perché i fori si fanno con utensili e calibri a misura fissa (alesatori, tamponi); l'albero base (…h) si usa quando un albero trafilato porta più pezzi con accoppiamenti diversi."}}, {"@type": "Question", "name": "Che accoppiamento per un perno scorrevole, un mozzo, un forzamento?", "acceptedAnswer": {"@type": "Answer", "text": "Come primo orientamento: perni e guide scorrevoli H7/g6 o H7/h6, mozzi con linguetta H7/k6, forzamenti da H7/p6 a H7/s6. Per i cuscinetti volventi segui le tabelle del produttore, perché il foro del cuscinetto ha una tolleranza sua."}}, {"@type": "Question", "name": "Calcola la forza o la pressione di un forzamento?", "acceptedAnswer": {"@type": "Answer", "text": "Non in questa stazione: l'accoppiamento con interferenza si passa alla stazione D-07 dei calettamenti, che dà la pressione di contatto, la coppia trasmissibile e le tensioni."}}, {"@type": "Question", "name": "È gratuito?", "acceptedAnswer": {"@type": "Answer", "text": "Sì, gratuito e senza registrazione. Tutto gira nel tuo browser."}}]}]</script>
+</head>
+<body class="guide">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/it/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigazione">
+        <span class="links"><a href="/it/">Home</a><a href="/it/metodo.html">Metodo</a><a href="/iso-fits-calculator/" hreflang="en">English</a></span>
+        <a class="btn go small" href="/app.html?m=fits&lang=it">Apri il calcolatore</a>
+      </nav>
+    </div>
+    <header class="page-head">
+      <h1>Tolleranze e accoppiamenti ISO</h1>
+      <p class="lead">Scegli un diametro e un accoppiamento (H7/g6, H7/k6, H7/p6 o qualsiasi combinazione ISO) e ottieni gli scostamenti di foro e albero, le dimensioni limite, il gioco massimo e minimo e se l'accoppiamento è con gioco, incerto o con interferenza. Oppure parti dal gioco che vuoi e trova l'accoppiamento.</p>
+      <div class="acts"><a class="btn go" href="/app.html?m=fits&lang=it">Apri il calcolatore →</a><a class="btn plain" href="/app.html?demo=bearingFit&lang=it">Apri l'esempio</a></div>
+      <p class="muted" style="margin-top:16px;font-size:15px">Gratuito, senza registrazione, gira nel browser: i dati restano sul tuo computer.</p>
+    </header>
+  </div>
+  <section><div class="wrap"><h2>Cosa calcola</h2><ul><li>Scostamenti di foro e albero (ES, EI, es, ei) e dimensioni limite, ISO 286-1 e 286-2.</li><li>Gioco massimo e minimo, o interferenza, e il tipo di accoppiamento: con gioco, incerto, con interferenza.</li><li>13 accoppiamenti raccomandati foro base e 8 albero base, oppure qualsiasi combinazione: fori C–S, alberi c–s, gradi IT5–IT11, diametri fino a 500 mm.</li><li>Ricerca inversa: dal gioco voluto agli accoppiamenti che lo danno, foro base o albero base.</li><li>Lavorazione e rugosità Ra indicative, quota da disegno e tabella comparativa degli accoppiamenti dello stesso sistema.</li></ul></div></section>
+  <section><div class="wrap"><h2>Metodo</h2><p>Foro e albero hanno ciascuno una zona di tolleranza: la sua ampiezza è la tolleranza fondamentale IT del grado, la sua posizione è lo scostamento fondamentale della lettera per lo scaglione di diametro. Il gioco è la misura del foro meno quella dell'albero: il massimo e il minimo vengono dagli scostamenti.</p><div class="eq" data-tex="g_{max} = ES - ei \qquad g_{min} = EI - es"></div><div class="eq" data-tex="\text{H: } EI = 0 \qquad \text{K–S (fori): } ES = -ei + \Delta, \quad \Delta = IT_n - IT_{n-1}"></div></div></section>
+  <section><div class="wrap"><h2>Esempio svolto</h2><div class="scroll"><table class="ex"><caption>Esempio: mozzo su un albero da 30 mm con accoppiamento H7/k6 (leggermente forzato, con linguetta).</caption><tbody><tr><th>Scaglione</th><td>oltre 18 fino a 30 mm</td></tr><tr><th>Foro H7</th><td>+21 / 0 µm → 30,000 … 30,021 mm</td></tr><tr><th>Albero k6</th><td>+15 / +2 µm → 30,002 … 30,015 mm</td></tr><tr class="r"><th>Gioco massimo</th><td>+19 µm (foro più grande, albero più piccolo)</td></tr><tr class="r"><th>Interferenza massima</th><td>15 µm (foro più piccolo, albero più grande)</td></tr><tr class="r"><th>Tipo di accoppiamento</th><td>incerto: può venire con gioco o con interferenza</td></tr></tbody></table></div><p class="muted" style="margin-top:14px">Le tabelle ISO 286 del calcolatore sono controllate da 904 test: una cinquantina di scostamenti pubblicati, la regola del Δ su ogni scaglione e la crescita di IT con il grado.</p>
+    <div class="acts"><a class="btn go" href="/app.html?demo=bearingFit&lang=it">Apri l'esempio →</a></div></div></section>
+  <section><div class="wrap"><h2>Tabelle ISO degli accoppiamenti</h2><h3>Accoppiamenti più usati su 30 mm</h3><p class="cap">Accoppiamenti foro base su un diametro di 30 mm, in µm (gioco negativo = interferenza). Calcolati da Torsio.</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">Accoppiamento</th><th>Gioco massimo</th><th>Gioco minimo</th><th style="text-align:left">Tipo</th></tr></thead><tbody><tr><th>H11/c11</th><td>+370</td><td>+110</td><td class="k c">gioco</td></tr><tr><th>H9/d9</th><td>+169</td><td>+65</td><td class="k c">gioco</td></tr><tr><th>H8/f7</th><td>+74</td><td>+20</td><td class="k c">gioco</td></tr><tr><th>H7/f7</th><td>+62</td><td>+20</td><td class="k c">gioco</td></tr><tr><th>H7/g6</th><td>+41</td><td>+7</td><td class="k c">gioco</td></tr><tr><th>H7/h6</th><td>+34</td><td>0</td><td class="k c">gioco</td></tr><tr><th>H8/h7</th><td>+54</td><td>0</td><td class="k c">gioco</td></tr><tr><th>H7/js6</th><td>+27,5</td><td>−6,5</td><td class="k t">incerto</td></tr><tr class="r"><th>H7/k6</th><td>+19</td><td>−15</td><td class="k t">incerto</td></tr><tr><th>H7/n6</th><td>+6</td><td>−28</td><td class="k t">incerto</td></tr><tr><th>H7/p6</th><td>−1</td><td>−35</td><td class="k i">interferenza</td></tr><tr><th>H7/r6</th><td>−7</td><td>−41</td><td class="k i">interferenza</td></tr><tr><th>H7/s6</th><td>−14</td><td>−48</td><td class="k i">interferenza</td></tr></tbody></table></div><h3>Scostamenti per scaglione di diametro</h3><p class="cap">Scostamento superiore / inferiore in µm, ISO 286-2, per le classi di tolleranza più usate. Fori in maiuscolo, alberi in minuscolo.</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">Diametro [mm]</th><th>H7</th><th>H8</th><th>f7</th><th>g6</th><th>h6</th><th>js6</th><th>k6</th><th>n6</th><th>p6</th></tr></thead><tbody><tr><th>fino a 3</th><td>+10 / 0</td><td>+14 / 0</td><td>−6 / −16</td><td>−2 / −8</td><td>0 / −6</td><td>±3</td><td>+6 / 0</td><td>+10 / +4</td><td>+12 / +6</td></tr><tr><th>oltre 3 fino a 6</th><td>+12 / 0</td><td>+18 / 0</td><td>−10 / −22</td><td>−4 / −12</td><td>0 / −8</td><td>±4</td><td>+9 / +1</td><td>+16 / +8</td><td>+20 / +12</td></tr><tr><th>oltre 6 fino a 10</th><td>+15 / 0</td><td>+22 / 0</td><td>−13 / −28</td><td>−5 / −14</td><td>0 / −9</td><td>±4,5</td><td>+10 / +1</td><td>+19 / +10</td><td>+24 / +15</td></tr><tr><th>oltre 10 fino a 18</th><td>+18 / 0</td><td>+27 / 0</td><td>−16 / −34</td><td>−6 / −17</td><td>0 / −11</td><td>±5,5</td><td>+12 / +1</td><td>+23 / +12</td><td>+29 / +18</td></tr><tr><th>oltre 18 fino a 30</th><td>+21 / 0</td><td>+33 / 0</td><td>−20 / −41</td><td>−7 / −20</td><td>0 / −13</td><td>±6,5</td><td>+15 / +2</td><td>+28 / +15</td><td>+35 / +22</td></tr><tr><th>oltre 30 fino a 50</th><td>+25 / 0</td><td>+39 / 0</td><td>−25 / −50</td><td>−9 / −25</td><td>0 / −16</td><td>±8</td><td>+18 / +2</td><td>+33 / +17</td><td>+42 / +26</td></tr><tr><th>oltre 50 fino a 80</th><td>+30 / 0</td><td>+46 / 0</td><td>−30 / −60</td><td>−10 / −29</td><td>0 / −19</td><td>±9,5</td><td>+21 / +2</td><td>+39 / +20</td><td>+51 / +32</td></tr><tr><th>oltre 80 fino a 120</th><td>+35 / 0</td><td>+54 / 0</td><td>−36 / −71</td><td>−12 / −34</td><td>0 / −22</td><td>±11</td><td>+25 / +3</td><td>+45 / +23</td><td>+59 / +37</td></tr><tr><th>oltre 120 fino a 180</th><td>+40 / 0</td><td>+63 / 0</td><td>−43 / −83</td><td>−14 / −39</td><td>0 / −25</td><td>±12,5</td><td>+28 / +3</td><td>+52 / +27</td><td>+68 / +43</td></tr><tr><th>oltre 180 fino a 250</th><td>+46 / 0</td><td>+72 / 0</td><td>−50 / −96</td><td>−15 / −44</td><td>0 / −29</td><td>±14,5</td><td>+33 / +4</td><td>+60 / +31</td><td>+79 / +50</td></tr><tr><th>oltre 250 fino a 315</th><td>+52 / 0</td><td>+81 / 0</td><td>−56 / −108</td><td>−17 / −49</td><td>0 / −32</td><td>±16</td><td>+36 / +4</td><td>+66 / +34</td><td>+88 / +56</td></tr><tr><th>oltre 315 fino a 400</th><td>+57 / 0</td><td>+89 / 0</td><td>−62 / −119</td><td>−18 / −54</td><td>0 / −36</td><td>±18</td><td>+40 / +4</td><td>+73 / +37</td><td>+98 / +62</td></tr><tr><th>oltre 400 fino a 500</th><td>+63 / 0</td><td>+97 / 0</td><td>−68 / −131</td><td>−20 / −60</td><td>0 / −40</td><td>±20</td><td>+45 / +5</td><td>+80 / +40</td><td>+108 / +68</td></tr></tbody></table></div><p class="muted" style="margin-top:14px">Per qualsiasi altro diametro, lettera o grado (IT5–IT11, fori C–S, alberi c–s, fino a 500 mm) apri il calcolatore: dà anche la quota da disegno e funziona al contrario, dal gioco che vuoi all'accoppiamento.</p></div></section>
+  <section><div class="wrap"><h2>Cosa ottieni</h2><ul><li>Una relazione di calcolo da scaricare in PDF: ogni formula con i tuoi numeri sostituiti, i diagrammi, un cartiglio ISO 7200 da compilare.</li><li>Un link condivisibile che riapre lo stesso identico calcolo, e un file di progetto con tutti i moduli.</li><li>Risultati da passare, solo quando lo chiedi tu, al modulo successivo (per esempio ruote → albero → bulloni).</li></ul></div></section>
+  <section><div class="wrap"><h2>Limiti e passo successivo</h2><p>Le lettere a, b, j e t…zc e le eccezioni puntuali della norma non sono gestite. La pressione e la coppia trasmissibile di un accoppiamento forzato (Lamé) si calcolano nella stazione D-07 dei calettamenti, dove l'accoppiamento si passa con un clic.</p></div></section>
+  <section><div class="wrap"><h2>Domande</h2><dl class="faq"><dt>Come si legge H7/g6?</dt><dd>Lettera maiuscola e numero sono il foro, quelli minuscoli l'albero. La lettera fissa la posizione della zona di tolleranza (H: scostamento inferiore nullo, g: poco sotto la quota nominale), il numero è il grado IT, cioè l'ampiezza della zona.</dd><dt>Foro base o albero base?</dt><dd>Il foro base (H…) è la scelta abituale perché i fori si fanno con utensili e calibri a misura fissa (alesatori, tamponi); l'albero base (…h) si usa quando un albero trafilato porta più pezzi con accoppiamenti diversi.</dd><dt>Che accoppiamento per un perno scorrevole, un mozzo, un forzamento?</dt><dd>Come primo orientamento: perni e guide scorrevoli H7/g6 o H7/h6, mozzi con linguetta H7/k6, forzamenti da H7/p6 a H7/s6. Per i cuscinetti volventi segui le tabelle del produttore, perché il foro del cuscinetto ha una tolleranza sua.</dd><dt>Calcola la forza o la pressione di un forzamento?</dt><dd>Non in questa stazione: l'accoppiamento con interferenza si passa alla stazione D-07 dei calettamenti, che dà la pressione di contatto, la coppia trasmissibile e le tensioni.</dd><dt>È gratuito?</dt><dd>Sì, gratuito e senza registrazione. Tutto gira nel tuo browser.</dd></dl></div></section>
+  <section><div class="wrap"><h2>Altri calcolatori</h2><div class="others"><a href="/it/dimensionamento-albero/">Dimensionamento alberi<span>Diametro a fatica, reazioni, DXF</span></a><a href="/it/calcolo-bulloni/">Dimensionamento e verifica bulloni<span>Viti, precarico, coppia di serraggio</span></a><a href="/it/calcolo-telaio-traliccio/">Calcolo telai e tralicci (FEM)<span>FEM, diagrammi N/T/M, sezioni</span></a><a href="/it/calcolo-ruote-dentate/">Calcolo ruote dentate<span>Modulo, fascia, Hertz, Lewis</span></a><a href="/it/metodo.html">Metodo<span>544 casi di prova svolti a mano</span></a></div></div></section>
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · un progetto di Luigi Frassi</span>
+      <span><a href="/it/metodo.html">Metodo</a> · <a href="/it/novita.html">Novità</a> · <a href="/it/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&lang=it" target="_blank" rel="noopener">Contatti</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">Codice sorgente</a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      function draw() { document.querySelectorAll('[data-tex]').forEach(function (el) { try { window.katex.render(el.getAttribute('data-tex'), el, { displayMode: true, throwOnError: false }); } catch (e) { el.textContent = el.getAttribute('data-tex'); } }); }
+      var s = document.createElement('script'); s.src = '/vendor/katex/katex.min.js'; s.onload = draw; document.head.appendChild(s);
+      try { localStorage.setItem('torsioLang', 'it'); } catch (e) { /* private mode */ }
+    })();
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

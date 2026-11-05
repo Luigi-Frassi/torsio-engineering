@@ -15,4 +15,8 @@
   <url><loc>https://torsio.app/it/dimensionamento-albero/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://torsio.app/it/calcolo-bulloni/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://torsio.app/it/calcolo-telaio-traliccio/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://torsio.app/gear-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://torsio.app/iso-fits-calculator/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://torsio.app/it/calcolo-ruote-dentate/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://torsio.app/it/tolleranze-accoppiamenti-iso/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

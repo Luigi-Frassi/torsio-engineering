@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spur and helical gear calculator: module and face width with Hertz and Lewis — Torsio</title>
+  <meta name="description" content="Free spur and helical gear calculator: module, number of teeth and face width from the Hertz contact pressure, Lewis bending check, best tooth combinations for a ratio and centre distance, maximum power of an existing pair, with PDF calculation report.">
+  <link rel="canonical" href="https://torsio.app/gear-calculator/">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/gear-calculator/">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/calcolo-ruote-dentate/">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/gear-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="Spur and helical gear calculator: module and face width with Hertz and Lewis">
+  <meta property="og:description" content="Free spur and helical gear calculator: module, number of teeth and face width from the Hertz contact pressure, Lewis bending check, best tooth combinations for a ratio and centre distance, maximum power of an existing pair, with PDF calculation report.">
+  <meta property="og:url" content="https://torsio.app/gear-calculator/">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .guide section { padding: 44px 0; }
+    .guide h2 { margin-top: 0; }
+    .guide ul { max-width: var(--measure); padding-left: 20px; } .guide li { margin-bottom: 6px; }
+    .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .btn.plain { background: var(--sheet); color: var(--ink); }
+    .ex { width: 100%; max-width: 46rem; border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 15.5px; }
+    .ex th, .ex td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .ex th { width: 46%; font-weight: 500; color: var(--ink-2); }
+    .ex tr.r td, .ex tr.r th { background: #eef3f9; } .ex tr.r td { font-weight: 700; color: var(--blue); }
+    .ex caption { text-align: left; font-size: 13px; color: var(--ink-2); padding: 0 0 8px; }
+    .faq dt { font-weight: 700; margin-top: 18px; } .faq dd { margin: 4px 0 0; max-width: var(--measure); color: var(--ink-2); }
+    .others { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 54rem; }
+    .others a { display: block; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 14px 16px; text-decoration: none; color: var(--ink); font-weight: 700; }
+    .others a span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+    .others a:hover { border-top-color: var(--signal); }
+    .iso { border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+    .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; max-width: var(--measure); }
+    .iso thead th:first-child, .iso tbody th { position: sticky; left: 0; background: var(--sheet); }
+    .iso th, .iso td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    .iso thead th { font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .iso tbody th { text-align: left; font-weight: 500; color: var(--ink-2); }
+    .iso td.k { text-align: left; } .iso tr.r td, .iso tr.r th { background: #eef3f9; } .scroll { overflow-x: auto; }
+    .iso .c { color: var(--blue); } .iso .t { color: #8a6408; } .iso .i { color: #b42318; }
+    .guide h3 { margin: 30px 0 10px; font-size: 19px; }
+    @media (max-width: 760px) { .others { grid-template-columns: 1fr; } .ex th { width: 50%; } }
+  </style>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebApplication", "name": "Gear calculator — Torsio Engineering", "url": "https://torsio.app/gear-calculator/", "applicationCategory": "EngineeringApplication", "operatingSystem": "Any (web browser)", "inLanguage": "en", "description": "Free spur and helical gear calculator: module, number of teeth and face width from the Hertz contact pressure, Lewis bending check, best tooth combinations for a ratio and centre distance, maximum power of an existing pair, with PDF calculation report.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "author": {"@type": "Person", "name": "Luigi Frassi"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can it check an existing gear pair?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: the \"Inverse Check (Max Power W_max)\" mode takes module, face width and teeth and returns the power the pair can transmit at the Hertz and Lewis limits."}}, {"@type": "Question", "name": "Does it handle helical gears?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: normal and transverse module, helix angle, and the factors Φ, Ψ and Γₜ from the course chart. With a given centre distance it also finds the helix angle that fits it."}}, {"@type": "Question", "name": "Which Lewis factor does it use?", "acceptedAnswer": {"@type": "Answer", "text": "The y of the course chart as a function of the number of teeth (and of the profile shift), digitised; the value used is written in the report."}}, {"@type": "Question", "name": "Is it the same as ISO 6336?", "acceptedAnswer": {"@type": "Answer", "text": "No. It is the textbook method (Hertz and Lewis) taught in machine design courses, good for preliminary sizing and for exams. ISO 6336 adds dynamic, load distribution and life factors."}}, {"@type": "Question", "name": "Is it free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, free and without sign-up. Everything runs in your browser."}}]}]</script>
+</head>
+<body class="guide">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigation">
+        <span class="links"><a href="/">Home</a><a href="/metodo.html">Method</a><a href="/it/calcolo-ruote-dentate/" hreflang="it">Italiano</a></span>
+        <a class="btn go small" href="/app.html?m=gears&lang=en">Open the calculator</a>
+      </nav>
+    </div>
+    <header class="page-head">
+      <h1>Spur and helical gear calculator</h1>
+      <p class="lead">From power, speed and ratio to the module, the number of teeth and the face width: Hertz contact pressure, Lewis bending check and the maximum power of an existing pair, for spur and helical gears, with the calculation report.</p>
+      <div class="acts"><a class="btn go" href="/app.html?m=gears&lang=en">Open the calculator →</a><a class="btn plain" href="/app.html?demo=helical50kw&lang=en">Try the exam example</a></div>
+      <p class="muted" style="margin-top:16px;font-size:15px">Free, no sign-up, runs in your browser: your data never leaves your computer.</p>
+    </header>
+  </div>
+  <section><div class="wrap"><h2>What it calculates</h2><ul><li>Design of a gear pair from power and speed (or torque) and the ratio: standard module, teeth and face width at the Hertz limit.</li><li>Automatic search of the best tooth combinations for a target ratio, with a tolerance, or for a given centre distance (the helix angle is adjusted to fit it).</li><li>Lewis bending stress with the Lewis factor y from the course chart; for helical gears the factors Φ, Ψ and Γₜ.</li><li>Maximum power an existing pair can transmit (Hertz and Lewis), from module, face width and teeth.</li><li>Profile shift of the pinion, and the results passed on request to the shaft calculator.</li></ul></div></section>
+  <section><div class="wrap"><h2>Method</h2><p>The face width comes from the Hertz contact pressure between the two pitch cylinders at the pitch point; the tooth root is then checked in bending with Lewis. For helical gears the course factors Φ (Hertz), Ψ (Lewis) and Γₜ (curvature) correct the spur formulas.</p><div class="eq" data-tex="W_H = \dfrac{\sigma_H^2\, L\, \omega_1 \sin 2\vartheta\; m_t^2 z_1^2}{8\, K_e\,(1+\tau)}\,\dfrac{\Gamma_t}{\Phi}"></div><div class="eq" data-tex="F_c = \dfrac{2 M_1}{d_{p1}} \qquad \sigma_L = \dfrac{F_c}{L\, m_n\, y}\,\dfrac{\Psi}{\Gamma_t}"></div></div></section>
+  <section><div class="wrap"><h2>Worked example</h2><div class="scroll"><table class="ex"><caption>Exam problem of 7 January 2019, second stage of a coaxial reducer: helical pair on a 182 mm centre distance.</caption><tbody><tr><th>Power and speed</th><td>50 kW at 369.75 rpm (1500 rpm after the 18/73 first stage) → M<sub>1</sub> = 1291 N·m</td></tr><tr><th>Ratio and centre distance</th><td>τ ≈ 0.245, i = 182 mm</td></tr><tr><th>Material</th><td>σ<sub>H,lim</sub> = 1160 MPa, K<sub>e</sub> = 35 GPa (steel on steel)</td></tr><tr class="r"><th>Teeth and module</th><td>z<sub>1</sub> = 19, z<sub>2</sub> = 78, m<sub>n</sub> = 3.5 mm, helix angle 21.1°</td></tr><tr><th>Pitch diameters</th><td>d<sub>p1</sub> = 71.3 mm, d<sub>p2</sub> = 292.7 mm</td></tr><tr class="r"><th>Face width</th><td>L = 59.9 mm (φ = L/d<sub>p1</sub> = 0.84)</td></tr><tr><th>Tangential force</th><td>F<sub>c</sub> = 36 223 N</td></tr><tr class="r"><th>Lewis stress</th><td>σ<sub>L</sub> = 311 MPa (y = 0.370, Ψ = 1.017)</td></tr></tbody></table></div><p class="muted" style="margin-top:14px">The hand solution finds the same pair (z 19/78, m<sub>n</sub> 3.5, about 21°) and L = 60.6 mm: the 1 % gap comes from reading Φ and Γₜ off the chart. The calculator reproduces 108 checks from 15 exam papers (2015–2024).</p>
+    <div class="acts"><a class="btn go" href="/app.html?demo=helical50kw&lang=en">Try the exam example →</a></div></div></section>
+  
+  <section><div class="wrap"><h2>What you get</h2><ul><li>A calculation report you can download as PDF: every formula with your numbers substituted, diagrams, an ISO 7200 title block you can fill in.</li><li>A shareable link that reopens exactly the same calculation, and a project file with all the modules.</li><li>Results you can pass, only when you ask, to the next module (for example gears → shaft → bolts).</li></ul></div></section>
+  <section><div class="wrap"><h2>Limits and next step</h2><p>Preliminary sizing with the course method: no dynamic, load distribution or lubrication factors, and the allowable Hertz pressure is entered already corrected for the required life. For the final design use ISO 6336.</p></div></section>
+  <section><div class="wrap"><h2>Questions</h2><dl class="faq"><dt>Can it check an existing gear pair?</dt><dd>Yes: the "Inverse Check (Max Power W_max)" mode takes module, face width and teeth and returns the power the pair can transmit at the Hertz and Lewis limits.</dd><dt>Does it handle helical gears?</dt><dd>Yes: normal and transverse module, helix angle, and the factors Φ, Ψ and Γₜ from the course chart. With a given centre distance it also finds the helix angle that fits it.</dd><dt>Which Lewis factor does it use?</dt><dd>The y of the course chart as a function of the number of teeth (and of the profile shift), digitised; the value used is written in the report.</dd><dt>Is it the same as ISO 6336?</dt><dd>No. It is the textbook method (Hertz and Lewis) taught in machine design courses, good for preliminary sizing and for exams. ISO 6336 adds dynamic, load distribution and life factors.</dd><dt>Is it free?</dt><dd>Yes, free and without sign-up. Everything runs in your browser.</dd></dl></div></section>
+  <section><div class="wrap"><h2>Other calculators</h2><div class="others"><a href="/shaft-calculator/">Shaft design calculator<span>Fatigue diameter, reactions, DXF</span></a><a href="/bolted-joint-calculator/">Bolted joint calculator<span>Bolts, preload, tightening torque</span></a><a href="/frame-truss-calculator/">2D frame and truss calculator<span>FEM, N/V/M diagrams, sections</span></a><a href="/iso-fits-calculator/">ISO fits calculator<span>Tolerances, clearance, interference</span></a><a href="/metodo.html">Method<span>544 hand-worked test cases</span></a></div></div></section>
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · a project by Luigi Frassi</span>
+      <span><a href="/metodo.html">Method</a> · <a href="/novita.html">What's new</a> · <a href="/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&lang=en" target="_blank" rel="noopener">Contact</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">Source code</a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      function draw() { document.querySelectorAll('[data-tex]').forEach(function (el) { try { window.katex.render(el.getAttribute('data-tex'), el, { displayMode: true, throwOnError: false }); } catch (e) { el.textContent = el.getAttribute('data-tex'); } }); }
+      var s = document.createElement('script'); s.src = '/vendor/katex/katex.min.js'; s.onload = draw; document.head.appendChild(s);
+      try { localStorage.setItem('torsioLang', 'en'); } catch (e) { /* private mode */ }
+    })();
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
