@@ -767,6 +767,8 @@ with sync_playwright() as p:
     # the example numbers on the gears page are the ones the demo gives
     gp = new_page(); gp.goto(BASE + '?demo=helical50kw&lang=it'); gp.wait_for_timeout(1200)
     gs = gp.evaluate("document.getElementById('sumBar').innerText")
+    gl = gp.evaluate("document.getElementById('linkBar_gears').innerText")
+    check('  demo ruote: la barra «Prosegui» mostra i dati della demo (50 kW, 370 rpm, Ø 71,3)', all(k in gl for k in ('50,00 kW', '370 rpm', '71,3')), gl)
     check('  esempio della pagina ruote = demo: z 19/78, m 3,50, L 59,9, σL 311', all(k in gs for k in ('19/78', '3,50', '59,9', '311')), gs)
     gp.close()
 
