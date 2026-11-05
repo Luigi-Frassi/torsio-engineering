@@ -341,5 +341,10 @@ function linkBoltsPrepare() {
   if (typeof ul === 'function') {
     window.updateLanguage = function () { const r = ul.apply(this, arguments); linkRenderActive(); return r; };
   }
+  // demos set the fields from code (no input events) after switchModule has already drawn the bar
+  const dp = window.loadDemoPreset;
+  if (typeof dp === 'function') {
+    window.loadDemoPreset = function () { const r = dp.apply(this, arguments); linkRenderActive(); linkSchedule(); return r; };
+  }
   for (const evName of ['input', 'change', 'click']) document.addEventListener(evName, linkSchedule, true);
 })();
