@@ -1,10 +1,12 @@
 # Builds the calculator landing pages (one per module, English and Italian) for people arriving from search:
-#   /shaft-calculator/  /bolted-joint-calculator/  /frame-truss-calculator/
-#   /it/dimensionamento-albero/  /it/calcolo-bulloni/  /it/calcolo-telaio-traliccio/
+#   /shaft-calculator/  /bolted-joint-calculator/  /frame-truss-calculator/  /gear-calculator/  /iso-fits-calculator/
+#   /it/dimensionamento-albero/  /it/calcolo-bulloni/  /it/calcolo-telaio-traliccio/  /it/calcolo-ruote-dentate/
+#   /it/tolleranze-accoppiamenti-iso/
+# The ISO 286 tables of the fits pages come from modules/core/fits-core.js through tools/fits-data.js (needs node).
 # Each page: what the module calculates, the method with its formulas, a worked exam example with the numbers the
 # calculator gives (checked in tests/browser_test.py), what you get, limits, FAQ, links. Run from the repo root:
 #   python3 tools/mkguides.py
-import json, os, re
+import json, os, re, subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://torsio.app'
@@ -27,6 +29,15 @@ STYLE += '''    .guide section { padding: 44px 0; }
     .others a { display: block; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 14px 16px; text-decoration: none; color: var(--ink); font-weight: 700; }
     .others a span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
     .others a:hover { border-top-color: var(--signal); }
+    .iso { border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+    .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; max-width: var(--measure); }
+    .iso thead th:first-child, .iso tbody th { position: sticky; left: 0; background: var(--sheet); }
+    .iso th, .iso td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    .iso thead th { font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .iso tbody th { text-align: left; font-weight: 500; color: var(--ink-2); }
+    .iso td.k { text-align: left; } .iso tr.r td, .iso tr.r th { background: #eef3f9; } .scroll { overflow-x: auto; }
+    .iso .c { color: var(--blue); } .iso .t { color: #8a6408; } .iso .i { color: #b42318; }
+    .guide h3 { margin: 30px 0 10px; font-size: 19px; }
     @media (max-width: 760px) { .others { grid-template-columns: 1fr; } .ex th { width: 50%; } }
 '''
 
@@ -208,12 +219,159 @@ PAGES = [
         ('È gratuito?','Sì, gratuito e senza registrazione. Tutto gira nel tuo browser.')])),
 ]
 
+# ------------------------------------------------------------------ ISO 286 tables (fits pages), computed by the calculator's own core
+ISO = json.loads(subprocess.run(['node', os.path.join(ROOT, 'tools', 'fits-data.js')], capture_output=True, text=True, check=True).stdout)
+
+def num(v, lang, sign=True):
+    t = (f'{v:+g}' if sign and v else f'{v:g}').replace('-', '−')
+    return t.replace('.', ',') if lang == 'it' else t
+
+KIND = {'en': {'clearance': 'clearance', 'transition': 'transition', 'interference': 'interference'},
+        'it': {'clearance': 'gioco', 'transition': 'incerto', 'interference': 'interferenza'}}
+KCLS = {'clearance': 'c', 'transition': 't', 'interference': 'i'}
+
+def fits_at30(lang):
+    hd = {'en': ('Fit', 'Max clearance', 'Min clearance', 'Type'), 'it': ('Accoppiamento', 'Gioco massimo', 'Gioco minimo', 'Tipo')}[lang]
+    cap = {'en': 'Hole-basis fits on a 30 mm diameter, in µm (negative clearance = interference). Computed by Torsio.',
+           'it': 'Accoppiamenti foro base su un diametro di 30 mm, in µm (gioco negativo = interferenza). Calcolati da Torsio.'}[lang]
+    rows = ''.join(f'<tr{" class=\"r\"" if f == "H7/k6" else ""}><th>{f}</th><td>{num(gmax, lang)}</td><td>{num(gmin, lang)}</td>'
+                   f'<td class="k {KCLS[k]}">{KIND[lang][k]}</td></tr>' for f, gmax, gmin, k in ISO['at30'])
+    return (f'<p class="cap">{cap}</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">{hd[0]}</th>'
+            f'<th>{hd[1]}</th><th>{hd[2]}</th><th style="text-align:left">{hd[3]}</th></tr></thead><tbody>{rows}</tbody></table></div>')
+
+def fits_devs(lang):
+    over, upto = ('over', 'up to') if lang == 'en' else ('oltre', 'fino a')
+    cap = {'en': 'Upper / lower deviation in µm, ISO 286-2, for the most used tolerance classes. Holes in capitals, shafts in lower case.',
+           'it': 'Scostamento superiore / inferiore in µm, ISO 286-2, per le classi di tolleranza più usate. Fori in maiuscolo, alberi in minuscolo.'}[lang]
+    head = '<th style="text-align:left">' + ('Size [mm]' if lang == 'en' else 'Diametro [mm]') + '</th>' + ''.join(f'<th>{c}</th>' for c in ISO['classes'])
+    body = ''
+    for st, row in zip(ISO['steps'], ISO['dev']):
+        lab = f'{upto} {st["max"]}' if st['min'] == 0 else f'{over} {st["min"]} {upto} {st["max"]}'
+        cells = ''.join(f'<td>{"±" + num(hi, lang, False) if hi == -lo else num(hi, lang) + " / " + num(lo, lang)}</td>' for hi, lo in row)
+        body += f'<tr><th>{lab}</th>{cells}</tr>'
+    return f'<p class="cap">{cap}</p><div class="scroll"><table class="iso"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+
+def fits_extra(lang):
+    if lang == 'en':
+        return ('<section><div class="wrap"><h2>ISO fit tables</h2><h3>Common fits at 30 mm</h3>' + fits_at30(lang) +
+                '<h3>Deviations by diameter range</h3>' + fits_devs(lang) +
+                '<p class="muted" style="margin-top:14px">For any other size, letter or grade (IT5–IT11, holes C–S, shafts c–s, up to 500 mm) open the calculator: it also gives the drawing callout and works backwards from the clearance you want.</p></div></section>')
+    return ('<section><div class="wrap"><h2>Tabelle ISO degli accoppiamenti</h2><h3>Accoppiamenti più usati su 30 mm</h3>' + fits_at30(lang) +
+            '<h3>Scostamenti per scaglione di diametro</h3>' + fits_devs(lang) +
+            '<p class="muted" style="margin-top:14px">Per qualsiasi altro diametro, lettera o grado (IT5–IT11, fori C–S, alberi c–s, fino a 500 mm) apri il calcolatore: dà anche la quota da disegno e funziona al contrario, dal gioco che vuoi all\'accoppiamento.</p></div></section>')
+
+PAGES += [
+ # ------------------------------------------------------------ gears
+ dict(key='gears', mod='gears', demo='helical50kw',
+  en=dict(path='gear-calculator/', title='Spur and helical gear calculator: module and face width with Hertz and Lewis',
+   short='Gear calculator', card='Module, face width, Hertz, Lewis',
+   desc='Free spur and helical gear calculator: module, number of teeth and face width from the Hertz contact pressure, Lewis bending check, best tooth combinations for a ratio and centre distance, maximum power of an existing pair, with PDF calculation report.',
+   h1='Spur and helical gear calculator', lead='From power, speed and ratio to the module, the number of teeth and the face width: Hertz contact pressure, Lewis bending check and the maximum power of an existing pair, for spur and helical gears, with the calculation report.',
+   what=['Design of a gear pair from power and speed (or torque) and the ratio: standard module, teeth and face width at the Hertz limit.',
+         'Automatic search of the best tooth combinations for a target ratio, with a tolerance, or for a given centre distance (the helix angle is adjusted to fit it).',
+         'Lewis bending stress with the Lewis factor y from the course chart; for helical gears the factors Φ, Ψ and Γₜ.',
+         'Maximum power an existing pair can transmit (Hertz and Lewis), from module, face width and teeth.',
+         'Profile shift of the pinion, and the results passed on request to the shaft calculator.'],
+   how='The face width comes from the Hertz contact pressure between the two pitch cylinders at the pitch point; the tooth root is then checked in bending with Lewis. For helical gears the course factors Φ (Hertz), Ψ (Lewis) and Γₜ (curvature) correct the spur formulas.',
+   eqs=[r'W_H = \dfrac{\sigma_H^2\, L\, \omega_1 \sin 2\vartheta\; m_t^2 z_1^2}{8\, K_e\,(1+\tau)}\,\dfrac{\Gamma_t}{\Phi}',
+        r'F_c = \dfrac{2 M_1}{d_{p1}} \qquad \sigma_L = \dfrac{F_c}{L\, m_n\, y}\,\dfrac{\Psi}{\Gamma_t}'],
+   excap='Exam problem of 7 January 2019, second stage of a coaxial reducer: helical pair on a 182 mm centre distance.',
+   exrows=[('Power and speed','50 kW at 369.75 rpm (1500 rpm after the 18/73 first stage) → M<sub>1</sub> = 1291 N·m'),
+           ('Ratio and centre distance','τ ≈ 0.245, i = 182 mm'), ('Material','σ<sub>H,lim</sub> = 1160 MPa, K<sub>e</sub> = 35 GPa (steel on steel)'),
+           ('!Teeth and module','z<sub>1</sub> = 19, z<sub>2</sub> = 78, m<sub>n</sub> = 3.5 mm, helix angle 21.1°'),
+           ('Pitch diameters','d<sub>p1</sub> = 71.3 mm, d<sub>p2</sub> = 292.7 mm'),
+           ('!Face width','L = 59.9 mm (φ = L/d<sub>p1</sub> = 0.84)'), ('Tangential force','F<sub>c</sub> = 36 223 N'),
+           ('!Lewis stress','σ<sub>L</sub> = 311 MPa (y = 0.370, Ψ = 1.017)')],
+   exnote='The hand solution finds the same pair (z 19/78, m<sub>n</sub> 3.5, about 21°) and L = 60.6 mm: the 1 % gap comes from reading Φ and Γₜ off the chart. The calculator reproduces 108 checks from 15 exam papers (2015–2024).',
+   lim='Preliminary sizing with the course method: no dynamic, load distribution or lubrication factors, and the allowable Hertz pressure is entered already corrected for the required life. For the final design use ISO 6336.',
+   faq=[('Can it check an existing gear pair?','Yes: the "Inverse Check (Max Power W_max)" mode takes module, face width and teeth and returns the power the pair can transmit at the Hertz and Lewis limits.'),
+        ('Does it handle helical gears?','Yes: normal and transverse module, helix angle, and the factors Φ, Ψ and Γₜ from the course chart. With a given centre distance it also finds the helix angle that fits it.'),
+        ('Which Lewis factor does it use?','The y of the course chart as a function of the number of teeth (and of the profile shift), digitised; the value used is written in the report.'),
+        ('Is it the same as ISO 6336?','No. It is the textbook method (Hertz and Lewis) taught in machine design courses, good for preliminary sizing and for exams. ISO 6336 adds dynamic, load distribution and life factors.'),
+        ('Is it free?','Yes, free and without sign-up. Everything runs in your browser.')]),
+  it=dict(path='it/calcolo-ruote-dentate/', title='Calcolo ruote dentate online: modulo e fascia con Hertz e Lewis, denti diritti ed elicoidali',
+   short='Calcolo ruote dentate', card='Modulo, fascia, Hertz, Lewis',
+   desc='Calcolatore gratuito di ruote dentate a denti diritti ed elicoidali: modulo, numero di denti e larghezza di fascia dalla pressione di Hertz, verifica a flessione di Lewis, combinazioni di denti per un rapporto e un interasse, potenza massima di una coppia esistente, con relazione di calcolo in PDF.',
+   h1='Calcolo ruote dentate', lead='Da potenza, giri e rapporto al modulo, ai denti e alla larghezza di fascia: pressione di contatto di Hertz, verifica a flessione di Lewis e potenza massima di una coppia esistente, a denti diritti ed elicoidali, con la relazione di calcolo.',
+   what=['Progetto di una coppia di ruote da potenza e giri (o coppia) e rapporto: modulo unificato, denti e larghezza di fascia al limite di Hertz.',
+         'Ricerca automatica delle combinazioni di denti migliori per un rapporto voluto, con tolleranza, o per un interasse dato (l\'angolo d\'elica si adatta all\'interasse).',
+         'Tensione di Lewis al piede del dente con il fattore y del diagramma del corso; per le elicoidali i fattori Φ, Ψ e Γₜ.',
+         'Potenza massima trasmissibile da una coppia esistente (Hertz e Lewis), da modulo, fascia e denti.',
+         'Spostamento di profilo del pignone, e risultati da passare, quando lo chiedi tu, al calcolatore degli alberi.'],
+   how='La larghezza di fascia viene dalla pressione di contatto di Hertz tra i due cilindri primitivi nel punto di contatto; poi il piede del dente si verifica a flessione con Lewis. Per le ruote elicoidali i fattori del corso Φ (Hertz), Ψ (Lewis) e Γₜ (curvatura) correggono le formule dei denti diritti.',
+   eqs=[r'W_H = \dfrac{\sigma_H^2\, L\, \omega_1 \sin 2\vartheta\; m_t^2 z_1^2}{8\, K_e\,(1+\tau)}\,\dfrac{\Gamma_t}{\Phi}',
+        r'F_c = \dfrac{2 M_1}{d_{p1}} \qquad \sigma_L = \dfrac{F_c}{L\, m_n\, y}\,\dfrac{\Psi}{\Gamma_t}'],
+   excap='Tema d\'esame del 7 gennaio 2019, secondo stadio di un riduttore coassiale: coppia elicoidale su un interasse di 182 mm.',
+   exrows=[('Potenza e velocità','50 kW a 369,75 giri/min (1500 giri/min dopo il primo stadio 18/73) → M<sub>1</sub> = 1291 N·m'),
+           ('Rapporto e interasse','τ ≈ 0,245, i = 182 mm'), ('Materiale','σ<sub>H,lim</sub> = 1160 MPa, K<sub>e</sub> = 35 GPa (acciaio su acciaio)'),
+           ('!Denti e modulo','z<sub>1</sub> = 19, z<sub>2</sub> = 78, m<sub>n</sub> = 3,5 mm, angolo d\'elica 21,1°'),
+           ('Diametri primitivi','d<sub>p1</sub> = 71,3 mm, d<sub>p2</sub> = 292,7 mm'),
+           ('!Larghezza di fascia','L = 59,9 mm (φ = L/d<sub>p1</sub> = 0,84)'), ('Forza tangenziale','F<sub>c</sub> = 36 223 N'),
+           ('!Tensione di Lewis','σ<sub>L</sub> = 311 MPa (y = 0,370, Ψ = 1,017)')],
+   exnote='La soluzione a mano trova la stessa coppia (z 19/78, m<sub>n</sub> 3,5, circa 21°) e L = 60,6 mm: l\'1 % di differenza viene dalla lettura di Φ e Γₜ sul diagramma. Il calcolatore riproduce 108 controlli presi da 15 temi d\'esame (2015–2024).',
+   lim='Dimensionamento di massima con il metodo del corso: niente fattori dinamici, di distribuzione del carico o di lubrificazione, e la pressione di Hertz ammissibile va inserita già corretta per la durata richiesta. Per il progetto esecutivo serve la ISO 6336.',
+   faq=[('Posso verificare una coppia di ruote esistente?','Sì: la modalità «Verifica potenza max» prende modulo, fascia e denti e restituisce la potenza trasmissibile al limite di Hertz e di Lewis.'),
+        ('Gestisce le ruote elicoidali?','Sì: modulo normale e trasversale, angolo d\'elica, fattori Φ, Ψ e Γₜ dal diagramma del corso. Con un interasse dato trova anche l\'angolo d\'elica che lo rispetta.'),
+        ('Che fattore di Lewis usa?','L\'y del diagramma del corso in funzione del numero di denti (e dello spostamento di profilo), digitalizzato; il valore usato è scritto nella relazione.'),
+        ('È la stessa cosa della ISO 6336?','No. È il metodo dei libri di testo (Hertz e Lewis) dei corsi di Costruzione di Macchine, adatto al dimensionamento di massima e agli esami. La ISO 6336 aggiunge i fattori dinamici, di distribuzione del carico e di durata.'),
+        ('È gratuito?','Sì, gratuito e senza registrazione. Tutto gira nel tuo browser.')])),
+ # ------------------------------------------------------------ fits
+ dict(key='fits', mod='fits', demo='bearingFit', extra=fits_extra, exlabel={'en': 'Open the example', 'it': "Apri l'esempio"},
+  en=dict(path='iso-fits-calculator/', title='ISO 286 fits and tolerances calculator: H7/g6, H7/k6, H7/p6 clearance and interference',
+   short='ISO fits calculator', card='Tolerances, clearance, interference',
+   desc='Free ISO 286 fits calculator: hole and shaft deviations, maximum and minimum clearance or interference for H7/g6, H7/h6, H7/k6, H7/p6 and any combination from IT5 to IT11 up to 500 mm, with tables, drawing callout and PDF report.',
+   h1='ISO fits and tolerances calculator', lead='Pick a diameter and a fit (H7/g6, H7/k6, H7/p6 or any ISO combination) and get the hole and shaft deviations, the limits of size, the maximum and minimum clearance and whether it is a clearance, transition or interference fit. Or start from the clearance you want and find the fit.',
+   what=['Hole and shaft deviations (ES, EI, es, ei) and limits of size, ISO 286-1 and 286-2.',
+         'Maximum and minimum clearance, or interference, and the type of fit: clearance, transition, interference.',
+         '13 recommended hole-basis fits and 8 shaft-basis fits, or any combination: holes C–S, shafts c–s, grades IT5–IT11, sizes up to 500 mm.',
+         'Reverse search: from the clearance you want to the fits that give it, hole basis or shaft basis.',
+         'Suggested machining and roughness Ra, the drawing callout, and a comparison table of the fits of the same system.'],
+   how='The hole and the shaft each have a tolerance zone: its width is the standard tolerance IT of the grade, its position is the fundamental deviation of the letter for the diameter range. The clearance is the hole size minus the shaft size: its maximum and minimum follow from the deviations.',
+   eqs=[r'g_{max} = ES - ei \qquad g_{min} = EI - es',
+        r'\text{H: } EI = 0 \qquad \text{K–S (holes): } ES = -ei + \Delta, \quad \Delta = IT_n - IT_{n-1}'],
+   excap='Example: a hub on a 30 mm shaft with an H7/k6 fit (light press fit, with a key).',
+   exrows=[('Diameter range','over 18 up to 30 mm'), ('Hole H7','+21 / 0 µm → 30.000 … 30.021 mm'), ('Shaft k6','+15 / +2 µm → 30.002 … 30.015 mm'),
+           ('!Maximum clearance','+19 µm (largest hole, smallest shaft)'), ('!Maximum interference','15 µm (smallest hole, largest shaft)'),
+           ('!Type of fit','transition: it can come out loose or tight')],
+   exnote='The ISO 286 tables in the calculator are checked by 904 tests: about 50 published deviations, the Δ rule on every range and the growth of IT with grade.',
+   lim='Letters a, b, j and t…zc and the isolated exceptions of the standard are not handled. The pressure and the transmissible torque of an interference fit (Lamé) are calculated in the shrink fit station D-07, where the fit can be passed with one click.',
+   faq=[('How do I read H7/g6?','The capital letter and number are the hole, the lower case ones the shaft. The letter sets the position of the tolerance zone (H: lower deviation zero, g: a little below the nominal size), the number is the IT grade, i.e. the width of the zone.'),
+        ('Hole basis or shaft basis?','Hole basis (H…) is the usual choice because holes are made with fixed-size tools (reamers, gauges); shaft basis (…h) is used when one drawn shaft carries several parts with different fits.'),
+        ('Which fit for a bearing, a gear hub, a sliding pin?','As a first orientation: sliding pins and guides H7/g6 or H7/h6, hubs with a key H7/k6, press fits H7/p6 to H7/s6. For rolling bearings follow the bearing manufacturer\'s tables, because the bearing bore has its own tolerance.'),
+        ('Can it calculate the force or pressure of a press fit?','Not in this station: the interference fit can be passed to the shrink fit station D-07, which gives the contact pressure, the transmissible torque and the stresses.'),
+        ('Is it free?','Yes, free and without sign-up. Everything runs in your browser.')]),
+  it=dict(path='it/tolleranze-accoppiamenti-iso/', title='Tolleranze e accoppiamenti ISO 286 online: H7/g6, H7/k6, H7/p6, giochi e interferenze',
+   short='Tolleranze e accoppiamenti ISO', card='Scostamenti, giochi, interferenze',
+   desc='Calcolatore gratuito di tolleranze e accoppiamenti ISO 286: scostamenti di foro e albero, gioco massimo e minimo o interferenza per H7/g6, H7/h6, H7/k6, H7/p6 e qualsiasi combinazione da IT5 a IT11 fino a 500 mm, con tabelle, quota da disegno e relazione in PDF.',
+   h1='Tolleranze e accoppiamenti ISO', lead='Scegli un diametro e un accoppiamento (H7/g6, H7/k6, H7/p6 o qualsiasi combinazione ISO) e ottieni gli scostamenti di foro e albero, le dimensioni limite, il gioco massimo e minimo e se l\'accoppiamento è con gioco, incerto o con interferenza. Oppure parti dal gioco che vuoi e trova l\'accoppiamento.',
+   what=['Scostamenti di foro e albero (ES, EI, es, ei) e dimensioni limite, ISO 286-1 e 286-2.',
+         'Gioco massimo e minimo, o interferenza, e il tipo di accoppiamento: con gioco, incerto, con interferenza.',
+         '13 accoppiamenti raccomandati foro base e 8 albero base, oppure qualsiasi combinazione: fori C–S, alberi c–s, gradi IT5–IT11, diametri fino a 500 mm.',
+         'Ricerca inversa: dal gioco voluto agli accoppiamenti che lo danno, foro base o albero base.',
+         'Lavorazione e rugosità Ra indicative, quota da disegno e tabella comparativa degli accoppiamenti dello stesso sistema.'],
+   how='Foro e albero hanno ciascuno una zona di tolleranza: la sua ampiezza è la tolleranza fondamentale IT del grado, la sua posizione è lo scostamento fondamentale della lettera per lo scaglione di diametro. Il gioco è la misura del foro meno quella dell\'albero: il massimo e il minimo vengono dagli scostamenti.',
+   eqs=[r'g_{max} = ES - ei \qquad g_{min} = EI - es',
+        r'\text{H: } EI = 0 \qquad \text{K–S (fori): } ES = -ei + \Delta, \quad \Delta = IT_n - IT_{n-1}'],
+   excap='Esempio: mozzo su un albero da 30 mm con accoppiamento H7/k6 (leggermente forzato, con linguetta).',
+   exrows=[('Scaglione','oltre 18 fino a 30 mm'), ('Foro H7','+21 / 0 µm → 30,000 … 30,021 mm'), ('Albero k6','+15 / +2 µm → 30,002 … 30,015 mm'),
+           ('!Gioco massimo','+19 µm (foro più grande, albero più piccolo)'), ('!Interferenza massima','15 µm (foro più piccolo, albero più grande)'),
+           ('!Tipo di accoppiamento','incerto: può venire con gioco o con interferenza')],
+   exnote='Le tabelle ISO 286 del calcolatore sono controllate da 904 test: una cinquantina di scostamenti pubblicati, la regola del Δ su ogni scaglione e la crescita di IT con il grado.',
+   lim='Le lettere a, b, j e t…zc e le eccezioni puntuali della norma non sono gestite. La pressione e la coppia trasmissibile di un accoppiamento forzato (Lamé) si calcolano nella stazione D-07 dei calettamenti, dove l\'accoppiamento si passa con un clic.',
+   faq=[('Come si legge H7/g6?','Lettera maiuscola e numero sono il foro, quelli minuscoli l\'albero. La lettera fissa la posizione della zona di tolleranza (H: scostamento inferiore nullo, g: poco sotto la quota nominale), il numero è il grado IT, cioè l\'ampiezza della zona.'),
+        ('Foro base o albero base?','Il foro base (H…) è la scelta abituale perché i fori si fanno con utensili e calibri a misura fissa (alesatori, tamponi); l\'albero base (…h) si usa quando un albero trafilato porta più pezzi con accoppiamenti diversi.'),
+        ('Che accoppiamento per un perno scorrevole, un mozzo, un forzamento?','Come primo orientamento: perni e guide scorrevoli H7/g6 o H7/h6, mozzi con linguetta H7/k6, forzamenti da H7/p6 a H7/s6. Per i cuscinetti volventi segui le tabelle del produttore, perché il foro del cuscinetto ha una tolleranza sua.'),
+        ('Calcola la forza o la pressione di un forzamento?','Non in questa stazione: l\'accoppiamento con interferenza si passa alla stazione D-07 dei calettamenti, che dà la pressione di contatto, la coppia trasmissibile e le tensioni.'),
+        ('È gratuito?','Sì, gratuito e senza registrazione. Tutto gira nel tuo browser.')])),
+]
+
 def page(P, lang):
     d, t, other = P[lang], L[lang], P['it' if lang == 'en' else 'en']
     url, alt = SITE + '/' + d['path'], SITE + '/' + other['path']
     url_en = SITE + '/' + P['en']['path']
     app = f'/app.html?m={P["mod"]}&lang={lang}'
     demo = f'/app.html?demo={P["demo"]}&lang={lang}'
+    if P.get('exlabel'): t = dict(t, example=P['exlabel'][lang])
     ld = [{'@context': 'https://schema.org', '@type': 'WebApplication', 'name': d['short'] + ' — Torsio Engineering', 'url': url,
            'applicationCategory': 'EngineeringApplication', 'operatingSystem': 'Any (web browser)', 'inLanguage': lang, 'description': d['desc'],
            'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'author': {'@type': 'Person', 'name': 'Luigi Frassi'}},
@@ -269,6 +427,7 @@ def page(P, lang):
   <section><div class="wrap"><h2>{t['how']}</h2><p>{d['how']}</p>{''.join(eq(e) for e in d['eqs'])}</div></section>
   <section><div class="wrap"><h2>{t['ex']}</h2><div class="scroll">{table(d['excap'], d['exrows'])}</div><p class="muted" style="margin-top:14px">{d['exnote']}</p>
     <div class="acts"><a class="btn go" href="{demo}">{t['example']} →</a></div></div></section>
+  {P['extra'](lang) if P.get('extra') else ''}
   <section><div class="wrap"><h2>{t['got']}</h2>{ul(GOT[lang])}</div></section>
   <section><div class="wrap"><h2>{t['lim']}</h2><p>{d['lim']}</p></div></section>
   <section><div class="wrap"><h2>{t['faq']}</h2><dl class="faq">{''.join(f'<dt>{q}</dt><dd>{a}</dd>' for q, a in d['faq'])}</dl></div></section>

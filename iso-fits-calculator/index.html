@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISO 286 fits and tolerances calculator: H7/g6, H7/k6, H7/p6 clearance and interference — Torsio</title>
+  <meta name="description" content="Free ISO 286 fits calculator: hole and shaft deviations, maximum and minimum clearance or interference for H7/g6, H7/h6, H7/k6, H7/p6 and any combination from IT5 to IT11 up to 500 mm, with tables, drawing callout and PDF report.">
+  <link rel="canonical" href="https://torsio.app/iso-fits-calculator/">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/iso-fits-calculator/">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/tolleranze-accoppiamenti-iso/">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/iso-fits-calculator/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="ISO 286 fits and tolerances calculator: H7/g6, H7/k6, H7/p6 clearance and interference">
+  <meta property="og:description" content="Free ISO 286 fits calculator: hole and shaft deviations, maximum and minimum clearance or interference for H7/g6, H7/h6, H7/k6, H7/p6 and any combination from IT5 to IT11 up to 500 mm, with tables, drawing callout and PDF report.">
+  <meta property="og:url" content="https://torsio.app/iso-fits-calculator/">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .guide section { padding: 44px 0; }
+    .guide h2 { margin-top: 0; }
+    .guide ul { max-width: var(--measure); padding-left: 20px; } .guide li { margin-bottom: 6px; }
+    .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .btn.plain { background: var(--sheet); color: var(--ink); }
+    .ex { width: 100%; max-width: 46rem; border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 15.5px; }
+    .ex th, .ex td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .ex th { width: 46%; font-weight: 500; color: var(--ink-2); }
+    .ex tr.r td, .ex tr.r th { background: #eef3f9; } .ex tr.r td { font-weight: 700; color: var(--blue); }
+    .ex caption { text-align: left; font-size: 13px; color: var(--ink-2); padding: 0 0 8px; }
+    .faq dt { font-weight: 700; margin-top: 18px; } .faq dd { margin: 4px 0 0; max-width: var(--measure); color: var(--ink-2); }
+    .others { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 54rem; }
+    .others a { display: block; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 14px 16px; text-decoration: none; color: var(--ink); font-weight: 700; }
+    .others a span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+    .others a:hover { border-top-color: var(--signal); }
+    .iso { border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+    .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; max-width: var(--measure); }
+    .iso thead th:first-child, .iso tbody th { position: sticky; left: 0; background: var(--sheet); }
+    .iso th, .iso td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    .iso thead th { font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .iso tbody th { text-align: left; font-weight: 500; color: var(--ink-2); }
+    .iso td.k { text-align: left; } .iso tr.r td, .iso tr.r th { background: #eef3f9; } .scroll { overflow-x: auto; }
+    .iso .c { color: var(--blue); } .iso .t { color: #8a6408; } .iso .i { color: #b42318; }
+    .guide h3 { margin: 30px 0 10px; font-size: 19px; }
+    @media (max-width: 760px) { .others { grid-template-columns: 1fr; } .ex th { width: 50%; } }
+  </style>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebApplication", "name": "ISO fits calculator — Torsio Engineering", "url": "https://torsio.app/iso-fits-calculator/", "applicationCategory": "EngineeringApplication", "operatingSystem": "Any (web browser)", "inLanguage": "en", "description": "Free ISO 286 fits calculator: hole and shaft deviations, maximum and minimum clearance or interference for H7/g6, H7/h6, H7/k6, H7/p6 and any combination from IT5 to IT11 up to 500 mm, with tables, drawing callout and PDF report.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "author": {"@type": "Person", "name": "Luigi Frassi"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I read H7/g6?", "acceptedAnswer": {"@type": "Answer", "text": "The capital letter and number are the hole, the lower case ones the shaft. The letter sets the position of the tolerance zone (H: lower deviation zero, g: a little below the nominal size), the number is the IT grade, i.e. the width of the zone."}}, {"@type": "Question", "name": "Hole basis or shaft basis?", "acceptedAnswer": {"@type": "Answer", "text": "Hole basis (H…) is the usual choice because holes are made with fixed-size tools (reamers, gauges); shaft basis (…h) is used when one drawn shaft carries several parts with different fits."}}, {"@type": "Question", "name": "Which fit for a bearing, a gear hub, a sliding pin?", "acceptedAnswer": {"@type": "Answer", "text": "As a first orientation: sliding pins and guides H7/g6 or H7/h6, hubs with a key H7/k6, press fits H7/p6 to H7/s6. For rolling bearings follow the bearing manufacturer's tables, because the bearing bore has its own tolerance."}}, {"@type": "Question", "name": "Can it calculate the force or pressure of a press fit?", "acceptedAnswer": {"@type": "Answer", "text": "Not in this station: the interference fit can be passed to the shrink fit station D-07, which gives the contact pressure, the transmissible torque and the stresses."}}, {"@type": "Question", "name": "Is it free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, free and without sign-up. Everything runs in your browser."}}]}]</script>
+</head>
+<body class="guide">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigation">
+        <span class="links"><a href="/">Home</a><a href="/metodo.html">Method</a><a href="/it/tolleranze-accoppiamenti-iso/" hreflang="it">Italiano</a></span>
+        <a class="btn go small" href="/app.html?m=fits&lang=en">Open the calculator</a>
+      </nav>
+    </div>
+    <header class="page-head">
+      <h1>ISO fits and tolerances calculator</h1>
+      <p class="lead">Pick a diameter and a fit (H7/g6, H7/k6, H7/p6 or any ISO combination) and get the hole and shaft deviations, the limits of size, the maximum and minimum clearance and whether it is a clearance, transition or interference fit. Or start from the clearance you want and find the fit.</p>
+      <div class="acts"><a class="btn go" href="/app.html?m=fits&lang=en">Open the calculator →</a><a class="btn plain" href="/app.html?demo=bearingFit&lang=en">Open the example</a></div>
+      <p class="muted" style="margin-top:16px;font-size:15px">Free, no sign-up, runs in your browser: your data never leaves your computer.</p>
+    </header>
+  </div>
+  <section><div class="wrap"><h2>What it calculates</h2><ul><li>Hole and shaft deviations (ES, EI, es, ei) and limits of size, ISO 286-1 and 286-2.</li><li>Maximum and minimum clearance, or interference, and the type of fit: clearance, transition, interference.</li><li>13 recommended hole-basis fits and 8 shaft-basis fits, or any combination: holes C–S, shafts c–s, grades IT5–IT11, sizes up to 500 mm.</li><li>Reverse search: from the clearance you want to the fits that give it, hole basis or shaft basis.</li><li>Suggested machining and roughness Ra, the drawing callout, and a comparison table of the fits of the same system.</li></ul></div></section>
+  <section><div class="wrap"><h2>Method</h2><p>The hole and the shaft each have a tolerance zone: its width is the standard tolerance IT of the grade, its position is the fundamental deviation of the letter for the diameter range. The clearance is the hole size minus the shaft size: its maximum and minimum follow from the deviations.</p><div class="eq" data-tex="g_{max} = ES - ei \qquad g_{min} = EI - es"></div><div class="eq" data-tex="\text{H: } EI = 0 \qquad \text{K–S (holes): } ES = -ei + \Delta, \quad \Delta = IT_n - IT_{n-1}"></div></div></section>
+  <section><div class="wrap"><h2>Worked example</h2><div class="scroll"><table class="ex"><caption>Example: a hub on a 30 mm shaft with an H7/k6 fit (light press fit, with a key).</caption><tbody><tr><th>Diameter range</th><td>over 18 up to 30 mm</td></tr><tr><th>Hole H7</th><td>+21 / 0 µm → 30.000 … 30.021 mm</td></tr><tr><th>Shaft k6</th><td>+15 / +2 µm → 30.002 … 30.015 mm</td></tr><tr class="r"><th>Maximum clearance</th><td>+19 µm (largest hole, smallest shaft)</td></tr><tr class="r"><th>Maximum interference</th><td>15 µm (smallest hole, largest shaft)</td></tr><tr class="r"><th>Type of fit</th><td>transition: it can come out loose or tight</td></tr></tbody></table></div><p class="muted" style="margin-top:14px">The ISO 286 tables in the calculator are checked by 904 tests: about 50 published deviations, the Δ rule on every range and the growth of IT with grade.</p>
+    <div class="acts"><a class="btn go" href="/app.html?demo=bearingFit&lang=en">Open the example →</a></div></div></section>
+  <section><div class="wrap"><h2>ISO fit tables</h2><h3>Common fits at 30 mm</h3><p class="cap">Hole-basis fits on a 30 mm diameter, in µm (negative clearance = interference). Computed by Torsio.</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">Fit</th><th>Max clearance</th><th>Min clearance</th><th style="text-align:left">Type</th></tr></thead><tbody><tr><th>H11/c11</th><td>+370</td><td>+110</td><td class="k c">clearance</td></tr><tr><th>H9/d9</th><td>+169</td><td>+65</td><td class="k c">clearance</td></tr><tr><th>H8/f7</th><td>+74</td><td>+20</td><td class="k c">clearance</td></tr><tr><th>H7/f7</th><td>+62</td><td>+20</td><td class="k c">clearance</td></tr><tr><th>H7/g6</th><td>+41</td><td>+7</td><td class="k c">clearance</td></tr><tr><th>H7/h6</th><td>+34</td><td>0</td><td class="k c">clearance</td></tr><tr><th>H8/h7</th><td>+54</td><td>0</td><td class="k c">clearance</td></tr><tr><th>H7/js6</th><td>+27.5</td><td>−6.5</td><td class="k t">transition</td></tr><tr class="r"><th>H7/k6</th><td>+19</td><td>−15</td><td class="k t">transition</td></tr><tr><th>H7/n6</th><td>+6</td><td>−28</td><td class="k t">transition</td></tr><tr><th>H7/p6</th><td>−1</td><td>−35</td><td class="k i">interference</td></tr><tr><th>H7/r6</th><td>−7</td><td>−41</td><td class="k i">interference</td></tr><tr><th>H7/s6</th><td>−14</td><td>−48</td><td class="k i">interference</td></tr></tbody></table></div><h3>Deviations by diameter range</h3><p class="cap">Upper / lower deviation in µm, ISO 286-2, for the most used tolerance classes. Holes in capitals, shafts in lower case.</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">Size [mm]</th><th>H7</th><th>H8</th><th>f7</th><th>g6</th><th>h6</th><th>js6</th><th>k6</th><th>n6</th><th>p6</th></tr></thead><tbody><tr><th>up to 3</th><td>+10 / 0</td><td>+14 / 0</td><td>−6 / −16</td><td>−2 / −8</td><td>0 / −6</td><td>±3</td><td>+6 / 0</td><td>+10 / +4</td><td>+12 / +6</td></tr><tr><th>over 3 up to 6</th><td>+12 / 0</td><td>+18 / 0</td><td>−10 / −22</td><td>−4 / −12</td><td>0 / −8</td><td>±4</td><td>+9 / +1</td><td>+16 / +8</td><td>+20 / +12</td></tr><tr><th>over 6 up to 10</th><td>+15 / 0</td><td>+22 / 0</td><td>−13 / −28</td><td>−5 / −14</td><td>0 / −9</td><td>±4.5</td><td>+10 / +1</td><td>+19 / +10</td><td>+24 / +15</td></tr><tr><th>over 10 up to 18</th><td>+18 / 0</td><td>+27 / 0</td><td>−16 / −34</td><td>−6 / −17</td><td>0 / −11</td><td>±5.5</td><td>+12 / +1</td><td>+23 / +12</td><td>+29 / +18</td></tr><tr><th>over 18 up to 30</th><td>+21 / 0</td><td>+33 / 0</td><td>−20 / −41</td><td>−7 / −20</td><td>0 / −13</td><td>±6.5</td><td>+15 / +2</td><td>+28 / +15</td><td>+35 / +22</td></tr><tr><th>over 30 up to 50</th><td>+25 / 0</td><td>+39 / 0</td><td>−25 / −50</td><td>−9 / −25</td><td>0 / −16</td><td>±8</td><td>+18 / +2</td><td>+33 / +17</td><td>+42 / +26</td></tr><tr><th>over 50 up to 80</th><td>+30 / 0</td><td>+46 / 0</td><td>−30 / −60</td><td>−10 / −29</td><td>0 / −19</td><td>±9.5</td><td>+21 / +2</td><td>+39 / +20</td><td>+51 / +32</td></tr><tr><th>over 80 up to 120</th><td>+35 / 0</td><td>+54 / 0</td><td>−36 / −71</td><td>−12 / −34</td><td>0 / −22</td><td>±11</td><td>+25 / +3</td><td>+45 / +23</td><td>+59 / +37</td></tr><tr><th>over 120 up to 180</th><td>+40 / 0</td><td>+63 / 0</td><td>−43 / −83</td><td>−14 / −39</td><td>0 / −25</td><td>±12.5</td><td>+28 / +3</td><td>+52 / +27</td><td>+68 / +43</td></tr><tr><th>over 180 up to 250</th><td>+46 / 0</td><td>+72 / 0</td><td>−50 / −96</td><td>−15 / −44</td><td>0 / −29</td><td>±14.5</td><td>+33 / +4</td><td>+60 / +31</td><td>+79 / +50</td></tr><tr><th>over 250 up to 315</th><td>+52 / 0</td><td>+81 / 0</td><td>−56 / −108</td><td>−17 / −49</td><td>0 / −32</td><td>±16</td><td>+36 / +4</td><td>+66 / +34</td><td>+88 / +56</td></tr><tr><th>over 315 up to 400</th><td>+57 / 0</td><td>+89 / 0</td><td>−62 / −119</td><td>−18 / −54</td><td>0 / −36</td><td>±18</td><td>+40 / +4</td><td>+73 / +37</td><td>+98 / +62</td></tr><tr><th>over 400 up to 500</th><td>+63 / 0</td><td>+97 / 0</td><td>−68 / −131</td><td>−20 / −60</td><td>0 / −40</td><td>±20</td><td>+45 / +5</td><td>+80 / +40</td><td>+108 / +68</td></tr></tbody></table></div><p class="muted" style="margin-top:14px">For any other size, letter or grade (IT5–IT11, holes C–S, shafts c–s, up to 500 mm) open the calculator: it also gives the drawing callout and works backwards from the clearance you want.</p></div></section>
+  <section><div class="wrap"><h2>What you get</h2><ul><li>A calculation report you can download as PDF: every formula with your numbers substituted, diagrams, an ISO 7200 title block you can fill in.</li><li>A shareable link that reopens exactly the same calculation, and a project file with all the modules.</li><li>Results you can pass, only when you ask, to the next module (for example gears → shaft → bolts).</li></ul></div></section>
+  <section><div class="wrap"><h2>Limits and next step</h2><p>Letters a, b, j and t…zc and the isolated exceptions of the standard are not handled. The pressure and the transmissible torque of an interference fit (Lamé) are calculated in the shrink fit station D-07, where the fit can be passed with one click.</p></div></section>
+  <section><div class="wrap"><h2>Questions</h2><dl class="faq"><dt>How do I read H7/g6?</dt><dd>The capital letter and number are the hole, the lower case ones the shaft. The letter sets the position of the tolerance zone (H: lower deviation zero, g: a little below the nominal size), the number is the IT grade, i.e. the width of the zone.</dd><dt>Hole basis or shaft basis?</dt><dd>Hole basis (H…) is the usual choice because holes are made with fixed-size tools (reamers, gauges); shaft basis (…h) is used when one drawn shaft carries several parts with different fits.</dd><dt>Which fit for a bearing, a gear hub, a sliding pin?</dt><dd>As a first orientation: sliding pins and guides H7/g6 or H7/h6, hubs with a key H7/k6, press fits H7/p6 to H7/s6. For rolling bearings follow the bearing manufacturer's tables, because the bearing bore has its own tolerance.</dd><dt>Can it calculate the force or pressure of a press fit?</dt><dd>Not in this station: the interference fit can be passed to the shrink fit station D-07, which gives the contact pressure, the transmissible torque and the stresses.</dd><dt>Is it free?</dt><dd>Yes, free and without sign-up. Everything runs in your browser.</dd></dl></div></section>
+  <section><div class="wrap"><h2>Other calculators</h2><div class="others"><a href="/shaft-calculator/">Shaft design calculator<span>Fatigue diameter, reactions, DXF</span></a><a href="/bolted-joint-calculator/">Bolted joint calculator<span>Bolts, preload, tightening torque</span></a><a href="/frame-truss-calculator/">2D frame and truss calculator<span>FEM, N/V/M diagrams, sections</span></a><a href="/gear-calculator/">Gear calculator<span>Module, face width, Hertz, Lewis</span></a><a href="/metodo.html">Method<span>544 hand-worked test cases</span></a></div></div></section>
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · a project by Luigi Frassi</span>
+      <span><a href="/metodo.html">Method</a> · <a href="/novita.html">What's new</a> · <a href="/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&lang=en" target="_blank" rel="noopener">Contact</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">Source code</a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      function draw() { document.querySelectorAll('[data-tex]').forEach(function (el) { try { window.katex.render(el.getAttribute('data-tex'), el, { displayMode: true, throwOnError: false }); } catch (e) { el.textContent = el.getAttribute('data-tex'); } }); }
+      var s = document.createElement('script'); s.src = '/vendor/katex/katex.min.js'; s.onload = draw; document.head.appendChild(s);
+      try { localStorage.setItem('torsioLang', 'en'); } catch (e) { /* private mode */ }
+    })();
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
