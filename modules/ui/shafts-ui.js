@@ -118,6 +118,7 @@ function calculateShafts() {
     return;
   }
 
+  shaftLinkSync();
   const { inp, Xreq, mode, notchType, Mt } = readShaftInputs();
 
   // ---- visibility of the inputs
@@ -700,6 +701,7 @@ function shaftCheckWorstSection() {
   const tq = document.getElementById('shaftSecTorque');
   if (tq) tq.checked = w.Mt > 1e-6;
   set('shaftDcheck', w.d);
+  set('shaftSecX', w.x); shaftSecLink = true;   // the section stays tied to the beam
   const shoulder = w.D > w.d && w.r > 0;
   if (shoulder) { set('shaftDDcheck', w.D); set('shaftR', w.r); }
   set('shaftNotchType', shoulder ? (w.keyway ? 'combined' : 'shoulder') : (w.keyway ? 'keyway' : 'none'));
@@ -759,9 +761,71 @@ function shaftSilentSection() {
   } catch (e) { return null; }
 }
 
+// ---- link between the loads of step 2 / 3 and the beam of step 1
+// true: Mf, N and "transmits Mt" follow the beam at the section chosen in step 1 (shaftSecX) and are kept in sync;
+// false: the user typed their own loads; null: not known yet (after a link, a project or a restored session),
+// decided on the next calculation by comparing the fields with the beam.
+let shaftSecLink = null;
+let shaftSecMismatch = null;   // { mf, bmf } when the typed loads differ from the beam (for the summary and the report)
+const SHAFT_LINK_TXT = {
+  it: { on: (x, mf) => `Mf e N presi dalla trave del passo 1, sezione x = ${x} mm (Mf ${mf} N·m): si aggiornano da soli quando cambi la trave.`,
+    off: (mf, n, bmf, bn) => `Mf e N qui (${mf} N·m, ${n} N) non sono quelli della trave del passo 1 nella sezione scelta (${bmf} N·m, ${bn} N): il diametro è calcolato con i valori scritti qui.`,
+    use: 'Usa i valori della trave' },
+  en: { on: (x, mf) => `Mf and N taken from the step-1 beam, section x = ${x} mm (Mf ${mf} N·m): they update by themselves when the beam changes.`,
+    off: (mf, n, bmf, bn) => `Mf and N here (${mf} N·m, ${n} N) are not the step-1 beam's at the chosen section (${bmf} N·m, ${bn} N): the diameter uses the values typed here.`,
+    use: 'Use the beam values' }
+};
+
+function shaftLinkSection() {
+  const b = lastShaftBeam;
+  if (!b || !b.critical) return null;
+  const xs = parseFloat(document.getElementById('shaftSecX')?.value);
+  const x = Number.isFinite(xs) && xs >= (b.xmin ?? 0) && (!(b.L > 0) || xs <= b.L) ? xs : b.critical.x;
+  const s = shaftBeamSection(b, x);
+  return { x, Mf: Math.round(s.Mf * 10) / 10, N: Math.round(s.N || 0), torque: Math.abs(s.T) > 1e-6 };
+}
+
+function shaftLinkSync() {
+  const box = document.getElementById('shaftSecLinkBox');
+  const s = shaftLinkSection();
+  shaftSecMismatch = null;
+  if (!s) { if (box) box.innerHTML = ''; return; }
+  const mfEl = document.getElementById('shaftMf'), nEl = document.getElementById('shaftAxial'), tqEl = document.getElementById('shaftSecTorque');
+  const mf = parseFloat(mfEl?.value), n = parseFloat(nEl?.value) || 0;
+  const same = Math.abs(mf - s.Mf) <= 0.05 + 0.002 * s.Mf && Math.abs(n - s.N) <= 0.5 + 0.002 * Math.abs(s.N);
+  if (shaftSecLink === null) shaftSecLink = same;
+  if (shaftSecLink && !same) {
+    if (mfEl) mfEl.value = s.Mf;
+    if (nEl) nEl.value = s.N;
+    if (tqEl) tqEl.checked = s.torque;
+  }
+  if (!shaftSecLink && !same) shaftSecMismatch = { mf, n, bmf: s.Mf, bn: s.N, x: s.x };
+  if (!box) return;
+  const L = SHAFT_LINK_TXT[currentLang] || SHAFT_LINK_TXT.en;
+  let html = '';
+  if (shaftSecLink) html = `<p class="text-slate-400">${L.on(shaftFmt(s.x, 1), shaftFmt(s.Mf, 1))}</p>`;
+  else if (!same) html = `<div class="flex flex-wrap items-center gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2"><span class="text-amber-300">⚠ ${L.off(shaftFmt(mf, 1), shaftFmt(n, 0), shaftFmt(s.Mf, 1), shaftFmt(s.N, 0))}</span><button type="button" id="shaftLinkBtn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold">${L.use} (Mf ${shaftFmt(s.Mf, 1)} N·m)</button></div>`;
+  if (box._h !== html) { box._h = html; box.innerHTML = html; }
+}
+
+function shaftLinkInit() {
+  // capture phase: the link is cut before the recalculation triggered by the same keystroke
+  // (typing fires input; the checkbox fires change; the change fired by leaving a number field is not an edit)
+  const unlink = ids => ev => { if (ev.isTrusted && ids.includes(ev.target && ev.target.id)) shaftSecLink = false; };
+  document.addEventListener('input', unlink(['shaftMf', 'shaftAxial']), true);
+  document.addEventListener('change', unlink(['shaftSecTorque']), true);
+  document.getElementById('shaftSecLinkBox')?.addEventListener('click', ev => {
+    if (!ev.target.closest('#shaftLinkBtn')) return;
+    shaftSecLink = true; calculateShafts();
+    if (typeof syncShareUrl === 'function') syncShareUrl();
+  });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', shaftLinkInit); else shaftLinkInit();
+
 // Copies the internal actions of the chosen section into the fatigue design (step 2)
 function shaftUseSection() {
   if (!lastShaftBeam) return;
+  shaftSecLink = true;
   const x = shaftVal('shaftSecX', lastShaftBeam.critical.x);
   const s = shaftBeamSection(lastShaftBeam, x);
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };

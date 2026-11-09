@@ -169,7 +169,7 @@ function updateComparisonTable(dMm, step, activeFit) {
     } else if (a.kind === 'interference') {
       typeStr = t.interferenceFit;
       badgeColor = "text-rose-400 bg-rose-500/10 border border-rose-500/30";
-      minMaxStr = `${formatDeviation(Math.abs(maxPlay))} / ${formatDeviation(Math.abs(minPlay))}`;
+      minMaxStr = `${formatDeviation(minPlay)} / ${formatDeviation(maxPlay)}`;
     } else {
       typeStr = t.transitionFit;
       badgeColor = "text-amber-400 bg-amber-500/10 border border-amber-500/30";

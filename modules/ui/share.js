@@ -104,9 +104,10 @@ function syncShareUrl() {
 }
 
 // Apply a state read from the URL. Unknown keys and invalid values are ignored.
-function applyShareState(q) {
+function applyShareState(q, quiet = false) {
   const m = q.get('m');
   if (!['fits', 'belts', 'gears', 'shafts', 'frames', 'bolts', 'discs', 'trains'].includes(m)) return false;
+  if (m === 'shafts' && typeof shaftSecLink !== 'undefined') shaftSecLink = null;   // decided again from the restored fields
 
   const lang = q.get('lang');
   if (lang === 'it' || lang === 'en') updateLanguage(lang);
@@ -176,7 +177,10 @@ function applyShareState(q) {
     if (q.get('spf') && typeof shaftProfileDecode === 'function') shaftProfileDecode(q.get('spf'));
   }
 
-  switchModule(m);   // shows the module and recalculates
+  if (quiet) {   // session restore: recalculate the module without showing it
+    const calc = { fits: 'calculateFits', belts: 'calculateBelts', gears: 'calculateGears', shafts: 'calculateShafts', frames: 'calculateFrames', bolts: 'calculateBolts', discs: 'calculateDiscs', trains: 'calculateTrains' }[m];
+    if (typeof window[calc] === 'function') window[calc]();
+  } else switchModule(m);   // shows the module and recalculates
   return true;
 }
 
@@ -231,6 +235,11 @@ function initShareLinks() {
 
   try {
     const q = new URLSearchParams(window.location.search);
+    // the inputs of every module are kept in this browser: a reload (or the address of one module) gives back the
+    // others as they were. The module named in the address, and the modules a demo sets, win over the session.
+    const demoMods = { transmission: ['belts', 'gears', 'shafts', 'fits'], shaftExam: ['shafts'], helical50kw: ['gears'], spur5kw: ['gears'], bearingFit: ['fits'], frames: ['frames'], boltsExam: ['bolts'], discsExam: ['discs'] };
+    sessionRestore([q.get('m'), ...(demoMods[q.get('demo')] || (q.has('demo') ? Object.keys(SHARE_FIELDS) : []))], q.has('demo'));
+    if (q.has('m') && !q.has('unit') && currentUnit !== shareDefaults.unit) setUnit(shareDefaults.unit);
     if (q.has('m')) applyShareState(q);
     else {
       // links from the home page: ?lang=it, ?demo=transmission
@@ -243,9 +252,83 @@ function initShareLinks() {
 
   shareSyncEnabled = true;
   let timer = null;
-  const schedule = () => { clearTimeout(timer); timer = setTimeout(syncShareUrl, 250); };
+  const schedule = () => { clearTimeout(timer); timer = setTimeout(() => { syncShareUrl(); sessionSave(); }, 250); };
   ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, schedule));
+  window.addEventListener('pagehide', sessionSave);
   syncShareUrl();
+  sessionSave();
 
   document.querySelectorAll('.js-share-btn').forEach(btn => btn.addEventListener('click', () => copyShareLink(btn)));
+}
+
+
+// ---- session: the inputs of all the modules, kept in this browser (localStorage) ----------------------------
+const SESSION_KEY = 'torsioSession';
+let sessionOff = false;
+const SESSION_TXT = {
+  it: { restored: 'Sessione precedente ripristinata', reset: 'Ricomincia da zero', close: 'Chiudi' },
+  en: { restored: 'Restored your last session', reset: 'Start from scratch', close: 'Close' }
+};
+
+function sessionDisabled() {
+  if (sessionOff) return true;
+  try { return localStorage.getItem('torsioNoSession') === '1'; } catch (e) { return true; }
+}
+
+function sessionSave() {
+  if (sessionDisabled() || !shareSyncEnabled || typeof projectSnapshot !== 'function') return;
+  try {
+    const snap = projectSnapshot();
+    for (const st of Object.values(snap.modules)) { delete st.lang; delete st.m; }
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ v: 1, saved: snap.saved, unit: snap.unit, active: snap.active, modules: snap.modules }));
+  } catch (e) { /* storage full or blocked: the session is a convenience */ }
+}
+
+// applies the saved inputs of every module except those in `skip` (named in the address or set by a demo);
+// true if anything differed from the defaults
+function sessionRestore(skip, keepUnit = false) {
+  if (sessionDisabled()) return false;
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { data = null; }
+  if (!data || data.v !== 1 || typeof data.modules !== 'object') return false;
+  let changed = false;
+  if ((data.unit === 'metric' || data.unit === 'imperial') && data.unit !== currentUnit) {
+    if (keepUnit) return false;   // a demo is in metric units: values saved in other units would be read wrongly
+    setUnit(data.unit); changed = true;
+  }
+  for (const [m, st] of Object.entries(data.modules)) {
+    if (skip.includes(m) || !SHARE_FIELDS[m] || !st || typeof st !== 'object') continue;
+    const q = new URLSearchParams();
+    for (const [k, v] of Object.entries(st)) {
+      if (k === 'lang' || k === 'unit' || !(typeof v === 'string' || typeof v === 'number')) continue;
+      q.set(k, String(v));
+      if (shareDefaults[k] !== undefined && String(shareDefaults[k]) !== String(v)) changed = true;
+    }
+    q.set('m', m);
+    try { applyShareState(q, true); } catch (e) { console.error(e); }
+  }
+  if (changed) sessionBanner();
+  return changed;
+}
+
+function sessionReset() {
+  sessionOff = true;
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) { /* ignore */ }
+  window.location.href = window.location.pathname;
+}
+
+function sessionBanner() {
+  const L = SESSION_TXT[currentLang] || SESSION_TXT.en;
+  document.getElementById('sessionBanner')?.remove();
+  const box = document.createElement('div');
+  box.id = 'sessionBanner'; box.setAttribute('role', 'status');
+  box.style.cssText = 'position:fixed;left:16px;bottom:16px;z-index:60;max-width:calc(100vw - 32px);display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 14px;background:#22211f;color:#f4f1ea;border-radius:2px;font:500 12px/1.4 "IBM Plex Mono",monospace;box-shadow:0 4px 18px rgba(0,0,0,.25)';
+  box.innerHTML = `<span>${L.restored}</span><button type="button" data-s="reset" style="color:#e8b321;text-decoration:underline;text-underline-offset:3px">${L.reset}</button><button type="button" data-s="close" aria-label="${L.close}" style="color:#a9a397;font-size:14px;line-height:1">×</button>`;
+  box.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-s]');
+    if (!b) return;
+    if (b.dataset.s === 'reset') sessionReset(); else box.remove();
+  });
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 12000);
 }

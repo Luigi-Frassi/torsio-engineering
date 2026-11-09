@@ -46,6 +46,8 @@
     .sum-bar-wrap.hidden { display: none; }
     .sum-card { background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; padding: 12px 14px; min-width: 0; }
     .sum-k { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6f6a62; }
+    .sum-kc { text-transform: none; letter-spacing: .02em; }
+    .sym-keep { text-transform: none; }
     .sum-val { margin: 4px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 600; line-height: 1.05; color: #22211f; overflow-wrap: anywhere; }
     .sum-val-s { font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 700; padding-top: 6px; }
     .sum-u { font-size: 14px; font-weight: 500; color: #6f6a62; margin-left: 6px; }
@@ -140,7 +142,7 @@
           <img src="vendor/brand/torsio-mark.svg" alt="" class="w-8 h-8">
           <span class="leading-none"><span class="block text-lg font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></span><span class="block text-[11px] text-slate-400 tracking-wide">Engineering</span></span>
         </a>
-        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.2</span>
+        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.2.1</span>
       </div>
       <p class="st-head" data-i18n="navStations">Stations</p>
       <nav class="space-y-0">
@@ -190,7 +192,7 @@
   <div class="md:hidden bg-slate-950 border-b border-slate-800 p-3 sticky top-0 z-50">
     <div class="flex items-center justify-between mb-2.5 px-1">
       <a href="/" data-site="" class="flex items-center gap-2"><img src="vendor/brand/torsio-mark.svg" alt="" class="w-6 h-6"><span class="text-base font-extrabold tracking-tight text-white" style="font-stretch:115%"><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span> <span class="font-medium text-slate-400" style="font-stretch:100%">Engineering</span></span></a>
-      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.2</span>
+      <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">v1.2.1</span>
     </div>
     <div class="grid grid-cols-4 gap-1">
       <button id="navBtnFitsMobile" class="m-station m-station-on">
@@ -415,7 +417,7 @@
                 <th class="p-2.5" data-i18n="thHoleDev">Hole Dev.</th>
                 <th class="p-2.5" data-i18n="thShaftDev">Shaft Dev.</th>
                 <th class="p-2.5" data-i18n="thFitCond">Fit Condition</th>
-                <th class="p-2.5" data-i18n="thMinMax">Min / Max</th>
+                <th class="p-2.5" data-i18n="thMinMax">Clearance min / max (− = interference)</th>
                 <th class="p-2.5 text-right" data-i18n="thAction">Action</th>
               </tr>
             </thead>
@@ -1752,6 +1754,7 @@
           </label>
         </div>
       </div>
+      <div id="shaftSecLinkBox" class="mt-3 text-xs"></div>
       </div>
       <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700/60 mb-4 backdrop-blur">
       <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3" data-i18n="shaftMaterialTitle">Material and life</h3>
@@ -2124,7 +2127,7 @@
         thHoleDev: "Hole Dev.",
         thShaftDev: "Shaft Dev.",
         thFitCond: "Fit Condition",
-        thMinMax: "Min / Max",
+        thMinMax: "Clearance min / max (− = interference)",
         thAction: "Action",
         btnSelect: "Select",
         btnActive: "✓ Active",
@@ -2601,7 +2604,7 @@
         thHoleDev: "Scostam. Foro",
         thShaftDev: "Scostam. Albero",
         thFitCond: "Condizione",
-        thMinMax: "Min / Max",
+        thMinMax: "Gioco min / max (− = interferenza)",
         thAction: "Azione",
         btnSelect: "Seleziona",
         btnActive: "✓ Attivo",
@@ -3797,6 +3800,7 @@
         set('shaftSigmaR', 1080); set('shaftSigmaS', 800); set('shaftSigmaLF', 520); set('shaftLife', 'infinite');
         set('shaftNotchType', 'shoulder'); set('shaftDd', 1.17); set('shaftR', 2);
         set('shaftFinish', 'e'); set('shaftX', 1.75);
+        shaftSecLink = true;
         setShaftMode('beam');
       }
     }
