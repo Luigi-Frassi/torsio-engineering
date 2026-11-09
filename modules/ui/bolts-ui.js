@@ -20,7 +20,7 @@ const BT_TXT = {
     opt: 'Precarico ottimale Pam·Kf/(Kv+Kf)', optHint: 'il giunto si apre proprio quando la vite arriva al carico ammissibile', Pam: 'Carico ammissibile della vite Pam = σs·A_res/X', Psep: 'Carico esterno per vite che apre il giunto',
     screw: 'Vite di manovra', d: 'Diametro nominale d', p: 'Passo p', hT: 'Altezza del filetto', beta: 'Profilo del filetto', betas: { 0: 'rettangolare (β = 0°)', 15: 'trapezoidale (β = 15°)', 30: 'metrico ISO (β = 30°)' },
     fScrew: 'Attrito vite-madrevite f', N: 'Forza assiale N', sy: 'Snervamento della vite σs', selfLock: 'autobloccante (α < φ)', notSelfLock: 'NON autobloccante (α ≥ φ): la vite torna indietro sotto carico', eta: 'Rendimento', pressure: 'Pressione × area (aiuto)',
-    roundDown: 'per difetto, X −0,5 % al massimo', ok: 'VERIFICATO', ko: 'NON VERIFICATO', method: 'Metodo degli appunti di Elementi Costruttivi delle Macchine: dm = 0,9·d, d_noc = 0,8·d, A_res = π·d_noc²/4, β = 30°, Dm = (Dc + d)/2, Dc = chiave della testa.'
+    roundDown: 'per difetto, X −0,5 % al massimo', roundRule: '↓ = arrotondato per difetto. Il numero di viti si arrotonda per eccesso, tranne quando arrotondando per difetto il coefficiente X scende al massimo dello 0,5 % (come nelle soluzioni d\'esame). Per avere sempre l\'arrotondamento per eccesso, imposta il numero di viti a mano.', ok: 'VERIFICATO', ko: 'NON VERIFICATO', method: 'Metodo degli appunti di Elementi Costruttivi delle Macchine: dm = 0,9·d, d_noc = 0,8·d, A_res = π·d_noc²/4, β = 30°, Dm = (Dc + d)/2, Dc = chiave della testa.'
   },
   en: {
     tabs: { design: '1 · Friction joint design', torque: '2 · Check from tightening torque', screw: '3 · Power screw' },
@@ -38,7 +38,7 @@ const BT_TXT = {
     opt: 'Optimal preload Pam·Kf/(Kv+Kf)', optHint: 'the joint opens exactly when the bolt reaches its allowable load', Pam: 'Allowable bolt load Pam = σy·A_res/X', Psep: 'External load per bolt that opens the joint',
     screw: 'Power screw', d: 'Nominal diameter d', p: 'Pitch p', hT: 'Thread depth', beta: 'Thread profile', betas: { 0: 'square (β = 0°)', 15: 'trapezoidal (β = 15°)', 30: 'ISO metric (β = 30°)' },
     fScrew: 'Screw-nut friction f', N: 'Axial force N', sy: 'Screw yield strength σy', selfLock: 'self-locking (α < φ)', notSelfLock: 'NOT self-locking (α ≥ φ): the screw backs off under load', eta: 'Efficiency', pressure: 'Pressure × area (helper)',
-    roundDown: 'rounded down, X −0.5 % at most', ok: 'VERIFIED', ko: 'NOT VERIFIED', method: 'Method of the Machine Elements notes: dm = 0.9·d, d_core = 0.8·d, A_res = π·d_core²/4, β = 30°, Dm = (Dc + d)/2, Dc = head across-flats.'
+    roundDown: 'rounded down, X −0.5 % at most', roundRule: '↓ = rounded down. The bolt count is rounded up, except when rounding down lowers the safety factor X by 0.5 % at most (as in the worked exam solutions). To always round up, set the number of bolts by hand.', ok: 'VERIFIED', ko: 'NOT VERIFIED', method: 'Method of the Machine Elements notes: dm = 0.9·d, d_core = 0.8·d, A_res = π·d_core²/4, β = 30°, Dm = (Dc + d)/2, Dc = head across-flats.'
   }
 };
 function btT() { return BT_TXT[currentLang] || BT_TXT.en; }
@@ -200,7 +200,7 @@ function calculateBolts() {
       (!r.fitsCircle && inp.load === 'torque' ? `<p class="text-xs text-amber-300 mt-2">${t.tooMany(r.nMax)}</p>` : '');
     if (!opts) opts = boltOptions({ F: inp.F, Mt: inp.Mt, Dcircle: inp.Dcircle, mInt: inp.mInt, f: inp.f, X: inp.X, cls, fThread: inp.fThread });
     btEl('btOpts').innerHTML = `<table class="w-full text-xs text-left"><thead><tr class="text-slate-400"><th class="pb-1 pr-2">${t.colSize}</th><th class="pr-2">${t.colM}</th><th class="pr-2">${t.colN}</th><th class="pr-2">${t.colMs}</th>${inp.load === 'torque' ? `<th>${t.colFit}</th>` : ''}</tr></thead><tbody>` +
-      opts.map(o => `<tr data-size="${o.size.name}" class="cursor-pointer border-t border-slate-700/50 ${o.size.name === size.name ? 'bg-blue-600/15' : 'hover:bg-slate-800/60'}"><td class="py-1 pr-2 text-white font-semibold">${o.size.name}</td><td class="pr-2">${btNum(o.r.mReq, 2)} → ${o.r.m}</td><td class="pr-2">${btNum(o.r.N / 1000, 1)}</td><td class="pr-2">${btNum(o.r.Ms / 1000, 0)}</td>${inp.load === 'torque' ? `<td class="${o.r.fitsCircle ? 'text-emerald-400' : 'text-amber-300'}">${o.r.m} / ${o.r.nMax}</td>` : ''}</tr>`).join('') + '</tbody></table>';
+      opts.map(o => `<tr data-size="${o.size.name}" class="cursor-pointer border-t border-slate-700/50 ${o.size.name === size.name ? 'bg-blue-600/15' : 'hover:bg-slate-800/60'}"><td class="py-1 pr-2 text-white font-semibold">${o.size.name}</td><td class="pr-2">${btNum(o.r.mReq, 2)} → ${o.r.m}${o.r.roundedDown ? ' ↓' : ''}</td><td class="pr-2">${btNum(o.r.N / 1000, 1)}</td><td class="pr-2">${btNum(o.r.Ms / 1000, 0)}</td>${inp.load === 'torque' ? `<td class="${o.r.fitsCircle ? 'text-emerald-400' : 'text-amber-300'}">${o.r.m} / ${o.r.nMax}</td>` : ''}</tr>`).join('') + '</tbody></table>' + (opts.some(o => o.r.roundedDown) ? `<p class="text-[11px] text-slate-500 mt-2">${t.roundRule}</p>` : '');
   } else {
     m = Math.max(1, inp.mChosen || 1);
     r = boltFromTorque({ Ms: inp.Ms, m, mInt: inp.mInt, f: inp.f, X: inp.X, size, cls, fThread: inp.fThread, Dcircle: inp.load === 'torque' ? inp.Dcircle : 0 });

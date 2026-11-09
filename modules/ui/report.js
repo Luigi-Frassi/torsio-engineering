@@ -23,7 +23,7 @@ const REPORT_TXT = {
     forcesTitle: 'Forze delle ruote sull\'albero', formulaGear: 'Ft = 2·Mt/d,  Fr = Ft·tanθ/cosα,  Fa = Ft·tanα',
     react: 'Reazione', axial: 'assiale', req: 'C richiesto', lifeL: 'durata L', catalog: 'C catalogo', lifeCat: 'durata con C catalogo', hours: 'h',
     bearingFormula: 'C = R · L^(1/p), p = 3 (sfere) o 10/3 (rulli); con C di catalogo L = (C/R)^p', ballW: 'sfere', rollerW: 'rulli',
-    critAt: 'Sezione con Mf massimo', sectionUsed: 'Sezione dimensionata (dati della scheda Progetto/Verifica)',
+    critAt: 'Sezione con Mf massimo', sectionUsed: 'Sezione dimensionata (dati della scheda Progetto/Verifica)', ownLoads: (x, mf, n) => `valori scritti a mano, diversi dalla trave in x = ${x} mm (Mf = ${mf} N·m, N = ${n} N)`, beamLoads: x => `dalla trave, sezione x = ${x} mm`,
     realSecs: 'Verifica delle sezioni reali', worst: 'più critica',
     notch: 'Intaglio', shoulder: 'spallamento', keyway: 'cava per linguetta', combined: 'spallamento + cava per linguetta', manualKe: 'Ke noto', none: 'sezione liscia',
     bendCycle: 'Flessione', rotating: 'rotante (alterna simmetrica)', staticL: 'costante', torsCycle: 'Torsione', pulsating: 'pulsante', alternating: 'alterna',
@@ -57,7 +57,7 @@ const REPORT_TXT = {
     forcesTitle: 'Gear forces on the shaft', formulaGear: 'Ft = 2·Mt/d,  Fr = Ft·tanθ/cosα,  Fa = Ft·tanα',
     react: 'Reaction', axial: 'axial', req: 'Required C', lifeL: 'life L', catalog: 'catalog C', lifeCat: 'life with catalog C', hours: 'h',
     bearingFormula: 'C = R · L^(1/p), p = 3 (ball) or 10/3 (roller); with a catalog C, L = (C/R)^p', ballW: 'ball', rollerW: 'roller',
-    critAt: 'Section with the largest Mf', sectionUsed: 'Designed section (data of the Design/Check tab)',
+    critAt: 'Section with the largest Mf', sectionUsed: 'Designed section (data of the Design/Check tab)', ownLoads: (x, mf, n) => `values typed by hand, different from the beam at x = ${x} mm (Mf = ${mf} N·m, N = ${n} N)`, beamLoads: x => `from the beam, section x = ${x} mm`,
     realSecs: 'Check of the real sections', worst: 'most critical',
     notch: 'Notch', shoulder: 'shoulder', keyway: 'keyway', combined: 'shoulder + keyway', manualKe: 'known Ke', none: 'plain section',
     bendCycle: 'Bending', rotating: 'rotating (fully reversed)', staticL: 'constant', torsCycle: 'Torsion', pulsating: 'pulsating', alternating: 'alternating',
@@ -426,7 +426,8 @@ function buildShaftReportHtml() {
   const L = inp.loads;
   const notchName = { shoulder: R.shoulder, keyway: R.keyway, combined: R.combined, manual: R.manualKe, none: R.none }[notchType] || notchType;
   body += H(mode === 'check' ? R.s6c : R.s6) + reportKV([
-    [R.sectionUsed, `Mf = ${N(L.Mf, 1)} N·m · Mt = ${N(L.Mt, 1)} N·m · N = ${N(L.N, 0)} N`],
+    [R.sectionUsed, `Mf = ${N(L.Mf, 1)} N·m · Mt = ${N(L.Mt, 1)} N·m · N = ${N(L.N, 0)} N` +
+      (typeof shaftSecMismatch !== 'undefined' && shaftSecMismatch ? ` · ⚠ ${R.ownLoads(N(shaftSecMismatch.x, 1), N(shaftSecMismatch.bmf, 1), N(shaftSecMismatch.bn, 0))}` : (typeof shaftSecLink !== 'undefined' && shaftSecLink && lastShaftBeam ? ` · ${R.beamLoads(N(shaftVal('shaftSecX', lastShaftBeam.critical.x), 1))}` : ''))],
     [R.bendCycle + ' / ' + R.torsCycle, `${L.bendingCycle === 'static' ? R.staticL : R.rotating} / ${{ static: R.staticL, pulsating: R.pulsating, alternating: R.alternating }[L.torsionCycle]}`],
     [R.notch, notchName + (shoulder ? ` · D/d = ${N(inp.notch.Dd || (D && d ? D / d : 0), 2)}, r = ${N(inp.notch.r, 1)} mm` : '')]
   ]);

@@ -39,7 +39,7 @@ def settle(page): page.wait_for_timeout(400)   # URL sync is debounced (250 ms)
 with sync_playwright() as p:
     browser = p.chromium.launch()
     ctx = browser.new_context()
-    ctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
+    ctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1'); localStorage.setItem('torsioNoSession', '1') } catch (e) {}")   # the start screen has its own test
     TW_STUB = "document.head.insertAdjacentHTML('beforeend','<style>.hidden{display:none}@media(min-width:768px){.md\\\\:flex{display:flex}.md\\\\:hidden{display:none}}@media(min-width:640px){.sm\\\\:inline{display:inline}}</style>')"
     def router(r):
         u = r.request.url
@@ -617,7 +617,7 @@ with sync_playwright() as p:
 
     # --- phone (390 px): report menu inside the screen, report without sideways overflow
     mctx = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
-    mctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
+    mctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1'); localStorage.setItem('torsioNoSession', '1') } catch (e) {}")   # the start screen has its own test
     mctx.route('**/*', router)
     mp = mctx.new_page(); mp.on('pageerror', lambda e: errors.append(str(e)))
     mp.goto(BASE + '?demo=shaftExam&lang=it'); settle(mp)
@@ -635,7 +635,7 @@ with sync_playwright() as p:
 
     # --- module views for Analytics
     lctx = browser.new_context(); lctx.route('**/*', router)
-    lctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")   # the start screen has its own test
+    lctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1'); localStorage.setItem('torsioNoSession', '1') } catch (e) {}")   # the start screen has its own test
     lp = lctx.new_page(); lp.on('pageerror', lambda e: errors.append(str(e)))
     lp.goto(BASE); settle(lp)
     lp.evaluate("switchModule('shafts'); switchModule('bolts'); switchModule('bolts')")
@@ -774,6 +774,7 @@ with sync_playwright() as p:
 
     # --- start screen: only for a bare calculator link, closed by any choice
     sctx = browser.new_context(); sctx.route('**/*', router)
+    sctx.add_init_script("try { localStorage.setItem('torsioNoSession', '1') } catch (e) {}")
     sp = sctx.new_page(); sp.on('pageerror', lambda e: errors.append(str(e)))
     sp.goto(BASE + '?lang=it'); settle(sp)
     st = sp.evaluate("[document.body.classList.contains('start-on'), document.querySelectorAll('#startView [data-start]').length, document.getElementById('moduleTitle').textContent, getComputedStyle(document.getElementById('moduleFitsSection')).display]")
@@ -797,6 +798,49 @@ with sync_playwright() as p:
     check('collegamenti: ruote → albero copia i dati, "Annulla" rimette quelli di prima', moved[0] == 'shafts' and moved[1] != '7' and back[1] == '7' and back[2] == '210', f'{moved} {back}')
     lu.close()
 
+
+    # --- feedback (Adam): session, shaft loads tied to the beam, fits sign, bolt rounding, class case
+    fctx = browser.new_context(); fctx.route('**/*', router)
+    fctx.add_init_script("try { localStorage.setItem('torsioNoStart', '1') } catch (e) {}")
+    fp = fctx.new_page(); fp.on('pageerror', lambda e: errors.append(str(e)))
+    fp.goto(BASE + '?m=bolts&lang=en'); settle(fp)
+    set_val(fp, 'btF', 12345); settle(fp)
+    fp.evaluate("switchModule('shafts')"); settle(fp)
+    set_val(fp, 'shaftPower', 15); settle(fp); fp.wait_for_timeout(400)
+    fp.reload(); settle(fp)
+    rs = fp.evaluate("[activeModule, document.getElementById('shaftPower').value, document.getElementById('btF').value, !!document.getElementById('sessionBanner'), (document.getElementById('sessionBanner')||{}).innerText || '']")
+    check('sessione: ricaricando restano anche gli altri moduli, con l\'avviso', rs[0] == 'shafts' and rs[1] == '15' and rs[2] == '12345' and rs[3] and 'Restored' in rs[4], str(rs))
+    with fp.expect_navigation():
+        fp.click('#sessionBanner [data-s="reset"]')
+    settle(fp)
+    rz = fp.evaluate("[document.getElementById('btF').value, document.getElementById('shaftPower').value, localStorage.getItem('torsioSession') === null || !JSON.parse(localStorage.getItem('torsioSession')).modules.bolts.btF]")
+    check('  "Start from scratch" rimette i valori iniziali', rz[0] != '12345' and rz[1] != '15', str(rz))
+    fp.goto(BASE + '?demo=shaftExam&lang=en'); settle(fp)
+    set_val(fp, 'shaftPower', 15); settle(fp)
+    fp.evaluate("setShaftMode('design')"); settle(fp)
+    sh = fp.evaluate("[document.getElementById('shaftMf').value, lastShaftSection.d, document.getElementById('shaftSecLinkBox').innerText]")
+    check('albero: Mf del passo 2 segue la trave (demo a 15 kW: 943,6 N·m, Ø50)', sh[0] == '943.6' and sh[1] == 50 and 'step-1 beam' in sh[2], str(sh))
+    fp.fill('#shaftMf', '1500'); settle(fp)
+    set_val(fp, 'shaftPower', 20); settle(fp)
+    sw = fp.evaluate("[document.getElementById('shaftMf').value, !!document.getElementById('shaftLinkBtn'), document.querySelector('.sum-card .sum-sub').innerText]")
+    check('  Mf scritto a mano: resta, con l\'avviso e il pulsante per riprendere la trave', sw[0] == '1500' and sw[1] and 'typed by hand' in sw[2], str(sw))
+    fp.click('#shaftLinkBtn'); settle(fp)
+    check('  "Use the beam values" riallinea Mf', abs(float(fp.evaluate("document.getElementById('shaftMf').value")) - 1258.2) < 1, fp.evaluate("document.getElementById('shaftMf').value"))
+    fp.goto(BASE + '?m=fits&lang=en&nominalDiameter=25&fitType=H7%2Fp6'); settle(fp)
+    rows = fp.evaluate("[...document.querySelectorAll('#comparisonTableBody tr')].map(r => r.innerText.replace(/\\s+/g, ' '))")
+    p6 = next((r for r in rows if 'H7/p6' in r), ''); k6 = next((r for r in rows if 'H7/k6' in r), '')
+    check('accoppiamenti: tabella con un solo segno (− = interferenza): H7/p6 −35/−1, H7/k6 −15/+19', '-35' in p6.replace('−', '-') and '-1' in p6.replace('−', '-') and '+1 ' not in p6, p6 + ' | ' + k6)
+    fp.goto(BASE + '?m=fits&lang=en&nominalDiameter=25&fitType=H7%2Fh6'); settle(fp)
+    kc = fp.evaluate("[...document.querySelectorAll('.sum-k')].map(e => e.innerText)")
+    check('  la classe dell\'albero resta minuscola nel riepilogo (h6, non H6)', any(k.endswith('h6') for k in kc) and not any('H6' in k for k in kc), str(kc))
+    fp.goto(BASE + '?m=shafts&smode=design&lang=en'); settle(fp)
+    lb = fp.evaluate("[...document.querySelectorAll('#shaftSectionPanel label')].map(e => e.innerText).join(' | ')")
+    check('  etichette in maiuscolo: simboli e unità restano come sono (Mf, σR, D/d, r)', all(k in lb for k in ('MOMENT Mf', 'STRENGTH σR', 'RATIO D/d', 'RADIUS r')), lb[:300])
+    fp.goto(BASE + '?demo=boltsExam&lang=en'); settle(fp)
+    bt = fp.evaluate("[document.getElementById('btOpts').innerText, [...document.querySelectorAll('.sum-sub')].map(e => e.innerText).join(' | ')]")
+    rounded = '↓' in bt[0]
+    check('viti: arrotondamento per difetto spiegato, senza virgola italiana in inglese', (not rounded or 'rounded down' in bt[0]) and '−0,5' not in bt[1], str(bt)[:300])
+    fctx.close()
     check('nessun errore JS in tutto il test', not errors, '; '.join(errors[:3]))
     browser.close()
 srv.shutdown()

@@ -11,24 +11,24 @@ const SUM_TXT = {
   it: {
     ok: 'VERIFICATO', ko: 'NON VERIFICATO', info: 'CALCOLATO', na: 'DA COMPLETARE',
     req: 'richiesto', margin: 'margine', min: 'min', none: '—',
-    sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', noLoad: 'La sezione scelta non è sollecitata', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R' },
+    sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', noLoad: 'La sezione scelta non è sollecitata', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R', own: (mf, b) => `Mf ${mf} N·m scritto a mano (trave: ${b})` },
     ge: { m: 'Modulo', L: 'Larghezza di fascia', lewis: 'Lewis σL', a: 'Interasse', P: 'Potenza trasmissibile', M1: 'Momento al pignone', lim: { hertz: 'limita Hertz', lewis: 'limita Lewis' }, und: 'sottotaglio' },
     be: { indic: 'indicativa, da confermare sul catalogo', C: 'Interasse esatto', zb: 'Cinghia', w: 'Larghezza', mesh: 'Denti in presa', teeth: 'denti', geom: 'solo geometria' },
     fi: { hole: 'Foro', shaft: 'Albero', fit: 'Accoppiamento', d: 'Diametro nominale', kinds: { clearance: 'GIOCO', interference: 'INTERFERENZA', transition: 'INCERTO' }, play: 'gioco', inter: 'interferenza' },
     fr: { sec: 'Sezione scelta', mass: 'Peso', util: 'Utilizzo massimo', defl: 'Freccia massima', empty: 'Disegna la struttura', bars: 'travi', bar1: 'trave' },
     ds: { pc: 'Pressione a fermo', pcs: 'Pressione in esercizio', sep: 'Velocità di distacco', seq: 'σeq massima', open: 'staccati', noSep: 'non si staccano', h0: 'Spessore al centro', he: 'Spessore al bordo', mass: 'Massa', uni: 'uniforme resistenza' },
-    bo: { bolts: 'Viti', Ms: 'Coppia di serraggio', X: 'X vite', N: 'Precarico per vite', Fmax: 'Carico trasmissibile', screw: 'Vite di manovra', eta: 'Rendimento', lock: 'autobloccante', nolock: 'non autobloccante', perBolt: 'per vite', sep: 'il giunto si apre' }
+    bo: { bolts: 'Viti', Ms: 'Coppia di serraggio', X: 'X vite', N: 'Precarico per vite', Fmax: 'Carico trasmissibile', screw: 'Vite di manovra', eta: 'Rendimento', lock: 'autobloccante', nolock: 'non autobloccante', perBolt: 'per vite', sep: 'il giunto si apre', rd: p => `per difetto: X −${p} % (≤ 0,5 %)` }
   },
   en: {
     ok: 'VERIFIED', ko: 'NOT VERIFIED', info: 'CALCULATED', na: 'TO COMPLETE',
     req: 'required', margin: 'margin', min: 'min', none: '—',
-    sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', noLoad: 'The chosen section carries no load', govF: 'fatigue governs', govY: 'yield governs', reac: 'R' },
+    sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', noLoad: 'The chosen section carries no load', govF: 'fatigue governs', govY: 'yield governs', reac: 'R', own: (mf, b) => `Mf ${mf} N·m typed by hand (beam: ${b})` },
     ge: { m: 'Module', L: 'Face width', lewis: 'Lewis σL', a: 'Centre distance', P: 'Power capacity', M1: 'Pinion torque', lim: { hertz: 'Hertz limits', lewis: 'Lewis limits' }, und: 'undercut' },
     be: { indic: 'indicative, confirm in the catalog', C: 'Exact centre distance', zb: 'Belt', w: 'Width', mesh: 'Teeth in mesh', teeth: 'teeth', geom: 'geometry only' },
     fi: { hole: 'Hole', shaft: 'Shaft', fit: 'Fit', d: 'Nominal diameter', kinds: { clearance: 'CLEARANCE', interference: 'INTERFERENCE', transition: 'TRANSITION' }, play: 'clearance', inter: 'interference' },
     fr: { sec: 'Chosen section', mass: 'Weight', util: 'Maximum utilisation', defl: 'Maximum deflection', empty: 'Draw the structure', bars: 'members', bar1: 'member' },
     ds: { pc: 'Pressure at rest', pcs: 'Pressure in service', sep: 'Separation speed', seq: 'Max σeq', open: 'separated', noSep: 'no separation', h0: 'Centre thickness', he: 'Rim thickness', mass: 'Mass', uni: 'uniform strength' },
-    bo: { bolts: 'Bolts', Ms: 'Tightening torque', X: 'Bolt X', N: 'Preload per bolt', Fmax: 'Transmissible load', screw: 'Power screw', eta: 'Efficiency', lock: 'self-locking', nolock: 'not self-locking', perBolt: 'per bolt', sep: 'the joint opens' }
+    bo: { bolts: 'Bolts', Ms: 'Tightening torque', X: 'Bolt X', N: 'Preload per bolt', Fmax: 'Transmissible load', screw: 'Power screw', eta: 'Efficiency', lock: 'self-locking', nolock: 'not self-locking', perBolt: 'per bolt', sep: 'the joint opens', rd: p => `rounded down: X −${p} % (≤ 0.5 %)` }
   }
 };
 function sumT() { return SUM_TXT[typeof currentLang !== 'undefined' ? currentLang : 'en'] || SUM_TXT.en; }
@@ -63,7 +63,8 @@ function sumShafts(t) {
     const okF = s.res.Xfatigue >= s.Xreq - 1e-9, okY = s.res.Xyield >= s.Xreq - 1e-9;
     status = okF && okY ? 'ok' : 'ko';
     const sub = [s.D ? `D ${sumNum(s.D, 0)}` : '', s.r ? `r ${sumNum(s.r, 1)}` : '', s.dMin ? `${t.min} ${sumNum(s.dMin, 1)}` : ''].filter(Boolean).join(' · ');
-    cards.push({ k: s.mode === 'design' ? t.sh.d : t.sh.dCheck, v: sumNum(s.d, s.mode === 'design' ? 0 : 1), u: 'mm', sub: sub + (s.governing ? ` · ${s.governing === 'yield' ? t.sh.govY : t.sh.govF}` : ''), tone: 'y' });
+    const mis = !s.fromBeam && typeof shaftSecMismatch !== 'undefined' ? shaftSecMismatch : null;
+    cards.push({ k: s.mode === 'design' ? t.sh.d : t.sh.dCheck, v: sumNum(s.d, s.mode === 'design' ? 0 : 1), u: 'mm', sub: sub + (s.governing ? ` · ${s.governing === 'yield' ? t.sh.govY : t.sh.govF}` : '') + (mis ? ` · ⚠ ${t.sh.own(sumNum(mis.mf, 0), sumNum(mis.bmf, 0))}` : ''), tone: 'y' });
     cards.push({ k: t.sh.xf, v: sumNum(s.res.Xfatigue, 2), sub: `${t.req} ${sumNum(s.Xreq, 2)} · ${t.margin} ${sumNum((s.res.Xfatigue / s.Xreq - 1) * 100, 0)} %`, tone: okF ? 'b' : 'r', bar: { x: s.res.Xfatigue, req: s.Xreq } });
     cards.push({ k: t.sh.xy, v: sumNum(s.res.Xyield, 2), sub: `${t.req} ${sumNum(s.Xreq, 2)}`, tone: okY ? 'b' : 'r', bar: { x: s.res.Xyield, req: s.Xreq } });
   } else {
@@ -125,8 +126,8 @@ function sumFits(t) {
     : `${t.fi.play} ${f(a.maxPlay)} · ${t.fi.inter} ${sumNum(Math.abs(a.minPlay), 0)} µm`;
   return { status: 'info', statusText: t.fi.kinds[a.kind] || '', cards: [
     { k: t.fi.d, v: sumNum(s.dMm, s.dMm % 1 ? 2 : 0), u: 'mm', sub: s.fit, tone: 'y' },
-    { k: `${t.fi.hole} ${a.holeClass}`, v: `${f(a.ES_H)} / ${f(a.EI_H)}`, u: 'µm', sub: `${sumNum(s.dMm + a.EI_H / 1000, 3)} … ${sumNum(s.dMm + a.ES_H / 1000, 3)}`, tone: 'b' },
-    { k: `${t.fi.shaft} ${a.shaftClass}`, v: `${f(a.devs.es)} / ${f(a.devs.ei)}`, u: 'µm', sub: `${sumNum(s.dMm + a.devs.ei / 1000, 3)} … ${sumNum(s.dMm + a.devs.es / 1000, 3)}`, tone: 'b' },
+    { k: t.fi.hole, kc: a.holeClass, v: `${f(a.ES_H)} / ${f(a.EI_H)}`, u: 'µm', sub: `${sumNum(s.dMm + a.EI_H / 1000, 3)} … ${sumNum(s.dMm + a.ES_H / 1000, 3)}`, tone: 'b' },
+    { k: t.fi.shaft, kc: a.shaftClass, v: `${f(a.devs.es)} / ${f(a.devs.ei)}`, u: 'µm', sub: `${sumNum(s.dMm + a.devs.ei / 1000, 3)} … ${sumNum(s.dMm + a.devs.es / 1000, 3)}`, tone: 'b' },
     { k: t.fi.fit, v: t.fi.kinds[a.kind] || '', sub: play, tone: 'k' }
   ] };
 }
@@ -211,10 +212,75 @@ function sumBolts(t) {
   const cards = [{ k: t.bo.bolts, v: `${s.m} × ${s.size.name}`, sub: `${s.cls}${extOn && s.ex.separated ? ' · ' + t.bo.sep : ''}`, tone: 'y' }];
   if (s.mode === 'design') cards.push({ k: t.bo.Ms, v: sumNum(r.Ms / 1000, 0), u: 'N·m', sub: t.bo.perBolt, tone: 'k' });
   else cards.push({ k: t.bo.Fmax, v: r.Mtmax ? sumNum(r.Mtmax / 1e6, 2) : sumNum(r.Fmax / 1000, 1), u: r.Mtmax ? 'kN·m' : 'kN', sub: '', tone: 'k' });
-  cards.push({ k: t.bo.X, v: sumNum(xBolt, 2), sub: `${t.req} ${sumNum(X, 2)}${r.roundedDown ? ' · −0,5 %' : ''}`, tone: okX ? 'b' : 'r', bar: { x: xBolt, req: Xok } });
+  cards.push({ k: t.bo.X, v: sumNum(xBolt, 2), sub: `${t.req} ${sumNum(X, 2)}${r.roundedDown ? ' · ' + t.bo.rd(sumNum(Math.max(0, (1 - xBolt / X) * 100), 1)) : ''}`, tone: okX ? 'b' : 'r', bar: { x: xBolt, req: Xok } });
   cards.push({ k: t.bo.N, v: sumNum(s.N / 1000, 1), u: 'kN', sub: `A_res ${sumNum(s.r.g ? s.r.g.Ares : NaN, 0)} mm²`, tone: 'k' });
   return { status: ok ? 'ok' : 'ko', cards };
 }
+
+// ---- symbols in uppercase labels -------------------------------------------------------------------------
+// Labels in capitals (CSS text-transform) must not change symbols and units: h6 is a shaft class, H6 a hole one;
+// σ is not Σ, Mf is not MF, N·m is not N·M. Such words are wrapped in a span that keeps their case.
+const SYM_STOP = new Set(['Di', 'Da', 'Il', 'Lo', 'La', 'Le', 'Li', 'In', 'Un', 'Al', 'Ai', 'Su', 'Se', 'Ed', 'Ne', 'Of', 'On', 'At', 'To', 'By', 'Is', 'No', 'Up', 'An', 'As', 'Or', 'Do', 'If', 'It', 'Me', 'My', 'So', 'We', 'He', 'Us', 'Go', 'Ok', 'Ex']);
+const SYM_UNITS = new Set(['mm', 'cm', 'm', 'rpm', 'kW', 'W', 'MPa', 'GPa', 'kN', 'N·m', 'N·mm', 'kN·m', 'Nm', 'µm', 'kg', 'mm²', 'mm³', 'mm⁴', 'rad/s', 'Hz', 'N/m', 'N/mm', 'N/mm²', 'kg/m', 'kg/m³', 's', 'h', 'lbf', 'psi', 'ksi', 'hp', 'lb·ft', 'lbf·ft', 'lbf·in']);
+function symIsSymbol(core) {
+  if (!core) return false;
+  return /[α-ωϑϕ]/.test(core) || SYM_UNITS.has(core) || /·[a-z]/.test(core) ||
+    /^[A-Za-z]{1,2}\d+$/.test(core) && /[a-z]/.test(core) ||
+    /^[b-df-hj-np-z]$/.test(core) ||
+    /^[a-z][a-z₀-₉']{0,3}[₀-₉']$/.test(core) ||
+    /^[A-Z][a-z]$/.test(core) && !SYM_STOP.has(core) ||
+    /^[A-Z][a-z]?[₀-₉']+$/.test(core) && /[a-z]/.test(core) ||
+    /^[A-Z]\/[a-z]$/.test(core);
+}
+// splits a word into leading punctuation, core, trailing punctuation
+function symSplit(w) {
+  const m = /^([(\[«"“]*)(.*?)([)\],:;.»"”]*)$/.exec(w);
+  return m ? [m[1], m[2], m[3]] : ['', w, ''];
+}
+function symHtml(text, cls = 'sym-keep') {
+  return String(text).split(/(\s+)/).map(w => {
+    if (/^\s+$/.test(w) || !w) return w;
+    const [a, c, b] = symSplit(w);
+    return symIsSymbol(c) ? `${sumEsc(a)}<span class="${cls}">${sumEsc(c)}</span>${sumEsc(b)}` : sumEsc(w);
+  }).join('');
+}
+function sumKey(k) { return symHtml(k, 'sum-kc'); }
+
+// wraps the symbols in the direct text of the elements written in capitals under `root`
+function symKeepCase(root) {
+  if (!root || !root.querySelectorAll) return;
+  const els = root.matches && root.matches('.uppercase') ? [root, ...root.querySelectorAll('.uppercase')] : root.querySelectorAll('.uppercase');
+  for (const el of els) {
+    for (const n of [...el.childNodes]) {
+      if (n.nodeType !== 3 || !n.nodeValue.trim()) continue;
+      const words = n.nodeValue.split(/\s+/);
+      if (!words.some(w => symIsSymbol(symSplit(w)[1]))) continue;
+      const span = document.createElement('span');
+      span.innerHTML = symHtml(n.nodeValue);
+      n.replaceWith(...span.childNodes);
+    }
+  }
+}
+
+(function symInstall() {
+  const ul = window.updateLanguage;
+  if (typeof ul === 'function') window.updateLanguage = function () { const r = ul.apply(this, arguments); symKeepCase(document.body); return r; };
+  let pending = new Set(), raf = 0;
+  const flush = () => { raf = 0; const roots = pending; pending = new Set(); roots.forEach(r => { if (r.isConnected) symKeepCase(r); }); };
+  const start = () => {
+    symKeepCase(document.body);
+    new MutationObserver(list => {
+      for (const m of list) {
+        const t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+        if (!t || t.closest('svg, .sym-keep, .sum-kc')) continue;
+        const up = t.closest('.uppercase');
+        pending.add(up ? up.parentElement || up : t);
+      }
+      if (pending.size && !raf) raf = requestAnimationFrame(flush);
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
 
 // ---- render --------------------------------------------------------------------------------------------
 const SUM_TONE = { y: '#e8b321', b: '#2f66b3', r: '#c0392b', k: '#22211f' };
@@ -229,7 +295,7 @@ function sumCardHtml(c) {
     const w = Math.min(100, c.bar.x / max * 100), m = c.bar.req / max * 100;
     bar = `<div class="sum-bar" aria-hidden="true"><div style="width:${w.toFixed(1)}%;background:${c.tone === 'r' ? SUM_TONE.r : SUM_TONE.b}"></div><i style="left:${m.toFixed(1)}%"></i></div>`;
   }
-  return `<div class="sum-card${c.wide ? ' sum-card-wide' : ''}" style="border-top-color:${SUM_TONE[c.tone] || SUM_TONE.k}"><p class="sum-k">${sumEsc(c.k)}</p>${val}${bar}${c.sub ? `<p class="sum-sub">${sumEsc(c.sub)}</p>` : ''}</div>`;
+  return `<div class="sum-card${c.wide ? ' sum-card-wide' : ''}" style="border-top-color:${SUM_TONE[c.tone] || SUM_TONE.k}"><p class="sum-k">${sumKey(c.k)}${c.kc ? ` <span class="sum-kc">${sumEsc(c.kc)}</span>` : ''}</p>${val}${bar}${c.sub ? `<p class="sum-sub">${sumEsc(c.sub)}</p>` : ''}</div>`;
 }
 
 function sumRender() {
