@@ -643,6 +643,18 @@ with sync_playwright() as p:
     check('analytics: ogni modulo aperto conta come /app/<modulo>, senza doppioni', '/app/shafts' in pv and pv.count('/app/bolts') == 1, str(pv))
     ev = lp.evaluate("(() => { const f = (window.vaq || []).find(a => a[0] === 'beforeSend'); return f ? [f[1]({ url: location.origin + '/app/shafts?x=1' }).url, f[1]({ url: location.origin + '/app.html?m=gears&gearPower=5' }).url] : null; })()")
     check('  il filtro privacy lascia passare /app/<modulo> e toglie i dati del calcolo', ev and ev[0].endswith('/app/shafts') and ev[1].endswith('/app.html?m=gears'), str(ev))
+    ev4 = lp.evaluate("(() => { const f = (window.vaq || []).find(a => a[0] === 'beforeSend'); return [f[1]({ url: location.origin + '/pdf/shafts?x=1' }).url, f[1]({ url: location.origin + '/app.html?m=gears&gearPower=5&utm_source=linkedin&utm_medium=social&utm_term=x' }).url]; })()")
+    check('  il filtro lascia passare /pdf/<modulo> e gli utm_ (source, medium, campaign), non il resto', ev4[0].endswith('/pdf/shafts') and ev4[1].endswith('/app.html?m=gears&utm_source=linkedin&utm_medium=social'), str(ev4))
+    lp.evaluate("switchModule('shafts')"); settle(lp)
+    with lp.expect_popup() as pop:
+        lp.evaluate("openReport()")
+    rw = pop.value; rw.wait_for_load_state(); rw.wait_for_timeout(1500)
+    rw.click('.toolbar button.sec >> nth=1'); rw.wait_for_timeout(300)   # HTML (the download itself is not needed here)
+    lp.evaluate("exportDxf('shafts')")
+    tl = lp.evaluate("window.torsioTrackLog || []")
+    pv2 = lp.evaluate("(window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path)")
+    check('analytics: relazione aperta, HTML scaricato e DXF contano come /report, /html, /dxf del modulo', all(k in tl and k in pv2 for k in ('/report/shafts', '/html/shafts', '/dxf/shafts')), str(tl))
+    rw.close()
     lctx.close()
 
     # --- feedback: 👍/👎 under the module and in the report toolbar (Tally form Gev5gZ)

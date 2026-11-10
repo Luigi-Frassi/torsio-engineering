@@ -278,6 +278,9 @@ function reportFeedbackLinks(R) {
 }
 
 function reportShell(title, subtitle, body, R, disclaimer = null) {
+  const trk = typeof reportKind !== 'undefined' && reportKind === 'transmission' ? 'transmission' : activeModule;
+  reportLastMod = trk;
+  const T = k => `try{opener&&opener.torsioTrack&&opener.torsioTrack('${k}','${trk}')}catch(e){};`;
   if (reportCollect) { reportCollect.push({ title, subtitle, body, disclaimer: disclaimer || R.disclaimer }); return '__part__'; }
   let link = '';
   try { link = typeof shareUrl === 'function' ? shareUrl() : window.location.href; } catch (e) { link = window.location.href; }
@@ -286,9 +289,9 @@ function reportShell(title, subtitle, body, R, disclaimer = null) {
   return `<!doctype html><html lang="${currentLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${reportEsc(R.docTitle)} — ${reportEsc(subtitle)}</title>
 <link rel="stylesheet" href="${new URL('vendor/fonts/fonts.css', window.location.href).href}"><link rel="stylesheet" href="${new URL('vendor/katex/katex.min.css', window.location.href).href}"><style>${reportCSS()}</style></head><body>
-<div class="toolbar"><button type="button" onclick="if(window.torsioPdf){torsioPdf(this)}else{var b=this,s=document.createElement('script');s.src=b.dataset.pdf;s.onload=function(){torsioPdf(b)};document.head.appendChild(s)}" data-pdf="${new URL('modules/ui/report-pdf.js', window.location.href).href}" data-lib="${new URL('vendor/html2canvas/html2canvas.min.js', window.location.href).href}" data-fname="${reportEsc(fname.replace(/\.html$/, '.pdf'))}" data-title="${reportEsc(title)}" data-footer="${reportEsc('Torsio Engineering · ' + title)}" data-lbl="${reportEsc(JSON.stringify({ busy: R.pdfBusy, fail: R.pdfFail, page: R.pdfPage }))}"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg> ${R.pdfBtn}</button>
-<button type="button" class="sec" onclick="window.print()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><path d="M5 17H3V9h18v8h-2"/><path d="M7 14h10v7H7z"/></svg> ${R.printBtn}</button>
-<button type="button" class="sec" onclick="(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()">${R.htmlBtn}</button>
+<div class="toolbar"><button type="button" onclick="${T('pdf')}if(window.torsioPdf){torsioPdf(this)}else{var b=this,s=document.createElement('script');s.src=b.dataset.pdf;s.onload=function(){torsioPdf(b)};document.head.appendChild(s)}" data-pdf="${new URL('modules/ui/report-pdf.js', window.location.href).href}" data-lib="${new URL('vendor/html2canvas/html2canvas.min.js', window.location.href).href}" data-fname="${reportEsc(fname.replace(/\.html$/, '.pdf'))}" data-title="${reportEsc(title)}" data-footer="${reportEsc('Torsio Engineering · ' + title)}" data-lbl="${reportEsc(JSON.stringify({ busy: R.pdfBusy, fail: R.pdfFail, page: R.pdfPage }))}"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg> ${R.pdfBtn}</button>
+<button type="button" class="sec" onclick="${T('pdf')}window.print()"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 8V3h10v5"/><path d="M5 17H3V9h18v8h-2"/><path d="M7 14h10v7H7z"/></svg> ${R.printBtn}</button>
+<button type="button" class="sec" onclick="${T('html')}(function(){var h='<!doctype html>'+document.documentElement.outerHTML;var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h],{type:'text/html'}));a.download=${JSON.stringify(fname).replace(/"/g, '&quot;')};a.click();})()">${R.htmlBtn}</button>
 <span>${R.printHint} <b id="pdfFail" style="color:#e8b321"></b></span>${reportFeedbackLinks(R)}</div>
 <div class="page">
 <header class="rep">${tbk.head}<h1>${reportEsc(title)}</h1><h2>${reportEsc(subtitle)}</h2></header>
@@ -298,7 +301,9 @@ ${tbk.cart}
 </div></body></html>`;
 }
 
+let reportLastMod = null;   // module of the last report built (for the usage count)
 function reportOpen(html, w = null) {
+  if (typeof window.torsioTrack === 'function' && reportLastMod) window.torsioTrack('report', reportLastMod);
   w = w || window.open('', '_blank');
   if (w && w.document) { w.document.open(); w.document.write(html); w.document.close(); return true; }
   // popup blocked: download the report instead
