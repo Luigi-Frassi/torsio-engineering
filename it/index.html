@@ -93,6 +93,11 @@
     .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0 0 30px; }
     .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
     .note { font-size: 14px; color: var(--ink-2); margin-top: 18px; }
+    .sample { margin-top: 16px; font-size: 15px; color: var(--ink-2); }
+    .sample a { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    .sample a:hover { color: var(--ink); }
+    .sample a svg { flex: none; }
+    .sample .meta { display: block; margin-top: 2px; font-size: 13px; }
     .jump { margin-top: 24px; }
     .jump p { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); }
     .jump div { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -208,6 +213,7 @@
             <a class="btn go" href="/app.html?lang=it" data-href="app" data-t="openApp">Apri il calcolatore</a>
             <a class="btn alt" href="/app.html?demo=transmission&amp;lang=it" data-href="demo" data-t="tryDemo">Prova una trasmissione completa</a>
           </div>
+          <p class="sample"><a href="/samples/torsio-sample-report-it.pdf" data-href-it="/samples/torsio-sample-report-it.pdf" data-href-en="/samples/torsio-sample-report-en.pdf" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v4h4"></path><path d="M9 12h6M9 15h6M9 18h3"></path></svg><span data-t="sample">Guarda una relazione d'esempio</span></a> <span class="meta" data-t="sampleMeta">PDF, 12 pagine: cinghia, ruote, albero, accoppiamento</span></p>
           <div class="jump"><p data-t="jump">Oppure vai direttamente a</p><div><a href="/app.html?m=shafts&amp;lang=it" data-href="shafts"><b>S-04</b><span data-t="jShafts">Alberi</span></a><a href="/app.html?m=gears&amp;lang=it" data-href="gears"><b>G-03</b><span data-t="jGears">Ruote dentate</span></a><a href="/app.html?m=bolts&amp;lang=it" data-href="bolts"><b>J-06</b><span data-t="jBolts">Bulloni</span></a><a href="/app.html?m=frames&amp;lang=it" data-href="frames"><b>T-05</b><span data-t="jFrames">Telai e tralicci</span></a><a href="/app.html?m=belts&amp;lang=it" data-href="belts"><b>B-02</b><span data-t="jBelts">Cinghie</span></a><a href="/app.html?m=fits&amp;lang=it" data-href="fits"><b>F-01</b><span data-t="jFits">Accoppiamenti</span></a><a href="/app.html?m=discs&amp;lang=it" data-href="discs"><b>D-07</b><span data-t="jDiscs">Dischi e calettamenti</span></a><a href="/app.html?m=trains&amp;lang=it" data-href="trains"><b>R-08</b><span data-t="jTrains">Rotismi</span></a></div></div>
           <p class="note" data-t="free">Gratuito, senza registrazione, verificato su 544 casi d'esame svolti a mano. I dati non escono dal tuo computer.</p>
         </div>
@@ -372,6 +378,7 @@
           <li><b data-t="r3b">Controlli tra gli stadi</b><span data-t="r3s">Velocità e potenze che non tornano, pignoni troppo piccoli per essere calettati.</span></li>
           <li><b data-t="r4b">Disegno DXF per il CAD</b><span data-t="r4s">Profilo dell'albero quotato con cave e raccordi, strutture, ruote e cinghie, con lo stesso cartiglio.</span></li>
         </ul>
+        <p class="sample"><a href="/samples/torsio-sample-report-it.pdf" data-href-it="/samples/torsio-sample-report-it.pdf" data-href-en="/samples/torsio-sample-report-en.pdf" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v4h4"></path><path d="M9 12h6M9 15h6M9 18h3"></path></svg><span data-t="sampleRep">Apri la relazione d'esempio completa</span></a> <span class="meta" data-t="sampleMeta">PDF, 12 pagine: cinghia, ruote, albero, accoppiamento</span></p>
       </div>
       <div class="page" aria-label="Estratto di una relazione di calcolo">
         <div class="bar"><img src="/vendor/brand/torsio-mark.svg" alt="">Torsio Engineering</div>
@@ -434,7 +441,7 @@
         m2h: 'Gears', m2p: 'Module and face width for pitting, bending check, power capacity of an existing pair.', m2m: 'Hertz · Lewis · spur and helical', open2: 'Size the gears',
         m3h: 'Shaft', m3p: 'Reactions, diagrams, minimum diameter for fatigue, real sections, life, bearings.', open3: 'Size the shaft',
         m4h: 'Fits', m4p: 'Deviations, clearances and interferences, machining and drawing callout.', open4: 'Choose the fit',
-        repH: 'A report you can sign and hand in', repP: 'The calculation does not stay on the screen. One click gives an A4 document to save as PDF, with your logo and title block, signatures and revision history.',
+        sample: 'See a sample report', sampleRep: 'Open the full sample report', sampleMeta: 'PDF, 12 pages: belt, gears, shaft, fit', repH: 'A report you can sign and hand in', repP: 'The calculation does not stay on the screen. One click gives an A4 document to save as PDF, with your logo and title block, signatures and revision history.',
         r1b: 'Formulas with the numbers substituted', r1s: 'Real fractions and roots, step by step, like a worked exam.',
         r2b: 'Diagrams and force views', r2s: 'Moments in both planes, Goodman line, gear and belt layouts.',
         r3b: 'Checks between stages', r3s: 'Speeds and powers that do not match, pinions too small to be keyed.',
