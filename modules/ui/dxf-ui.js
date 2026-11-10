@@ -284,6 +284,7 @@ function exportDxf(mod = activeModule) {
   const text = d.toString();
   const name = (typeof prjFileName === 'function' ? prjFileName('') : 'torsio') + '_' + ({ shafts: 'albero', frames: 'struttura', gears: 'ruote', belts: 'cinghia' }[mod]) + '.dxf';
   if (typeof prjDownload === 'function') prjDownload(name, text, 'application/dxf');
+  if (typeof window.torsioTrack === 'function') window.torsioTrack('dxf', mod);
   window.lastDxf = { name, text };   // for tests
   return text;
 }
