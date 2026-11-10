@@ -343,7 +343,7 @@ function buildShaftReportHtml() {
     [R.material, (typeof shaftMaterialLabel === 'function' && shaftMaterialLabel(document.getElementById('shaftMaterial')?.value) ? shaftMaterialLabel(document.getElementById('shaftMaterial').value) + ' (EN 10083) · ' : '') + `σR = ${N(inp.sigmaR, 0)} MPa · σs = ${N(inp.sigmaS, 0)} MPa · σLF = ${N(inp.sigmaLF, 0)} MPa`],
     [R.finish, reportEsc(finishName)], [R.Xreq, `X = ${N(Xreq, 2)}`], [R.life, lifeTxt],
     [R.theta, `θ = ${N(bi.theta, 1)}°`], [R.length, bi.L > 0 ? `L = ${N(bi.L, 1)} mm` : '—'],
-    [R.bearings, `${bi.bearingType === 'roller' ? 'rulli / roller (p = 10/3)' : 'sfere / ball (p = 3)'} · L = ${N(bi.life, 1)}·10⁶`],
+    [R.bearings, `${bi.bearingType === 'roller' ? (currentLang === 'it' ? 'rulli (p = 10/3)' : 'roller (p = 10/3)') : (currentLang === 'it' ? 'sfere (p = 3)' : 'ball (p = 3)')} · L = ${N(bi.life, 1)}·10⁶`],
     [R.rotation, bi.rotation === 'cw' ? R.cw : R.ccw]
   ]);
 
@@ -409,7 +409,7 @@ function buildShaftReportHtml() {
     ]);
     const rs = typeof lastShaftRealSections !== 'undefined' && lastShaftRealSections && lastShaftRealSections.rows.length ? lastShaftRealSections : null;
     if (rs) {
-      body += `<h4>${R.realSecs}</h4>` + reportTable(['x [mm]', 'd / D, r [mm]', 'Mf [N·m]', 'Mt [N·m]', 'Ke', 'X fat.', 'X snerv./yield'],
+      body += `<h4>${R.realSecs}</h4>` + reportTable(['x [mm]', 'd / D, r [mm]', 'Mf [N·m]', 'Mt [N·m]', 'Ke', currentLang === 'it' ? 'X fatica' : 'X fatigue', currentLang === 'it' ? 'X snerv.' : 'X yield'],
         rs.rows.map(r => ({ cls: r === rs.worst ? 'hl' : '', cells: [N(r.x, 1) + (r === rs.worst ? ` (${R.worst})` : ''),
           (r.D > r.d && r.r > 0 ? `Ø${N(r.d, 1)} / Ø${N(r.D, 1)}, r ${N(r.r, 1)}` : `Ø${N(r.d, 1)}`) + (r.keyway ? ` + ${R.keyway}` : ''),
           N(r.Mf, 1), N(r.Mt, 1), N(r.check.ke, 2), N(r.check.Xfatigue, 2), N(r.check.Xyield, 2)] })));
@@ -465,7 +465,7 @@ function buildShaftReportHtml() {
     if (des && des.ok) resBox += `<div>${R.dMin}: <span class="big">d ≥ ${N(des.dMin, 1)} mm</span> (${R.governs} ${des.governing === 'yield' ? R.yieldG : R.fatigue})</div>` +
       `<div>${R.dChosen}: <span class="big">d = ${N(d, 0)} mm${D ? ` · D = ${N(D, 0)} mm` : ''}</span>${shoulder ? ` · r = ${N(inp.notch.r, 1)} mm` : ''}</div>`;
     else resBox += `<div>d = <span class="big">${N(d, 1)} mm</span>${D ? ` · D = ${N(D, 1)} mm` : ''}</div>`;
-    resBox += `<div>X fatica / fatigue = <b>${N(res.Xfatigue, 2)}</b> <span class="${okF ? 'ok' : 'ko'}">${okF ? R.ok : R.ko}</span> · X snerv. / yield = <b>${N(res.Xyield, 2)}</b> <span class="${okY ? 'ok' : 'ko'}">${okY ? R.ok : R.ko}</span> (X ≥ ${N(Xreq, 2)})</div>`;
+    resBox += `<div>${currentLang === 'it' ? 'X fatica' : 'X fatigue'} = <b>${N(res.Xfatigue, 2)}</b> <span class="${okF ? 'ok' : 'ko'}">${okF ? R.ok : R.ko}</span> · ${currentLang === 'it' ? 'X snervamento' : 'X yield'} = <b>${N(res.Xyield, 2)}</b> <span class="${okY ? 'ok' : 'ko'}">${okY ? R.ok : R.ko}</span> (X ≥ ${N(Xreq, 2)})</div>`;
     body += `<div class="res">${resBox}</div>`;
     // Goodman diagram and sketch, redrawn for this result
     drawShaftGoodman(res, inp, Xreq, t);
