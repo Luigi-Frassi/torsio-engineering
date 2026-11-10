@@ -74,6 +74,7 @@
 
     /* hero */
     .hero { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr); gap: 48px; align-items: center; padding: 40px 0 72px; }
+    .pain { margin: 0 0 16px; padding-left: 14px; border-left: 3px solid var(--signal); color: var(--ink-2); font-size: 18px; line-height: 1.4; max-width: 30rem; }
     h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 52px); line-height: 1.04; letter-spacing: -0.02em; margin: 0 0 22px; }
     .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0 0 30px; }
     .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -146,6 +147,7 @@
 
     @media (max-width: 960px) {
       .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 16px; }
+      .pain { font-size: 16px; }
       .chain { grid-template-columns: 1fr; gap: 26px; }
       .chain li { padding: 0 0 0 0; }
       .chain .shaftline { display: none; }
@@ -185,6 +187,7 @@
     <main>
       <div class="hero">
         <div>
+          <p class="pain" data-t="pain">Un albero di massima non dovrebbe costarti un pomeriggio tra manuale, Excel e Word.</p>
           <h1 data-t="h1">Dimensiona gli organi di macchine. Consegna la relazione di calcolo.</h1>
           <p class="lead" data-t="lead">Alberi, ruote dentate, bulloni, cinghie, accoppiamenti ISO, telai (FEM), dischi e calettamenti, rotismi epicicloidali. Ogni risultato arriva con la sua relazione in PDF: formule con i tuoi numeri, diagrammi e quote per il CAD.</p>
           <div class="ctas">
@@ -405,6 +408,7 @@
     var T = {
       en: {
         navMods: 'Modules', navRep: 'Report', navMethod: 'Method', openApp: 'Open the calculator', tryDemo: 'Try a complete drive',
+        pain: 'Sizing a shaft shouldn\'t take an afternoon of handbook, spreadsheet and Word.',
         h1: 'Size machine elements. Hand in the calculation report.',
         lead: 'Shafts, gears, bolted joints, timing belts, ISO fits, 2D frames (FEM), discs and shrink fits, epicyclic gear trains. Every result comes with its PDF report: formulas with your numbers, diagrams and dimensions for CAD.',
         free: 'Free, no sign-up, checked against 544 hand-solved exam cases. Your data never leaves your computer.',
