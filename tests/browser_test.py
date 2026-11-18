@@ -655,6 +655,15 @@ with sync_playwright() as p:
     pv2 = lp.evaluate("(window.vaq || []).filter(a => a[0] === 'pageview').map(a => a[1].path)")
     check('analytics: relazione aperta, HTML scaricato e DXF contano come /report, /html, /dxf del modulo', all(k in tl and k in pv2 for k in ('/report/shafts', '/html/shafts', '/dxf/shafts')), str(tl))
     rw.close()
+    cta = lp.evaluate("[!document.getElementById('sumReport').classList.contains('hidden'), document.getElementById('sumReport').innerText, !!document.getElementById('reportGo')]")
+    check('relazione a un clic: invito sotto i risultati e pulsante principale diretto', cta[0] and cta[2] and ('report' in cta[1].lower() or 'relazione' in cta[1].lower()), str(cta))
+    with lp.expect_popup() as pop2:
+        lp.click('#sumReportGo')
+    pop2.value.close()
+    with lp.expect_popup() as pop3:
+        lp.click('#reportGo')
+    pop3.value.close()
+    check('  i due pulsanti aprono la relazione (contata come /report/<modulo>)', lp.evaluate("(window.torsioTrackLog || []).filter(x => x === '/report/shafts').length") >= 3)
     lctx.close()
 
     # --- feedback: 👍/👎 under the module and in the report toolbar (Tally form Gev5gZ)
