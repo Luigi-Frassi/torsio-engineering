@@ -10,6 +10,7 @@ const SUM_CODES = { fits: 'F-01', belts: 'B-02', gears: 'G-03', shafts: 'S-04', 
 const SUM_TXT = {
   it: {
     ok: 'VERIFICATO', ko: 'NON VERIFICATO', info: 'CALCOLATO', na: 'DA COMPLETARE',
+    repTxt: '<b>Relazione di calcolo pronta</b> · formule con i tuoi numeri, diagrammi, ipotesi · PDF', repBtn: 'Apri la relazione →',
     req: 'richiesto', margin: 'margine', min: 'min', none: '—',
     sh: { d: 'Diametro scelto', dCheck: 'Diametro verificato', xf: 'X fatica', xy: 'X snervamento', crit: 'Sezione critica', step2: 'Calcola la sezione al passo 2 o 3', noLoad: 'La sezione scelta non è sollecitata', govF: 'governa la fatica', govY: 'governa lo snervamento', reac: 'R', own: (mf, b) => `Mf ${mf} N·m scritto a mano (trave: ${b})` },
     ge: { m: 'Modulo', L: 'Larghezza di fascia', lewis: 'Lewis σL', a: 'Interasse', P: 'Potenza trasmissibile', M1: 'Momento al pignone', lim: { hertz: 'limita Hertz', lewis: 'limita Lewis' }, und: 'sottotaglio' },
@@ -21,6 +22,7 @@ const SUM_TXT = {
   },
   en: {
     ok: 'VERIFIED', ko: 'NOT VERIFIED', info: 'CALCULATED', na: 'TO COMPLETE',
+    repTxt: '<b>Calculation report ready</b> · formulas with your numbers, diagrams, assumptions · PDF', repBtn: 'Open the report →',
     req: 'required', margin: 'margin', min: 'min', none: '—',
     sh: { d: 'Chosen diameter', dCheck: 'Checked diameter', xf: 'X fatigue', xy: 'X yield', crit: 'Critical section', step2: 'Calculate the section in step 2 or 3', noLoad: 'The chosen section carries no load', govF: 'fatigue governs', govY: 'yield governs', reac: 'R', own: (mf, b) => `Mf ${mf} N·m typed by hand (beam: ${b})` },
     ge: { m: 'Module', L: 'Face width', lewis: 'Lewis σL', a: 'Centre distance', P: 'Power capacity', M1: 'Pinion torque', lim: { hertz: 'Hertz limits', lewis: 'Lewis limits' }, und: 'undercut' },
@@ -313,7 +315,15 @@ function sumRender() {
     const html = data.cards.length ? data.cards.map(sumCardHtml).join('') : '';
     if (bar.dataset.html !== html) { bar.innerHTML = html; bar.dataset.html = html; bar.classList.toggle('hidden', !html); }
   }
+  // one click to the report, right under the results (only with a valid result)
+  const rep = document.getElementById('sumReport');
+  if (rep) {
+    const show = data.cards.length && !data.statusText && data.status !== 'na' && typeof openReport === 'function';
+    const html = show ? `<span>${t.repTxt}</span><button type="button" id="sumReportGo">${sumEsc(t.repBtn)}</button>` : '';
+    if (rep.dataset.html !== html) { rep.innerHTML = html; rep.dataset.html = html; rep.classList.toggle('hidden', !html); }
+  }
 }
+document.addEventListener('click', ev => { if (ev.target.closest && ev.target.closest('#sumReportGo')) openReport(); });
 
 let sumTimer = null;
 function sumSchedule() { clearTimeout(sumTimer); sumTimer = setTimeout(sumRender, 160); }

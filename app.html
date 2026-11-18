@@ -44,6 +44,12 @@
     .sum-lamp-ko { background: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
     .sum-bar-wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: -8px 0 28px; }
     .sum-bar-wrap.hidden { display: none; }
+    .sum-bar-wrap:has(+ .sum-report:not(.hidden)) { margin-bottom: 12px; }
+    .sum-report { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 28px; padding: 10px 14px; border: 1px dashed #c9c3b6; background: #f6f3ec; font-size: 13px; color: #4a463f; }
+    .sum-report.hidden { display: none; }
+    .sum-report b { color: #22211f; }
+    .sum-report button { margin-left: auto; padding: 6px 12px; background: #e8b321; color: #22211f; font-weight: 700; font-size: 12px; border-radius: 6px; white-space: nowrap; }
+    .sum-report button:hover { background: #f0c241; }
     .sum-card { background: #fbfaf7; border: 1px solid #d6d1c6; border-top: 3px solid #22211f; padding: 12px 14px; min-width: 0; }
     .sum-k { margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #6f6a62; }
     .sum-kc { text-transform: none; letter-spacing: .02em; }
@@ -288,9 +294,12 @@
           </div>
         </div>
         <div class="relative">
-          <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] px-2.5 py-1.5 rounded-lg border border-[#e8b321] text-xs font-bold text-[#22211f] transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
-            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 11h6M9 14h6M12 17h3v4"/></svg><span class="hidden sm:inline" data-i18n="reportBtn">Report</span><span aria-hidden="true" class="text-[9px] opacity-80">▼</span>
+          <div class="flex items-stretch">
+          <button type="button" id="reportGo" onclick="openReport()" class="flex items-center gap-1.5 bg-[#e8b321] hover:bg-[#f0c241] pl-2.5 pr-2 py-1.5 rounded-l-lg border border-[#e8b321] text-xs font-bold text-[#22211f] transition-colors" data-i18n-title="reportTitle" title="Calculation report (PDF)">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 11h6M9 14h6M12 17h3v4"/></svg><span data-i18n="reportBtn">Report</span>
           </button>
+          <button type="button" id="reportBtn" onclick="toggleReportMenu(event)" class="flex items-center bg-[#e8b321] hover:bg-[#f0c241] px-1.5 py-1.5 rounded-r-lg border border-l-[#22211f]/25 border-[#e8b321] text-[#22211f] transition-colors" data-i18n-title="reportMenuTitle" title="Other reports: complete transmission" aria-haspopup="true"><span aria-hidden="true" class="text-[9px] opacity-80">▼</span></button>
+          </div>
           <div id="reportMenu" class="hidden absolute left-0 md:left-auto md:right-0 top-full mt-2 z-50 w-64 max-w-[calc(100vw-2rem)] bg-slate-950 border border-slate-700 rounded-xl shadow-2xl p-2 text-xs text-slate-200">
             <button type="button" id="reportMenuThis" onclick="document.getElementById('reportMenu').classList.add('hidden'); openReport()" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800 font-semibold">Report of this module</button>
             <div class="border-t border-slate-800 my-1.5"></div>
@@ -326,6 +335,7 @@
 
     <!-- Summary band (modules/ui/summary.js) -->
     <section id="sumBar" class="sum-bar-wrap hidden" aria-label="Results"></section>
+    <div id="sumReport" class="sum-report hidden"></div>
 
     <!-- ==================== MODULE 1: TOLERANCES & FITS ==================== -->
     <div id="moduleFitsSection">
@@ -2210,7 +2220,7 @@
         shaftEndViewTitle: "end view from B",
         shaftIsoTitle: "forces on the shaft · +H towards you",
         optTorqueNone: "None (idler gear)",
-        reportBtn: "Report",
+        reportBtn: "Report", reportMenuTitle: "Other reports: complete transmission",
         reportTitle: "Calculation report: formulas with your numbers, downloadable as PDF", sideMet: "Method", sideNews: "What's new",
         shaftRealSecTitle: "Real sections: which one is really critical? (optional)",
         shaftRealSecHint: "The largest bending moment is not always the critical section: a small diameter or a sharp notch can be worse. Enter the real sections (x, diameter d, shoulder diameter D and fillet r, keyway): each is checked with material, finish, life and X of the Design/Check tabs, and the one with the lowest X is the critical one. A groove is a shoulder with D = the adjacent diameter.",
@@ -2687,7 +2697,7 @@
         shaftEndViewTitle: "vista da B",
         shaftIsoTitle: "forze sull'albero · +H verso di te",
         optTorqueNone: "Nessuna (ruota folle)",
-        reportBtn: "Relazione",
+        reportBtn: "Relazione", reportMenuTitle: "Altre relazioni: trasmissione completa",
         reportTitle: "Relazione di calcolo: formule con i tuoi numeri, da scaricare in PDF", sideMet: "Metodo", sideNews: "Novità",
         shaftRealSecTitle: "Sezioni reali: qual è davvero la più critica? (facoltativo)",
         shaftRealSecHint: "Il momento flettente massimo non è sempre la sezione critica: un diametro piccolo o un intaglio stretto possono essere peggio. Inserisci le sezioni reali (x, diametro d, diametro dello spallamento D e raccordo r, linguetta): ognuna viene verificata con materiale, finitura, vita e X delle schede Progetto/Verifica, e la più critica è quella con X minore. Una gola di scarico è uno spallamento con D = diametro adiacente.",
