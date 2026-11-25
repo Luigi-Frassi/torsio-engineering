@@ -156,9 +156,10 @@ function linkRender(mod) {
     bar.id = 'linkBar_' + mod;
     bar.addEventListener('click', linkClick);
   }
-  if (sec.lastElementChild !== bar) sec.appendChild(bar);   // always last, also after modules that rebuild their content
+  if (sec.lastElementChild !== bar && !(sec.lastElementChild && sec.lastElementChild.id === 'guideLink_' + mod && sec.lastElementChild.previousElementSibling === bar)) sec.appendChild(bar);   // always last (then the guide link), also after modules that rebuild their content
   const html = linkBarHtml(mod);
   if (bar.dataset.html !== html) { bar.innerHTML = html; bar.dataset.html = html; }
+  guideRender(mod);
 }
 
 function linkRenderActive() {
@@ -327,6 +328,25 @@ function linkBoltsPrepare() {
   if (typeof setBoltMode === 'function') setBoltMode('design');
 }
 
+// ---- guide page of the module (the pages for search, tools/mkguides.py), under the results ------------------
+const GUIDE_PAGES = {
+  shafts: { en: '/shaft-calculator/', it: '/it/dimensionamento-albero/' }, gears: { en: '/gear-calculator/', it: '/it/calcolo-ruote-dentate/' },
+  bolts: { en: '/bolted-joint-calculator/', it: '/it/calcolo-bulloni/' }, frames: { en: '/frame-truss-calculator/', it: '/it/calcolo-telaio-traliccio/' },
+  fits: { en: '/iso-fits-calculator/', it: '/it/tolleranze-accoppiamenti-iso/' }
+};
+function guideRender(mod) {
+  const g = GUIDE_PAGES[mod], sec = linkEl(LINK_SECTIONS[mod] || (mod === 'bolts' ? 'moduleBoltsSection' : ''));
+  if (!g || !sec) return;
+  const it = typeof currentLang !== 'undefined' && currentLang === 'it';
+  let a = linkEl('guideLink_' + mod);
+  if (!a) { a = document.createElement('a'); a.id = 'guideLink_' + mod; a.className = 'guide-link block text-sm text-slate-400 hover:text-white mt-2 mb-6'; }
+  a.href = it ? g.it : g.en;
+  const txt = mod === 'fits' ? (it ? 'Guida: tabelle ISO 286 di ogni accoppiamento, giochi ed esempio svolto' : 'Guide: ISO 286 tables of each fit, clearances and a worked example')
+    : (it ? 'Guida al calcolo: metodo, formule ed esercizio d\'esame svolto' : 'Calculation guide: method, formulas and a worked exam problem');
+  a.innerHTML = txt + ' <span class="text-amber-400">→</span>';
+  if (sec.lastElementChild !== a) sec.appendChild(a);   // after the "Continue with these results" bar
+}
+
 // ---- hooks ------------------------------------------------------------------------------------------------
 (function linkInstall() {
   const sw = window.switchModule;
@@ -335,11 +355,12 @@ function linkBoltsPrepare() {
       if (mod !== activeModule) linkEl('linkBanner')?.remove();
       sw.apply(this, arguments);
       linkRender(mod);
+      guideRender(mod);
     };
   }
   const ul = window.updateLanguage;
   if (typeof ul === 'function') {
-    window.updateLanguage = function () { const r = ul.apply(this, arguments); linkRenderActive(); return r; };
+    window.updateLanguage = function () { const r = ul.apply(this, arguments); linkRenderActive(); if (typeof activeModule !== 'undefined') guideRender(activeModule); return r; };
   }
   // demos set the fields from code (no input events) after switchModule has already drawn the bar
   const dp = window.loadDemoPreset;
