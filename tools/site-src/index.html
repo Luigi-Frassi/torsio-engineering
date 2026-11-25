@@ -142,6 +142,11 @@
     .facts p { margin: 0; color: var(--ink-2); font-size: 15.5px; max-width: 30ch; }
     .limits { margin-top: 44px; max-width: var(--measure); padding-left: 16px; border-left: 3px solid var(--signal); color: var(--ink-2); font-size: 15.5px; }
 
+    .guides { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
+    .guides a { display: block; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); border-radius: 6px; color: var(--ink); text-decoration: none; }
+    .guides a:hover { border-color: var(--ink); }
+    .guides b { display: block; font-size: 17px; margin-bottom: 6px; } .guides b::after { content: '\00a0→'; color: #b8860b; }
+    .guides span { display: block; font-size: 14.5px; color: var(--ink-2); line-height: 1.45; }
     .fem { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 32px; align-items: center; padding: 24px; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; }
     .fem h3 { font-size: 21px; font-stretch: 105%; margin: 0 0 8px; }
     .fem p { margin: 0 0 12px; color: var(--ink-2); font-size: 15.5px; max-width: 60ch; }
@@ -383,6 +388,14 @@
     </div>
   </section>
 
+  <section id="guide">
+    <div class="wrap">
+      <h2 data-t="guideH">Guide ai calcoli, con un esercizio svolto</h2>
+      <p class="intro" data-t="guideP">Per ogni modulo una pagina con il metodo, le formule, un tema d'esame risolto con i numeri del calcolatore e i limiti dichiarati.</p>
+      <div class="guides"><a href="/it/dimensionamento-albero/" data-href-it="/it/dimensionamento-albero/" data-href-en="/shaft-calculator/"><b data-t="g_shaftH">Dimensionamento alberi</b><span data-t="g_shaftP">Diametro a fatica e snervamento, reazioni, cuscinetti. Esempio: tema dell'11/4/2003.</span></a><a href="/it/calcolo-ruote-dentate/" data-href-it="/it/calcolo-ruote-dentate/" data-href-en="/gear-calculator/"><b data-t="g_gearH">Calcolo ruote dentate</b><span data-t="g_gearP">Modulo e fascia con Hertz, verifica di Lewis, elicoidali. Esempio: tema del 7/1/2019.</span></a><a href="/it/calcolo-bulloni/" data-href-it="/it/calcolo-bulloni/" data-href-en="/bolted-joint-calculator/"><b data-t="g_boltH">Dimensionamento e verifica bulloni</b><span data-t="g_boltP">Giunti ad attrito e a flange, coppia di serraggio, carico esterno. Esempio: tema del 2/2/2021.</span></a><a href="/it/calcolo-telaio-traliccio/" data-href-it="/it/calcolo-telaio-traliccio/" data-href-en="/frame-truss-calculator/"><b data-t="g_frameH">Calcolo telai e tralicci (FEM)</b><span data-t="g_frameP">Reazioni, N, T, M e deformata, sezione più leggera a catalogo. Esempio: torre radio.</span></a><a href="/it/tolleranze-accoppiamenti-iso/" data-href-it="/it/tolleranze-accoppiamenti-iso/" data-href-en="/iso-fits-calculator/"><b data-t="g_fitsH">Tolleranze e accoppiamenti ISO</b><span data-t="g_fitsP">Scostamenti, giochi e interferenze ISO 286, tabelle di H7/g6, H7/k6, H7/p6 e degli altri.</span></a></div>
+    </div>
+  </section>
+
   <section id="metodo">
     <div class="wrap">
       <h2 data-t="metH">Il metodo del corso, controllato sui temi d'esame</h2>
@@ -441,7 +454,7 @@
         limits: 'This is preliminary sizing: it gives the first dimensions for CAD. The final design must be checked with the standards (ISO 6336, DIN 743), the manufacturers’ catalogs or an FEM analysis.',
         boltP: 'And for the joints: friction and flanged bolted joints, tightening torque, external load with the tightening diagram, power screws.', boltA: 'Try the flanged coupling',
         femH: 'And for everything else: finite element structures', femP: 'Plane beams, frames and trusses: draw the members on the grid, add supports and loads with a click and get reactions, N, V, M diagrams and the deformed shape. Then Torsio picks the lightest section in six families (round, tube, rectangle, hollow square, IPE, HEA), checking strength, Euler buckling and deflection.', femA: 'Open the Structures module', femDemo: 'try the radio tower',
-        endH: 'Start from the example drive and change the numbers.', foot: 'Torsio Engineering · a project by Luigi Frassi', code: 'Source code', issue: 'Report a problem', fMet: 'Method', fNews: "What's new", fContact: 'Contact', fShaft: 'Shaft calculator', fBolts: 'Bolted joint calculator', fFrames: 'Frame & truss calculator', fGears: 'Gear calculator', fFits: 'ISO fits calculator',
+        endH: 'Start from the example drive and change the numbers.', foot: 'Torsio Engineering · a project by Luigi Frassi', code: 'Source code', issue: 'Report a problem', fMet: 'Method', fNews: "What's new", fContact: 'Contact', fShaft: 'Shaft calculator', fBolts: 'Bolted joint calculator', fFrames: 'Frame & truss calculator', guideH: 'Calculation guides, each with a worked example', guideP: 'For every module a page with the method, the formulas, an exam problem solved with the calculator\'s numbers and the stated limits.', g_shaftH: 'Shaft design', g_shaftP: 'Fatigue and yield diameter, reactions, bearings. Worked example: exam of 11/4/2003.', g_gearH: 'Gear calculator', g_gearP: 'Module and face width with Hertz, Lewis check, helical gears. Worked example: exam of 7/1/2019.', g_boltH: 'Bolted joint calculator', g_boltP: 'Friction and flange joints, tightening torque, external load. Worked example: exam of 2/2/2021.', g_frameH: 'Frame and truss calculator (FEM)', g_frameP: 'Reactions, N, V, M and deflection, lightest catalogue section. Worked example: radio tower.', g_fitsH: 'ISO fits and tolerances', g_fitsP: 'ISO 286 deviations, clearance and interference, tables of H7/g6, H7/k6, H7/p6 and more.', fGears: 'Gear calculator', fFits: 'ISO fits calculator',
         crit: 'Critical section E', critX: 'X fatigue 2.16 · yield 4.51', key: 'key', tbTitle: 'Pinion shaft', tbMat: '39NiCrMo3 Q+T', tbLife: 'Infinite life · X ≥ 2', tbScale: 'Dimensions in mm', sheetCap: 'Pinion shaft of the example drive: Ø35 at the bearings, Ø42 at the shoulders, pinion z = 20, m = 2.25 integral with the shaft.', tbSheet: 'Sheet 1 of 1', pull: 'belt pull 1660 N', ft: 'Ft 4390 N · Fr 1598 N'
       }
     };

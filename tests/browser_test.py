@@ -785,6 +785,14 @@ with sync_playwright() as p:
     ft = lp.evaluate("[...document.querySelectorAll('table.iso')].map(t => t.tBodies[0].rows.length).concat([[...document.querySelectorAll('table.iso tr.r td')].map(td => td.textContent).join('|')])")
     check('  pagina accoppiamenti: 13 accoppiamenti su 30 mm, 13 scaglioni, H7/k6 = +19 / −15 incerto', ft == [13, 13, '+19|−15|incerto'], str(ft))
     lp.close()
+    # links to the guide pages: section in the body of the home, link under the results in the calculator
+    lp = new_page(); lp.goto(HOME + 'it/'); lp.wait_for_timeout(300)
+    gh = lp.evaluate("[...document.querySelectorAll('.guides a')].map(a => a.getAttribute('href')).join(',')")
+    check('  home: sezione «Guide ai calcoli» con le 5 pagine guida italiane', gh == '/it/dimensionamento-albero/,/it/calcolo-ruote-dentate/,/it/calcolo-bulloni/,/it/calcolo-telaio-traliccio/,/it/tolleranze-accoppiamenti-iso/', gh)
+    lp.goto(BASE + '?m=bolts&lang=en'); lp.wait_for_timeout(900)
+    gl = lp.evaluate("(document.getElementById('guideLink_bolts') || {}).href || ''")
+    check('  calcolatore: link alla guida del modulo (bulloni, inglese)', gl.endswith('/bolted-joint-calculator/'), gl)
+    lp.close()
     # one page per ISO fit (tools/mkfits.py): 21 fits × 2 languages, numbers from the core, link to the calculator with the fit
     lp = new_page(); lp.goto(HOME + 'it/accoppiamenti/h7-s6/'); lp.wait_for_timeout(300)
     fp = lp.evaluate("""() => { const rows = [...document.querySelectorAll('table.iso tbody tr')];
