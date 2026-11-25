@@ -234,7 +234,7 @@ def fits_at30(lang):
     hd = {'en': ('Fit', 'Max clearance', 'Min clearance', 'Type'), 'it': ('Accoppiamento', 'Gioco massimo', 'Gioco minimo', 'Tipo')}[lang]
     cap = {'en': 'Hole-basis fits on a 30 mm diameter, in µm (negative clearance = interference). Computed by Torsio.',
            'it': 'Accoppiamenti foro base su un diametro di 30 mm, in µm (gioco negativo = interferenza). Calcolati da Torsio.'}[lang]
-    rows = ''.join(f'<tr{" class=\"r\"" if f == "H7/k6" else ""}><th>{f}</th><td>{num(gmax, lang)}</td><td>{num(gmin, lang)}</td>'
+    rows = ''.join(f'<tr{" class=\"r\"" if f == "H7/k6" else ""}><th><a href="/{"iso-fits" if lang == "en" else "it/accoppiamenti"}/{f.lower().replace("/", "-")}/">{f}</a></th><td>{num(gmax, lang)}</td><td>{num(gmin, lang)}</td>'
                    f'<td class="k {KCLS[k]}">{KIND[lang][k]}</td></tr>' for f, gmax, gmin, k in ISO['at30'])
     return (f'<p class="cap">{cap}</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">{hd[0]}</th>'
             f'<th>{hd[1]}</th><th>{hd[2]}</th><th style="text-align:left">{hd[3]}</th></tr></thead><tbody>{rows}</tbody></table></div>')
@@ -251,13 +251,22 @@ def fits_devs(lang):
         body += f'<tr><th>{lab}</th>{cells}</tr>'
     return f'<p class="cap">{cap}</p><div class="scroll"><table class="iso"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
 
+FIT_LIST = (['H11/c11', 'H9/d9', 'H8/f7', 'H7/f7', 'H7/g6', 'H7/h6', 'H8/h7', 'H7/js6', 'H7/k6', 'H7/n6', 'H7/p6', 'H7/r6', 'H7/s6'],
+            ['C11/h11', 'D9/h9', 'F8/h7', 'G7/h6', 'K7/h6', 'N7/h6', 'P7/h6', 'S7/h6'])
+def fit_index(lang):   # links to the one-page-per-fit tables (tools/mkfits.py)
+    base = 'iso-fits' if lang == 'en' else 'it/accoppiamenti'
+    links = lambda L: ' · '.join(f'<a href="/{base}/{f.lower().replace("/", "-")}/">{f}</a>' for f in L)
+    if lang == 'en':
+        return f'<h3>Full table of each fit, 1 to 500 mm</h3><p>Hole basis: {links(FIT_LIST[0])}</p><p>Shaft basis: {links(FIT_LIST[1])}</p>'
+    return f'<h3>Tabella completa di ogni accoppiamento, da 1 a 500 mm</h3><p>Foro base: {links(FIT_LIST[0])}</p><p>Albero base: {links(FIT_LIST[1])}</p>'
+
 def fits_extra(lang):
     if lang == 'en':
         return ('<section><div class="wrap"><h2>ISO fit tables</h2><h3>Common fits at 30 mm</h3>' + fits_at30(lang) +
-                '<h3>Deviations by diameter range</h3>' + fits_devs(lang) +
+                '<h3>Deviations by diameter range</h3>' + fits_devs(lang) + fit_index(lang) +
                 '<p class="muted" style="margin-top:14px">For any other size, letter or grade (IT5–IT11, holes C–S, shafts c–s, up to 500 mm) open the calculator: it also gives the drawing callout and works backwards from the clearance you want.</p></div></section>')
     return ('<section><div class="wrap"><h2>Tabelle ISO degli accoppiamenti</h2><h3>Accoppiamenti più usati su 30 mm</h3>' + fits_at30(lang) +
-            '<h3>Scostamenti per scaglione di diametro</h3>' + fits_devs(lang) +
+            '<h3>Scostamenti per scaglione di diametro</h3>' + fits_devs(lang) + fit_index(lang) +
             '<p class="muted" style="margin-top:14px">Per qualsiasi altro diametro, lettera o grado (IT5–IT11, fori C–S, alberi c–s, fino a 500 mm) apri il calcolatore: dà anche la quota da disegno e funziona al contrario, dal gioco che vuoi all\'accoppiamento.</p></div></section>')
 
 PAGES += [

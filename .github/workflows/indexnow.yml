@@ -1,0 +1,23 @@
+# After a push to main: wait for the Vercel deploy, then send the changed pages to IndexNow (tools/indexnow.py).
+# Run by hand (Actions → IndexNow → Run workflow) to send every page of the sitemap.
+name: IndexNow
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Wait for the deploy
+        if: github.event_name == 'push'
+        run: sleep 150
+      - name: Send changed pages
+        if: github.event_name == 'push'
+        run: python3 tools/indexnow.py ${{ github.event.before }} ${{ github.sha }} || true
+      - name: Send every page
+        if: github.event_name == 'workflow_dispatch'
+        run: python3 tools/indexnow.py --all

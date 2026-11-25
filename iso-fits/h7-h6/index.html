@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H7/h6 fit: tolerances, clearance and ISO 286 table — Torsio</title>
+  <meta name="description" content="H7/h6 ISO fit (clearance, hole basis): hole H7 and shaft h6 deviations and the maximum and minimum clearance for every size from 1 to 500 mm. On 30 mm: hole +21/0 µm, shaft 0/−13 µm.">
+  <link rel="canonical" href="https://torsio.app/iso-fits/h7-h6/">
+  <link rel="alternate" hreflang="en" href="https://torsio.app/iso-fits/h7-h6/">
+  <link rel="alternate" hreflang="it" href="https://torsio.app/it/accoppiamenti/h7-h6/">
+  <link rel="alternate" hreflang="x-default" href="https://torsio.app/iso-fits/h7-h6/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Torsio Engineering">
+  <meta property="og:title" content="H7/h6 fit: tolerances, clearance and ISO 286 table">
+  <meta property="og:description" content="H7/h6 ISO fit (clearance, hole basis): hole H7 and shaft h6 deviations and the maximum and minimum clearance for every size from 1 to 500 mm. On 30 mm: hole +21/0 µm, shaft 0/−13 µm.">
+  <meta property="og:url" content="https://torsio.app/iso-fits/h7-h6/">
+  <meta property="og:image" content="https://torsio.app/vendor/brand/og-image.png">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/vendor/brand/torsio-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f1efea">
+  <link rel="stylesheet" href="/vendor/fonts/fonts.css">
+  <style>
+    :root { --paper: #f1efea; --sheet: #fbfaf7; --ink: #22211f; --ink-2: #5b5750; --line: #d6d1c6; --blue: #21497f; --blue-2: #3f7fd0; --signal: #e8b321; --measure: 40rem; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+    a { color: var(--blue); }
+    a:focus-visible, button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    html[lang="it"] [data-l="en"], html[lang="en"] [data-l="it"] { display: none !important; }
+
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .brand img { width: 34px; height: 34px; }
+    .brand b { font-weight: 800; font-stretch: 118%; font-size: 21px; letter-spacing: -0.01em; }
+    .brand span { color: var(--ink-2); font-size: 15px; margin-left: 2px; }
+    .nav { display: flex; align-items: center; gap: 22px; font-size: 15px; }
+    .nav .links { display: contents; }
+    .nav a { color: var(--ink-2); text-decoration: none; }
+    .nav a:hover { color: var(--ink); }
+    .lang { border: 1px solid var(--line); border-radius: 6px; display: inline-flex; overflow: hidden; }
+    .lang button { background: none; border: 0; font: inherit; font-size: 13px; padding: 4px 9px; cursor: pointer; color: var(--ink-2); }
+    .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; border-radius: 8px; padding: 12px 20px; cursor: pointer; border: 2px solid var(--ink); }
+    .btn.go { background: var(--signal); color: var(--ink); }
+    .btn.go:hover { background: #f0c241; }
+    .btn.small { padding: 7px 14px; font-size: 14px; }
+
+    h1 { font-weight: 800; font-stretch: 112%; font-size: clamp(34px, 4.2vw, 50px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 18px; }
+    .lead { font-size: 19px; color: var(--ink-2); max-width: var(--measure); margin: 0; }
+    header.page-head { padding: 36px 0 56px; }
+    section { padding: 56px 0; border-top: 1px solid var(--line); }
+    h2 { font-weight: 800; font-stretch: 108%; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 12px; }
+    h3 { font-size: 20px; font-stretch: 105%; margin: 28px 0 8px; }
+    p { max-width: var(--measure); }
+    .muted { color: var(--ink-2); }
+
+    /* summary table */
+    .tbl { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--sheet); border: 1px solid var(--line); }
+    .tbl th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); padding: 10px 12px; border-bottom: 2px solid var(--ink); }
+    .tbl td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .tbl td.n { font-weight: 800; font-stretch: 110%; font-size: 18px; text-align: right; white-space: nowrap; }
+    .tbl tfoot td { border-bottom: 0; font-weight: 700; }
+    .tbl a { font-weight: 600; }
+    .scroll { overflow-x: auto; }
+
+    /* module cards */
+    .mods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .mod { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+    .mod h3 { margin: 0 0 4px; }
+    .mod .src { font-size: 13.5px; color: var(--blue); font-weight: 600; margin: 0 0 12px; }
+    .mod p, .mod li { font-size: 15.5px; }
+    .mod ul { padding-left: 18px; margin: 8px 0 0; }
+    .mod li { margin-bottom: 4px; }
+    .mod .lim { border-left: 3px solid var(--signal); padding-left: 12px; color: var(--ink-2); margin-top: 14px; font-size: 14.5px; }
+    .eq { border-left: 3px solid var(--blue); background: #f6f4ef; padding: 2px 12px; margin: 10px 0; overflow-x: auto; }
+    .eq .katex-display { margin: 8px 0; text-align: left; }
+    .eq .katex { font-size: 1em; }
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+    .steps li { counter-increment: s; }
+    .steps li::before { content: counter(s); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+    .steps b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .steps span { color: var(--ink-2); font-size: 15.5px; }
+    .limits { margin: 0; padding-left: 18px; max-width: var(--measure); }
+    .limits li { margin-bottom: 8px; }
+    .closing { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+    @media (max-width: 900px) {
+      .mods { grid-template-columns: minmax(0, 1fr); }
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .nav .links { display: none; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 0 16px; }
+      .brand span { display: none; }
+      .nav { gap: 10px; }
+      .nav .btn.small { padding: 6px 10px; font-size: 13px; }
+      .mod { padding: 18px 16px; }
+      .tbl { font-size: 14px; }
+      .tbl th, .tbl td { padding: 8px; }
+      section { padding: 44px 0; }
+    }
+    .gear-o{display:inline-block;width:.72em;height:.72em;vertical-align:-.085em;margin:0 .015em}.wm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .guide section { padding: 44px 0; }
+    .guide h2 { margin-top: 0; }
+    .guide ul { max-width: var(--measure); padding-left: 20px; } .guide li { margin-bottom: 6px; }
+    .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .btn.plain { background: var(--sheet); color: var(--ink); }
+    .ex { width: 100%; max-width: 46rem; border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 15.5px; }
+    .ex th, .ex td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .ex th { width: 46%; font-weight: 500; color: var(--ink-2); }
+    .ex tr.r td, .ex tr.r th { background: #eef3f9; } .ex tr.r td { font-weight: 700; color: var(--blue); }
+    .ex caption { text-align: left; font-size: 13px; color: var(--ink-2); padding: 0 0 8px; }
+    .faq dt { font-weight: 700; margin-top: 18px; } .faq dd { margin: 4px 0 0; max-width: var(--measure); color: var(--ink-2); }
+    .others { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 54rem; }
+    .others a { display: block; background: var(--sheet); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 14px 16px; text-decoration: none; color: var(--ink); font-weight: 700; }
+    .others a span { display: block; font-weight: 400; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+    .others a:hover { border-top-color: var(--signal); }
+    .iso { border-collapse: collapse; background: var(--sheet); border: 1px solid var(--line); font-size: 14.5px; font-variant-numeric: tabular-nums; }
+    .cap { font-size: 13px; color: var(--ink-2); margin: 0 0 8px; max-width: var(--measure); }
+    .iso thead th:first-child, .iso tbody th { position: sticky; left: 0; background: var(--sheet); }
+    .iso th, .iso td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    .iso thead th { font-weight: 700; color: var(--ink); border-bottom: 2px solid var(--ink); }
+    .iso tbody th { text-align: left; font-weight: 500; color: var(--ink-2); }
+    .iso td.k { text-align: left; } .iso tr.r td, .iso tr.r th { background: #eef3f9; } .scroll { overflow-x: auto; }
+    .iso .c { color: var(--blue); } .iso .t { color: #8a6408; } .iso .i { color: #b42318; }
+    .guide h3 { margin: 30px 0 10px; font-size: 19px; }
+    @media (max-width: 760px) { .others { grid-template-columns: 1fr; } .ex th { width: 50%; } }
+    .crumbs { font-size: 14px; color: var(--ink-2); margin: 0 0 10px; } .crumbs a { color: inherit; }
+    .others a[aria-current] { border-color: var(--ink); }
+  </style>
+  <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is H7/h6 a clearance or an interference fit?", "acceptedAnswer": {"@type": "Answer", "text": "Clearance. It is a clearance fit: on every size the hole is larger than the shaft, so the parts slide or turn."}}, {"@type": "Question", "name": "What clearance does H7/h6 give on 50 mm?", "acceptedAnswer": {"@type": "Answer", "text": "From 0 to +41 µm (range over 30 up to 50 mm; negative values are interference)."}}, {"@type": "Question", "name": "And on 100 mm?", "acceptedAnswer": {"@type": "Answer", "text": "From 0 to +57 µm (range over 80 up to 120 mm)."}}, {"@type": "Question", "name": "Where do these values come from?", "acceptedAnswer": {"@type": "Answer", "text": "From the ISO 286-1 and 286-2 tables built into the Torsio calculator, checked by 904 tests against published deviations. For a contract drawing always refer to the standard."}}]}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Torsio", "item": "https://torsio.app/"}, {"@type": "ListItem", "position": 2, "name": "ISO fits", "item": "https://torsio.app/iso-fits-calculator/"}, {"@type": "ListItem", "position": 3, "name": "H7/h6", "item": "https://torsio.app/iso-fits/h7-h6/"}]}]</script>
+</head>
+<body class="guide">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="/"><img src="/vendor/brand/torsio-mark.svg" alt=""><b><span class="wm-sr">Torsio</span><span aria-hidden="true">T<svg class="gear-o" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.52 2.73 L10.65 2.50 L11.09 0.44 L12.91 0.44 L13.35 2.50 L14.48 2.73 L14.48 2.73 L15.58 3.09 L16.99 1.53 L18.57 2.44 L17.92 4.45 L18.79 5.21 L18.79 5.21 L19.55 6.08 L21.56 5.43 L22.47 7.01 L20.91 8.42 L21.27 9.52 L21.27 9.52 L21.50 10.65 L23.56 11.09 L23.56 12.91 L21.50 13.35 L21.27 14.48 L21.27 14.48 L20.91 15.58 L22.47 16.99 L21.56 18.57 L19.55 17.92 L18.79 18.79 L18.79 18.79 L17.92 19.55 L18.57 21.56 L16.99 22.47 L15.58 20.91 L14.48 21.27 L14.48 21.27 L13.35 21.50 L12.91 23.56 L11.09 23.56 L10.65 21.50 L9.52 21.27 L9.52 21.27 L8.42 20.91 L7.01 22.47 L5.43 21.56 L6.08 19.55 L5.21 18.79 L5.21 18.79 L4.45 17.92 L2.44 18.57 L1.53 16.99 L3.09 15.58 L2.73 14.48 L2.73 14.48 L2.50 13.35 L0.44 12.91 L0.44 11.09 L2.50 10.65 L2.73 9.52 L2.73 9.52 L3.09 8.42 L1.53 7.01 L2.44 5.43 L4.45 6.08 L5.21 5.21 L5.21 5.21 L6.08 4.45 L5.43 2.44 L7.01 1.53 L8.42 3.09 L9.52 2.73 Z M10.70 7.38 L10.70 5.60 L13.30 5.60 L13.30 7.38 A4.8 4.8 0 1 1 10.70 7.38 Z"/></svg>rsio</span></b><span>Engineering</span></a>
+      <nav class="nav" aria-label="Navigation">
+        <span class="links"><a href="/">Home</a><a href="/metodo.html">Method</a><a href="/it/accoppiamenti/h7-h6/" hreflang="it">Italiano</a></span>
+        <a class="btn go small" href="/app.html?m=fits&fitType=H7%2Fh6&nominalDiameter=30&lang=en">Open the calculator</a>
+      </nav>
+    </div>
+    <header class="page-head">
+      <p class="crumbs"><a href="/">Torsio</a> › <a href="/iso-fits-calculator/">ISO fits</a> › H7/h6</p>
+      <h1>H7/h6 fit</h1>
+      <p class="lead">Sliding by hand, location fit. ISO 286 clearance fit, hole basis. Below: hole and shaft deviations, limits of size and clearance for every diameter range up to 500 mm.</p>
+      <div class="acts"><a class="btn go" href="/app.html?m=fits&fitType=H7%2Fh6&nominalDiameter=30&lang=en">Calculate H7/h6 on your diameter →</a></div>
+      <p class="muted" style="margin-top:16px;font-size:15px">Free, no sign-up, runs in your browser: your data never leaves your computer.</p>
+    </header>
+  </div>
+  <section><div class="wrap"><h2>Example on 30 mm</h2><div class="scroll"><table class="ex"><tbody><tr><th>Hole H7</th><td>+21 / 0 µm → 30.000 … 30.021 mm</td></tr><tr><th>Shaft h6</th><td>0 / −13 µm → 29.987 … 30.000 mm</td></tr><tr class="r"><th>Largest hole, smallest shaft</th><td>34 µm clearance</td></tr><tr class="r"><th>Smallest hole, largest shaft</th><td>0 µm clearance</td></tr><tr class="r"><th>Type</th><td>clearance</td></tr></tbody></table></div></div></section>
+  <section><div class="wrap"><h2>ISO 286 table of H7/h6</h2><p class="cap">ISO 286-2 deviations and clearances of H7/h6 in µm (negative clearance = interference). Computed by Torsio.</p><div class="scroll"><table class="iso"><thead><tr><th style="text-align:left">Size [mm]</th><th>Hole H7 [µm]</th><th>Shaft h6 [µm]</th><th>Max clearance</th><th>Min clearance</th><th style="text-align:left">Type</th></tr></thead><tbody><tr><th>up to 3</th><td>+10 / 0</td><td>0 / −6</td><td>+16</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 3 up to 6</th><td>+12 / 0</td><td>0 / −8</td><td>+20</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 6 up to 10</th><td>+15 / 0</td><td>0 / −9</td><td>+24</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 10 up to 18</th><td>+18 / 0</td><td>0 / −11</td><td>+29</td><td>0</td><td class="k c">clearance</td></tr><tr class="r"><th>over 18 up to 30</th><td>+21 / 0</td><td>0 / −13</td><td>+34</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 30 up to 50</th><td>+25 / 0</td><td>0 / −16</td><td>+41</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 50 up to 80</th><td>+30 / 0</td><td>0 / −19</td><td>+49</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 80 up to 120</th><td>+35 / 0</td><td>0 / −22</td><td>+57</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 120 up to 180</th><td>+40 / 0</td><td>0 / −25</td><td>+65</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 180 up to 250</th><td>+46 / 0</td><td>0 / −29</td><td>+75</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 250 up to 315</th><td>+52 / 0</td><td>0 / −32</td><td>+84</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 315 up to 400</th><td>+57 / 0</td><td>0 / −36</td><td>+93</td><td>0</td><td class="k c">clearance</td></tr><tr><th>over 400 up to 500</th><td>+63 / 0</td><td>0 / −40</td><td>+103</td><td>0</td><td class="k c">clearance</td></tr></tbody></table></div>
+    <p class="muted" style="margin-top:14px">For any other diameter, or to compare fits and work back from the clearance you want, open the calculator: it also gives the drawing callout and the calculation report.</p>
+    <div class="acts"><a class="btn go" href="/app.html?m=fits&fitType=H7%2Fh6&nominalDiameter=30&lang=en">Open the calculator →</a></div></div></section>
+  <section><div class="wrap"><h2>When to use it</h2><p>Sliding by hand, location fit.</p><p>It is a <b>clearance fit</b>: on every size the hole is larger than the shaft, so the parts slide or turn.</p><p>Indicative roughness: hole Ra 1.6 µm, shaft Ra 0.8 µm. Typical machining: shaft by finish turning or grinding, hole by reaming.</p><p>On the drawing: <b>Ø30 H7/h6</b> on the assembly, <b>Ø30 H7</b> on the hub and <b>Ø30 h6</b> on the shaft (or the limits of size).</p></div></section>
+  <section><div class="wrap"><h2>Questions</h2><dl class="faq"><dt>Is H7/h6 a clearance or an interference fit?</dt><dd>Clearance. It is a clearance fit: on every size the hole is larger than the shaft, so the parts slide or turn.</dd><dt>What clearance does H7/h6 give on 50 mm?</dt><dd>From 0 to +41 µm (range over 30 up to 50 mm; negative values are interference).</dd><dt>And on 100 mm?</dt><dd>From 0 to +57 µm (range over 80 up to 120 mm).</dd><dt>Where do these values come from?</dt><dd>From the ISO 286-1 and 286-2 tables built into the Torsio calculator, checked by 904 tests against published deviations. For a contract drawing always refer to the standard.</dd></dl></div></section>
+  <section><div class="wrap"><h2>Other hole basis fits</h2><div class="others"><a href="/iso-fits/h11-c11/">H11/c11<span>Very loose running, wide clearance</span></a><a href="/iso-fits/h9-d9/">H9/d9<span>Free running, large clearance</span></a><a href="/iso-fits/h8-f7/">H8/f7<span>Close running, lubricated journals</span></a><a href="/iso-fits/h7-f7/">H7/f7<span>Wide clearance, loose running</span></a><a href="/iso-fits/h7-g6/">H7/g6<span>Precision running, journal bearings</span></a><a href="/iso-fits/h7-h6/" aria-current="page">H7/h6<span>Sliding by hand, location fit</span></a><a href="/iso-fits/h8-h7/">H8/h7<span>Sliding location, medium precision</span></a><a href="/iso-fits/h7-js6/">H7/js6<span>Transition, mallet assembly</span></a><a href="/iso-fits/h7-k6/">H7/k6<span>Light press, hand press fit</span></a><a href="/iso-fits/h7-n6/">H7/n6<span>Tight transition, press assembly</span></a><a href="/iso-fits/h7-p6/">H7/p6<span>Permanent press or heat shrink fit</span></a><a href="/iso-fits/h7-r6/">H7/r6<span>Medium interference, press fit</span></a><a href="/iso-fits/h7-s6/">H7/s6<span>Heavy interference, shrink fit</span></a></div>
+    <p style="margin-top:18px"><a href="/iso-fits/c11-h11/">Shaft basis fits →</a> · <a href="/iso-fits-calculator/">All ISO fit tables and the calculator →</a></p></div></section>
+  <div class="wrap">
+    <footer>
+      <span>Torsio Engineering · a project by Luigi Frassi</span>
+      <span><a href="/metodo.html">Method</a> · <a href="/novita.html">What's new</a> · <a href="/privacy.html">Privacy</a> · <a href="https://tally.so/r/Gev5gZ?module=contact&lang=en" target="_blank" rel="noopener">Contact</a> · <a href="mailto:info@torsio.app">info@torsio.app</a> · <a href="https://github.com/Luigi-Frassi/torsio-engineering" target="_blank" rel="noopener">Source code</a></span>
+    </footer>
+  </div>
+  <script>try { localStorage.setItem('torsioLang', 'en'); } catch (e) { /* private mode */ }</script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

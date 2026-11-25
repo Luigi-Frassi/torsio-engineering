@@ -785,6 +785,19 @@ with sync_playwright() as p:
     ft = lp.evaluate("[...document.querySelectorAll('table.iso')].map(t => t.tBodies[0].rows.length).concat([[...document.querySelectorAll('table.iso tr.r td')].map(td => td.textContent).join('|')])")
     check('  pagina accoppiamenti: 13 accoppiamenti su 30 mm, 13 scaglioni, H7/k6 = +19 / −15 incerto', ft == [13, 13, '+19|−15|incerto'], str(ft))
     lp.close()
+    # one page per ISO fit (tools/mkfits.py): 21 fits × 2 languages, numbers from the core, link to the calculator with the fit
+    lp = new_page(); lp.goto(HOME + 'it/accoppiamenti/h7-s6/'); lp.wait_for_timeout(300)
+    fp = lp.evaluate("""() => { const rows = [...document.querySelectorAll('table.iso tbody tr')];
+      const r = rows.find(tr => tr.cells[0].textContent === 'oltre 50 fino a 65');
+      return [rows.length, r ? [...r.querySelectorAll('td')].map(td => td.textContent).join('|') : '', document.querySelector('link[hreflang=en]').href.endsWith('/iso-fits/h7-s6/'),
+              document.querySelector('.page-head .btn.go').getAttribute('href')]; }""")
+    check('  pagina H7/s6: 23 scaglioni, 50–65 mm = H7 +30/0, s6 +72/+53, gioco −23/−72, link al calcolatore con H7/s6', fp == [23, '+30 / 0|+72 / +53|−23|−72|interferenza', True, '/app.html?m=fits&fitType=H7%2Fs6&nominalDiameter=30&lang=it'], str(fp))
+    lp.goto(HOME + 'app.html?m=fits&fitType=H7%2Fs6&nominalDiameter=30&lang=it'); lp.wait_for_timeout(900)
+    check('  il link della pagina apre il calcolatore su H7/s6', lp.evaluate("document.getElementById('fitType').value") == 'H7/s6')
+    import glob as _g
+    check('  42 pagine per accoppiamento, tutte nella sitemap', len(_g.glob(REPO + '/iso-fits/*/index.html')) == 21 and len(_g.glob(REPO + '/it/accoppiamenti/*/index.html')) == 21
+          and open(REPO + '/sitemap.xml').read().count('<lastmod>') == open(REPO + '/sitemap.xml').read().count('<url>') >= 61)
+    lp.close()
     # the example numbers on the gears page are the ones the demo gives
     gp = new_page(); gp.goto(BASE + '?demo=helical50kw&lang=it'); gp.wait_for_timeout(1200)
     gs = gp.evaluate("document.getElementById('sumBar').innerText")
