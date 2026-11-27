@@ -7,8 +7,12 @@
 
 const FR_TXT = {
   it: {
-    tools: { member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
+    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
+      N: 'N > 0 trazione.', Vt: 'T > 0: sulla faccia di sinistra verso +y, su quella di destra verso −y (coppia oraria).', M: 'M > 0 tende le fibre dal lato −y: sotto, per una trave orizzontale disegnata da sinistra a destra (trave appoggiata con carico verso il basso → M positivo).',
+      draw: 'Nei diagrammi N e T positivi sono disegnati dal lato +y, M dal lato delle fibre tese.' },
+    tools: { move: 'Sposta', member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
     toolHelp: {
+      move: 'Trascina un nodo per spostarlo, una trave per spostarla insieme ai suoi due nodi, lo sfondo per spostare la vista; con la rotellina ingrandisci. I risultati si aggiornano mentre trascini. Passo: un decimo della griglia (tieni premuto Maiusc per muovere al millimetro).',
       member: 'Trascina da un punto all\'altro (o clicca due punti) per creare una trave: lavora a sforzo normale, taglio e flessione. I nodi si agganciano alla griglia e ai nodi esistenti.',
       bar: 'Come la trave, ma con una cerniera a entrambi gli estremi: lavora solo a sforzo normale, come nei tralicci. Metti i carichi nei nodi: un carico distribuito la farebbe inflettere.',
       support: 'Clicca un nodo per cambiare vincolo: cerniera → carrello orizzontale → carrello verticale → incastro → pattino → nessuno.',
@@ -49,8 +53,12 @@ const FR_TXT = {
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    tools: { member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
+    sign: { title: 'Sign convention', V: 'V', tens: 'tension side', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
+      N: 'N > 0 tension.', Vt: 'V > 0: on the left face towards +y, on the right face towards −y (clockwise couple).', M: 'M > 0 puts the −y side in tension: the bottom, for a horizontal member drawn from left to right (simply supported beam loaded downwards → positive M).',
+      draw: 'In the diagrams positive N and V are drawn on the +y side, M on the tension side.' },
+    tools: { move: 'Move', member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
     toolHelp: {
+      move: 'Drag a node to move it, a member to move it with its two nodes, the background to pan; zoom with the mouse wheel. Results update while you drag. Step: a tenth of the grid (hold Shift to move by the millimetre).',
       member: 'Drag from one point to another (or click two points) to create a beam: it carries axial force, shear and bending. Nodes snap to the grid and to existing nodes.',
       bar: 'Like a beam, but hinged at both ends: it carries axial force only, as in a truss. Put the loads on the nodes: a distributed load would bend it.',
       support: 'Click a node to change its support: pin → horizontal roller → vertical roller → fixed → guide → none.',
@@ -106,6 +114,8 @@ let frView = { x0: -500, y0: -1500, x1: 8500, y1: 3500 };
 let frShow = 'M';
 let frPending = null;       // first point of a member drawn with two clicks
 let frDrag = null;          // { a: {x,y}, b: {x,y} } while dragging
+let frMove = null;          // Move tool: { kind: 'node' | 'member' | 'pan', ... } while dragging
+let frLiveRaf = 0;
 let frResults = null;       // { byFamily: {fam: sizing}, best, sel }
 let frSelFamily = null;
 let frCalcTimer = null;
@@ -191,6 +201,7 @@ function frBuildStatic() {
       <button type="button" id="frFit" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200"></button>
       <button type="button" id="frClear" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200"></button>
     </div>
+    <details id="frSign" class="mt-3 text-xs border border-slate-700 rounded-lg px-3 py-2" open><summary class="cursor-pointer font-semibold text-slate-200" id="frSignT"></summary><div id="frSignBody" class="mt-2"></div></details>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -240,13 +251,34 @@ function frBuildStatic() {
   frInitCanvas();
 }
 
+// small drawing of the sign convention (also used in the report)
+function frSignSvg(t, print = false) {
+  const ink = print ? '#222' : '#22211f', mut = print ? '#555' : '#6f6a62', col = { N: '#2f66b3', V: '#21497f', M: '#c0392b' };
+  const box = cx => `<rect x="${cx - 20}" y="45" width="40" height="40" fill="none" stroke="${ink}" stroke-width="1.6"/><text x="${cx}" y="70" text-anchor="middle" font-size="13" fill="${ink}">+</text>`;
+  const arr = (x1, y1, x2, y2, c) => { const a = Math.atan2(y2 - y1, x2 - x1), h = 7; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/><path d="M ${x2} ${y2} L ${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)} L ${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)} Z" fill="${c}"/>`; };
+  const head = (x, y, ang, c) => { const h = 7; return `<path d="M ${x} ${y} L ${x - h * Math.cos(ang - 0.45)} ${y - h * Math.sin(ang - 0.45)} L ${x - h * Math.cos(ang + 0.45)} ${y - h * Math.sin(ang + 0.45)} Z" fill="${c}"/>`; };
+  let g = '';
+  g += `<text x="85" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.N}">N</text>` + box(85) + arr(65, 65, 33, 65, col.N) + arr(105, 65, 137, 65, col.N);
+  g += `<text x="275" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.V}">${t.sign.V}</text>` + box(275) + arr(247, 88, 247, 42, col.V) + arr(303, 42, 303, 88, col.V);
+  g += `<text x="465" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.M}">M</text>` + box(465);
+  g += `<path d="M 441 88 Q 418 65 441 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(447, 41, -0.25, col.M);    // left face: clockwise
+  g += `<path d="M 489 88 Q 512 65 489 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(483, 41, Math.PI + 0.25, col.M);   // right face: counter-clockwise
+  g += `<line x1="447" y1="81" x2="483" y2="81" stroke="${col.M}" stroke-width="2.5" stroke-dasharray="4 2"/><text x="465" y="104" text-anchor="middle" font-size="10.5" fill="${mut}">${t.sign.tens}</text>`;
+  // local axes
+  g += arr(560, 95, 610, 95, mut) + `<text x="614" y="99" font-size="11" fill="${mut}">x</text>` + arr(560, 95, 560, 50, mut) + `<text x="556" y="45" font-size="11" fill="${mut}">y</text>` +
+    `<circle cx="560" cy="95" r="3" fill="${mut}"/><text x="552" y="112" font-size="10" fill="${mut}">1</text><text x="606" y="112" font-size="10" fill="${mut}">→ 2</text>`;
+  return `<svg viewBox="0 0 640 118" width="100%" style="max-width:640px;display:block" font-family="Archivo, Arial, sans-serif" role="img" aria-label="${t.sign.title}">${g}</svg>`;
+}
+
 function frRelabel() {
   const t = frT();
   if (!frEl('frTools')) return;
   frEl('frTools').innerHTML = Object.keys(t.tools).map(k =>
     `<button type="button" data-tool="${k}" class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${k === frTool ? 'bg-blue-600/20 text-blue-300 border-blue-500/40' : 'text-slate-300 border-slate-700 hover:text-white hover:bg-slate-800'}">${t.tools[k]}</button>`).join('');
   frEl('frTools').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { frTool = b.dataset.tool; frPending = null; frRelabel(); frDraw(); }));
+  const cv = frEl('frCanvas'); if (cv) cv.style.cursor = frTool === 'move' ? 'grab' : 'crosshair';
   frEl('frToolHelp').textContent = t.toolHelp[frTool];
+  if (frEl('frSignT')) { frEl('frSignT').textContent = t.sign.title; frEl('frSignBody').innerHTML = frSignSvg(t) + `<p class="text-slate-400 mt-1">${t.sign.axes} ${t.sign.N} ${t.sign.Vt} ${t.sign.M} ${t.sign.draw}</p>`; }
   frEl('frEmpty').textContent = t.empty;
   frEl('frShowLbl').textContent = t.view;
   frEl('frShow').innerHTML = Object.entries(t.views).map(([k, v]) => `<option value="${k}" ${k === frShow ? 'selected' : ''}>${v}</option>`).join('');
@@ -430,6 +462,15 @@ function frInitCanvas() {
   const svg = frEl('frCanvas');
   svg.addEventListener('pointerdown', ev => {
     const { X, Y } = frEventPoint(ev);
+    if (frTool === 'move') {
+      const n = frNearestNode(X, Y), mi = n < 0 ? frNearestMember(X, Y).i : -1;
+      const idx = n >= 0 ? [n] : mi >= 0 ? [frModel.members[mi].n1, frModel.members[mi].n2] : [];
+      frMove = idx.length ? { kind: n >= 0 ? 'node' : 'member', idx, p0: frToModel(X, Y), orig: idx.map(k => ({ ...frModel.nodes[k] })), moved: false }
+        : { kind: 'pan', X0: X, Y0: Y, view: { ...frView } };
+      svg.setPointerCapture(ev.pointerId); svg.style.cursor = 'grabbing';
+      ev.preventDefault();
+      return;
+    }
     if (frTool === 'member' || frTool === 'bar') {
       frDrag = { a: frSnap(X, Y), b: frSnap(X, Y), moved: false };
       svg.setPointerCapture(ev.pointerId);
@@ -464,6 +505,33 @@ function frInitCanvas() {
   });
   svg.addEventListener('pointermove', ev => {
     const { X, Y } = frEventPoint(ev);
+    if (frMove) {
+      if (frMove.kind === 'pan') {
+        const sc = frScale(), dx = (X - frMove.X0) / sc, dy = (Y - frMove.Y0) / sc, v = frMove.view;
+        frView = { x0: v.x0 - dx, x1: v.x1 - dx, y0: v.y0 + dy, y1: v.y1 + dy };
+        frDraw();
+        return;
+      }
+      const p = frToModel(X, Y), step = ev.shiftKey ? 1 : Math.max(1, frGrid / 10);
+      const dx = p.x - frMove.p0.x, dy = p.y - frMove.p0.y;
+      const next = frMove.orig.map(o => ({ x: Math.round((o.x + dx) / step) * step, y: Math.round((o.y + dy) / step) * step }));
+      if (frMove.kind === 'member') {   // keep the member's shape: move both nodes by the same snapped offset
+        const ox = next[0].x - frMove.orig[0].x, oy = next[0].y - frMove.orig[0].y;
+        next[1] = { x: frMove.orig[1].x + ox, y: frMove.orig[1].y + oy };
+      }
+      const same = next.every((q, j) => q.x === frModel.nodes[frMove.idx[j]].x && q.y === frModel.nodes[frMove.idx[j]].y);
+      if (same) return;
+      const old = frMove.idx.map(k => ({ ...frModel.nodes[k] }));
+      frMove.idx.forEach((k, j) => { frModel.nodes[k] = { ...frModel.nodes[k], x: next[j].x, y: next[j].y }; });
+      // a member cannot collapse to zero length
+      if (frModel.members.some(mm => { const a = frModel.nodes[mm.n1], b = frModel.nodes[mm.n2]; return Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6; })) {
+        frMove.idx.forEach((k, j) => { frModel.nodes[k] = old[j]; });
+        return;
+      }
+      frMove.moved = true;
+      if (!frLiveRaf) frLiveRaf = requestAnimationFrame(() => { frLiveRaf = 0; calculateFrames(); });   // results follow the drag
+      return;
+    }
     if (frDrag) {
       const b = frSnap(X, Y);
       if (b.x !== frDrag.b.x || b.y !== frDrag.b.y) { frDrag.b = b; frDrag.moved = true; frDraw(); }
@@ -472,6 +540,11 @@ function frInitCanvas() {
     }
   });
   svg.addEventListener('pointerup', ev => {
+    if (frMove) {
+      const mv = frMove; frMove = null; svg.style.cursor = frTool === 'move' ? 'grab' : 'crosshair';
+      if (mv.kind !== 'pan' && mv.moved) { frRenderTables(); calculateFrames(); }
+      return;
+    }
     if (!frDrag) return;
     const d = frDrag; frDrag = null;
     const same = Math.abs(d.a.x - d.b.x) < 1e-6 && Math.abs(d.a.y - d.b.y) < 1e-6;
@@ -482,6 +555,15 @@ function frInitCanvas() {
     } else frPending = { ...d.a };
     frDraw();
   });
+  svg.addEventListener('pointercancel', () => { if (frMove) { frMove = null; frRenderTables(); calculateFrames(); } });
+  // zoom with the wheel around the pointer (Move tool only, so the page still scrolls with the other tools)
+  svg.addEventListener('wheel', ev => {
+    if (frTool !== 'move') return;
+    ev.preventDefault();
+    const { X, Y } = frEventPoint(ev), P = frToModel(X, Y), f = Math.exp(Math.max(-60, Math.min(60, ev.deltaY)) * 0.004), v = frView;
+    frView = { x0: P.x + (v.x0 - P.x) * f, x1: P.x + (v.x1 - P.x) * f, y0: P.y + (v.y0 - P.y) * f, y1: P.y + (v.y1 - P.y) * f };
+    frDraw();
+  }, { passive: false });
   const tbl = ['frNodesTbl', 'frMembersTbl', 'frSupportsTbl', 'frLoadsTbl', 'frDloadsTbl'];
   tbl.forEach(id => { frEl(id).addEventListener('change', frTableEvent); frEl(id).addEventListener('click', frTableEvent); });
 }
@@ -564,10 +646,12 @@ function frDraw(target = null, opts = {}) {
       note = `${t.views.def} · ${t.scale} ×${frNum(k, k < 10 ? 1 : 0)} · δmax = ${frNum(ev.dmax, 2)} mm`;
     } else if (['N', 'V', 'M'].includes(frShow)) {
       const key = frShow;
-      let vmax = 0;
-      ev.rows.forEach(r => r.sum.pts.forEach(p => { vmax = Math.max(vmax, Math.abs(p[key])); }));
+      let vmax = 0, ref = 0;
+      ev.rows.forEach(r => r.sum.pts.forEach(p => { vmax = Math.max(vmax, Math.abs(p[key])); ref = Math.max(ref, Math.abs(p.N), Math.abs(p.V), Math.abs(p.M) / span); }));
+      // round-off (e.g. shear and moment of a bar, ~1e-12) is zero, not a full-size diagram
+      if ((key === 'M' ? vmax / span : vmax) < 1e-9 * ref) vmax = 0;
       const k = vmax > 0 ? 0.09 * span / vmax : 0, col = FRC[key];
-      ev.an.members.forEach((mr, i) => {
+      if (vmax > 0) ev.an.members.forEach((mr, i) => {
         const mm = m.members[i], p1 = m.nodes[mm.n1], pts = ev.rows[i].sum.pts;
         const sgn = key === 'M' ? -1 : 1;   // moment drawn on the tension side
         const poly = pts.map(p => { const o = sgn * k * p[key], P = frToScreen({ x: p1.x + p.x * mr.c - o * mr.s, y: p1.y + p.x * mr.s + o * mr.c }); return `${P.X.toFixed(1)},${P.Y.toFixed(1)}`; });

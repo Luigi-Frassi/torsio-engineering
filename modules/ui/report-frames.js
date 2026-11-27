@@ -103,6 +103,7 @@ function buildFrameReportHtml() {
     .concat(m.dloads.map(d => [`${t.member} ${d.member + 1}`, (d.shape === 'lin' ? `${t.shapes.lin}: q₁ = ${N(d.q, 2)} → q₂ = ${N(+d.q2 || 0, 2)} kN/m` :
       d.shape === 'par' ? `${t.shapes.par}: q₁ = ${N(d.q, 2)} · q<sub>m</sub> = ${N(+d.qm || 0, 2)} · q₂ = ${N(+d.q2 || 0, 2)} kN/m` : `q = ${N(d.q, 2)} kN/m`) + ` · ${t.dirs[d.dir]}`]));
   if (lrows.length) body += reportTable([F.loads, ''], lrows);
+  body += `<h4>${t.sign.title}</h4><div class="fig">${frSignSvg(t, true)}</div><p>${t.sign.axes} ${t.sign.N} ${t.sign.Vt} ${t.sign.M} ${t.sign.draw}</p>`;
 
   // 3. method
   body += H(F.s3) + `<p>${F.m1}</p>` + reportEq([
