@@ -7,9 +7,9 @@
 
 const FR_TXT = {
   it: {
-    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
+    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese in basso', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
       N: 'N > 0 trazione.', Vt: 'T > 0: sulla faccia di sinistra verso +y, su quella di destra verso −y (coppia oraria).', M: 'M > 0 tende le fibre dal lato −y: sotto, per una trave orizzontale disegnata da sinistra a destra (trave appoggiata con carico verso il basso → M positivo).',
-      draw: 'Nei diagrammi N e T positivi sono disegnati dal lato +y, M dal lato delle fibre tese.' },
+      draw: 'Quindi dT/dx = q e dM/dx = T. Nei diagrammi N e T positivi sono disegnati dal lato +y, M dal lato delle fibre tese.' },
     tools: { move: 'Sposta', member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
     toolHelp: {
       move: 'Trascina un nodo per spostarlo, una trave per spostarla insieme ai suoi due nodi, lo sfondo per spostare la vista; con la rotellina ingrandisci. I risultati si aggiornano mentre trascini. Passo: un decimo della griglia (tieni premuto Maiusc per muovere al millimetro).',
@@ -53,9 +53,9 @@ const FR_TXT = {
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    sign: { title: 'Sign convention', V: 'V', tens: 'tension side', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
+    sign: { title: 'Sign convention', V: 'V', tens: 'tension at the bottom', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
       N: 'N > 0 tension.', Vt: 'V > 0: on the left face towards +y, on the right face towards −y (clockwise couple).', M: 'M > 0 puts the −y side in tension: the bottom, for a horizontal member drawn from left to right (simply supported beam loaded downwards → positive M).',
-      draw: 'In the diagrams positive N and V are drawn on the +y side, M on the tension side.' },
+      draw: 'Hence dV/dx = q and dM/dx = V. In the diagrams positive N and V are drawn on the +y side, M on the tension side.' },
     tools: { move: 'Move', member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
     toolHelp: {
       move: 'Drag a node to move it, a member to move it with its two nodes, the background to pan; zoom with the mouse wheel. Results update while you drag. Step: a tenth of the grid (hold Shift to move by the millimetre).',
@@ -263,7 +263,7 @@ function frSignSvg(t, print = false) {
   g += `<text x="465" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.M}">M</text>` + box(465);
   g += `<path d="M 441 88 Q 418 65 441 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(447, 41, -0.25, col.M);    // left face: clockwise
   g += `<path d="M 489 88 Q 512 65 489 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(483, 41, Math.PI + 0.25, col.M);   // right face: counter-clockwise
-  g += `<line x1="447" y1="81" x2="483" y2="81" stroke="${col.M}" stroke-width="2.5" stroke-dasharray="4 2"/><text x="465" y="104" text-anchor="middle" font-size="10.5" fill="${mut}">${t.sign.tens}</text>`;
+  g += `<text x="465" y="104" text-anchor="middle" font-size="10.5" fill="${mut}">${t.sign.tens}</text>`;
   // local axes
   g += arr(560, 95, 610, 95, mut) + `<text x="614" y="99" font-size="11" fill="${mut}">x</text>` + arr(560, 95, 560, 50, mut) + `<text x="556" y="45" font-size="11" fill="${mut}">y</text>` +
     `<circle cx="560" cy="95" r="3" fill="${mut}"/><text x="552" y="112" font-size="10" fill="${mut}">1</text><text x="606" y="112" font-size="10" fill="${mut}">→ 2</text>`;
