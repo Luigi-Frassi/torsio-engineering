@@ -7,7 +7,7 @@
 
 const FR_TXT = {
   it: {
-    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese in basso', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
+    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese in basso', n1: 'nodo 1', n2: 'nodo 2', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
       N: 'N > 0 trazione.', Vt: 'T > 0: sulla faccia di sinistra verso +y, su quella di destra verso −y (coppia oraria).', M: 'M > 0 tende le fibre dal lato −y: sotto, per una trave orizzontale disegnata da sinistra a destra (trave appoggiata con carico verso il basso → M positivo).',
       draw: 'Quindi dT/dx = q e dM/dx = T. Nei diagrammi N e T positivi sono disegnati dal lato +y, M dal lato delle fibre tese.' },
     tools: { move: 'Sposta', member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
@@ -53,7 +53,7 @@ const FR_TXT = {
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    sign: { title: 'Sign convention', V: 'V', tens: 'tension at the bottom', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
+    sign: { title: 'Sign convention', V: 'V', tens: 'tension at the bottom', n1: 'node 1', n2: 'node 2', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
       N: 'N > 0 tension.', Vt: 'V > 0: on the left face towards +y, on the right face towards −y (clockwise couple).', M: 'M > 0 puts the −y side in tension: the bottom, for a horizontal member drawn from left to right (simply supported beam loaded downwards → positive M).',
       draw: 'Hence dV/dx = q and dM/dx = V. In the diagrams positive N and V are drawn on the +y side, M on the tension side.' },
     tools: { move: 'Move', member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
@@ -265,9 +265,11 @@ function frSignSvg(t, print = false) {
   g += `<path d="M 489 88 Q 512 65 489 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(483, 41, Math.PI + 0.25, col.M);   // right face: counter-clockwise
   g += `<text x="465" y="104" text-anchor="middle" font-size="10.5" fill="${mut}">${t.sign.tens}</text>`;
   // local axes
-  g += arr(560, 95, 610, 95, mut) + `<text x="614" y="99" font-size="11" fill="${mut}">x</text>` + arr(560, 95, 560, 50, mut) + `<text x="556" y="45" font-size="11" fill="${mut}">y</text>` +
-    `<circle cx="560" cy="95" r="3" fill="${mut}"/><text x="552" y="112" font-size="10" fill="${mut}">1</text><text x="606" y="112" font-size="10" fill="${mut}">→ 2</text>`;
-  return `<svg viewBox="0 0 640 118" width="100%" style="max-width:640px;display:block" font-family="Archivo, Arial, sans-serif" role="img" aria-label="${t.sign.title}">${g}</svg>`;
+  // local axes on a member drawn from node 1 to node 2
+  g += `<line x1="560" y1="80" x2="620" y2="80" stroke="${ink}" stroke-width="3" stroke-linecap="round"/><circle cx="560" cy="80" r="3.5" fill="${ink}"/><circle cx="620" cy="80" r="3.5" fill="${ink}"/>` +
+    `<text x="560" y="100" text-anchor="middle" font-size="10" fill="${mut}">${t.sign.n1}</text><text x="620" y="100" text-anchor="middle" font-size="10" fill="${mut}">${t.sign.n2}</text>` +
+    arr(560, 80, 597, 80, col.N) + `<text x="600" y="72" font-size="11" fill="${col.N}">x</text>` + arr(560, 80, 560, 43, col.N) + `<text x="566" y="44" font-size="11" fill="${col.N}">y</text>`;
+  return `<svg viewBox="0 0 650 118" width="100%" style="max-width:640px;display:block" font-family="Archivo, Arial, sans-serif" role="img" aria-label="${t.sign.title}">${g}</svg>`;
 }
 
 function frRelabel() {
