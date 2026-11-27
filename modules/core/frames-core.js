@@ -51,9 +51,41 @@ function frLocalK(E, A, I, L) {
   ];
 }
 
-// Fixed-end forces (acting on the element) for uniform loads qx (axial) and qy (transverse), local axes
+// Distributed loads along a member: q(x) = a0 + a1 x + a2 x² (x from the start node, N/mm), one polynomial
+// for the axial component (qx) and one for the transverse one (qy). Uniform, linear (trapezoidal/triangular)
+// and parabolic distributions are all of this form.
+// Values of a distributed load at start, mid-span and end: shape 'u' uniform (q), 'lin' linear (q → q2),
+// 'par' parabolic through q (start), qm (mid-span), q2 (end).
+function frLoadVals(dl) {
+  const q = +dl.q || 0;
+  if (dl.shape === 'lin') { const q2 = +dl.q2 || 0; return [q, (q + q2) / 2, q2]; }
+  if (dl.shape === 'par') return [q, +dl.qm || 0, +dl.q2 || 0];
+  return [q, q, q];
+}
+// polynomial coefficients in x of the load through the values at 0, L/2, L
+function frLoadPoly(vals, L) {
+  const [q0, qm, qL] = vals, c2 = 2 * (q0 - 2 * qm + qL), c1 = qL - q0 - c2;
+  return [q0, c1 / L, c2 / (L * L)];
+}
+const frPolyAt = (a, x) => a[0] + a[1] * x + a[2] * x * x;
+const frPolyInt1 = (a, x) => a[0] * x + a[1] * x * x / 2 + a[2] * x ** 3 / 3;              // ∫0^x q
+const frPolyInt2 = (a, x) => a[0] * x * x / 2 + a[1] * x ** 3 / 6 + a[2] * x ** 4 / 12;     // ∫0^x q(ξ)(x − ξ) dξ
+const frPolyAny = a => a.some(v => Math.abs(v) > 0);
+
+// Fixed-end forces (acting on the element), local axes: f0_i = −∫ N_i q dx with the element's own shape functions
+// (linear for the axial dofs, Hermite cubics for the transverse ones). 3-point Gauss: exact up to degree 5.
+// Uniform load: [−qx L/2, −qy L/2, −qy L²/12, −qx L/2, −qy L/2, +qy L²/12].
 function frLocalFEF(qx, qy, L) {
-  return [-qx * L / 2, -qy * L / 2, -qy * L * L / 12, -qx * L / 2, -qy * L / 2, qy * L * L / 12];
+  const ax = Array.isArray(qx) ? qx : [qx, 0, 0], ay = Array.isArray(qy) ? qy : [qy, 0, 0];
+  const G = [[-Math.sqrt(0.6), 5 / 9], [0, 8 / 9], [Math.sqrt(0.6), 5 / 9]];
+  const f = [0, 0, 0, 0, 0, 0];
+  for (const [xi, w] of G) {
+    const t = (xi + 1) / 2, x = t * L, W = w * L / 2, px = frPolyAt(ax, x), py = frPolyAt(ay, x);
+    f[0] -= W * px * (1 - t); f[3] -= W * px * t;
+    f[1] -= W * py * (1 - 3 * t * t + 2 * t ** 3); f[2] -= W * py * L * (t - 2 * t * t + t ** 3);
+    f[4] -= W * py * (3 * t * t - 2 * t ** 3); f[5] -= W * py * L * (-t * t + t ** 3);
+  }
+  return f;
 }
 
 // Member geometry and local load components
@@ -64,11 +96,14 @@ function frMemberGeom(model, i) {
 }
 
 function frMemberLoads(model, i, g) {
-  let qx = 0, qy = 0;
+  const qx = [0, 0, 0], qy = [0, 0, 0];
   for (const dl of model.dloads || []) {
     if (dl.member !== i) continue;
-    if (dl.dir === 'perp') qy += dl.q;                           // perpendicular to the member (local y)
-    else { qx += dl.q * g.s; qy += dl.q * g.c; }                 // global Y, per unit length of member
+    const a = frLoadPoly(frLoadVals(dl), g.L);
+    for (let k = 0; k < 3; k++) {
+      if (dl.dir === 'perp') qy[k] += a[k];                      // perpendicular to the member (local y)
+      else { qx[k] += a[k] * g.s; qy[k] += a[k] * g.c; }          // global Y, per unit length of member
+    }
   }
   return { qx, qy };
 }
@@ -114,7 +149,7 @@ const FR_SUPPORTS = {
 };
 
 // ---- analysis --------------------------------------------------------------------------------
-// model: { nodes:[{x,y}], members:[{n1,n2,relStart,relEnd}], supports:[{node,type}], loads:[{node,Fx,Fy,M}], dloads:[{member,q,dir}] }
+// model: { nodes:[{x,y}], members:[{n1,n2,relStart,relEnd}], supports:[{node,type}], loads:[{node,Fx,Fy,M}], dloads:[{member,q,dir,shape,q2,qm}] }
 // props: per member { E, A, I }
 function frameAnalyze(model, props) {
   const nN = model.nodes.length, nM = model.members.length, nd = 3 * nN;
@@ -208,7 +243,16 @@ function frameAnalyze(model, props) {
 // Internal actions at x along a member (sign convention: N > 0 tension, M > 0 sagging, i.e. tension on the local -y side)
 function frameMemberActions(mr, x) {
   const f = mr.f;
-  return { N: -(f[0] + mr.qx * x), V: f[1] + mr.qy * x, M: -f[2] + f[1] * x + mr.qy * x * x / 2 };
+  return { N: -(f[0] + frPolyInt1(mr.qx, x)), V: f[1] + frPolyInt1(mr.qy, x), M: -f[2] + f[1] * x + frPolyInt2(mr.qy, x) };
+}
+
+// Transverse deflection of the member with both ends clamped under its own load (EI w'''' = q, w = w' = 0 at 0 and L)
+function frParticularW(a, L, EI, x) {
+  if (!frPolyAny(a)) return 0;
+  const P = z => a[0] * z ** 4 / 24 + a[1] * z ** 5 / 120 + a[2] * z ** 6 / 360;
+  const dP = z => a[0] * z ** 3 / 6 + a[1] * z ** 4 / 24 + a[2] * z ** 5 / 60;
+  const A = P(L) / EI, B = dP(L) / EI, c3 = (2 * A / L - B) / (L * L), c2 = (-A - c3 * L ** 3) / (L * L);
+  return P(x) / EI + c2 * x * x + c3 * x ** 3;
 }
 
 // Sample the member: actions and local transverse deflection (Hermite + uniform-load particular solution)
@@ -216,11 +260,20 @@ function frameMemberSample(mr, n = 40) {
   const L = mr.L, ul = mr.ul, pts = [];
   const xs = [];
   for (let i = 0; i <= n; i++) xs.push(L * i / n);
-  if (mr.qy) { const x0 = -mr.f[1] / mr.qy; if (x0 > 0 && x0 < L) xs.push(x0); }   // shear zero: extreme moment
+  if (frPolyAny(mr.qy)) {   // shear zero inside the member: extreme moment (bisection between sign changes)
+    const V = x => mr.f[1] + frPolyInt1(mr.qy, x);
+    for (let i = 0; i < n; i++) {
+      let a = L * i / n, b = L * (i + 1) / n, va = V(a), vb = V(b);
+      if (va === 0 || va * vb > 0) continue;
+      for (let k = 0; k < 60; k++) { const c = (a + b) / 2, vc = V(c); if (va * vc <= 0) { b = c; } else { a = c; va = vc; } }
+      const x0 = (a + b) / 2;
+      if (x0 > 1e-9 * L && x0 < L * (1 - 1e-9)) xs.push(x0);
+    }
+  }
   xs.sort((a, b) => a - b);
   for (const x of xs) {
     const t = x / L, h1 = 1 - 3 * t * t + 2 * t ** 3, h2 = L * (t - 2 * t * t + t ** 3), h3 = 3 * t * t - 2 * t ** 3, h4 = L * (-t * t + t ** 3);
-    const w = h1 * ul[1] + h2 * ul[2] + h3 * ul[4] + h4 * ul[5] + mr.qy * x * x * (L - x) ** 2 / (24 * mr.E * mr.I);
+    const w = h1 * ul[1] + h2 * ul[2] + h3 * ul[4] + h4 * ul[5] + frParticularW(mr.qy, L, mr.E * mr.I, x);
     const ua = ul[0] + (ul[3] - ul[0]) * t;
     pts.push({ x, w, ua, ...frameMemberActions(mr, x) });
   }

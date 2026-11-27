@@ -954,6 +954,29 @@ for (const [a, z1, z2, phi, g1, g2, psi] of [
     supports: [{ node: 0, type: 'fixed' }, { node: 2, type: 'rollerX' }], loads: [], dloads: [{ member: 1, q: -10, dir: 'gy' }] };
   an = F.frameAnalyze(m, [P, P]);
   rel('FEM trave Gerber (cerniera interna): M incastro = R·a', an.reactions[0].M, 15000 * 2000, 1e-9);
+  // carichi distribuiti lineari e parabolici (valori in forma chiusa)
+  {
+    const q0 = 12, one = (supports, dl) => ({ nodes: [{ x: 0, y: 0 }, { x: L, y: 0 }], members: [{ n1: 0, n2: 1 }], supports, loads: [], dloads: [{ member: 0, dir: 'gy', ...dl }] });
+    const SS = [{ node: 0, type: 'pin' }, { node: 1, type: 'rollerX' }], FF = [{ node: 0, type: 'fixed' }, { node: 1, type: 'fixed' }];
+    let mm = one(SS, { q: 0, q2: -q0, shape: 'lin' }), a2 = F.frameAnalyze(mm, [P]), s2 = F.frameMemberSummary(a2.members[0], mm);
+    rel('FEM appoggiata, carico triangolare 0→q: R_A = qL/6 [N]', a2.reactions[0].Ry, q0 * L / 6, 1e-9);
+    rel('FEM appoggiata, carico triangolare: R_B = qL/3 [N]', a2.reactions[1].Ry, q0 * L / 3, 1e-9);
+    rel('FEM appoggiata, carico triangolare: M max = qL²/(9√3) [N·mm]', s2.Mabs, q0 * L * L / (9 * Math.sqrt(3)), 1e-9);
+    // freccia: w = q x (7L⁴ − 10L²x² + 3x⁴) / (360 L EI), massimo in x = 0,5193 L
+    let wmax = 0; for (let k = 0; k <= 20000; k++) { const x = L * k / 20000; wmax = Math.max(wmax, q0 * x * (7 * L ** 4 - 10 * L * L * x * x + 3 * x ** 4) / (360 * L * E * I)); }
+    rel('FEM appoggiata, carico triangolare: freccia max = 0,00652 qL⁴/EI [mm] (41 punti per trave)', s2.dmax, wmax, 1e-3);
+    mm = one(FF, { q: 0, q2: -q0, shape: 'lin' }); a2 = F.frameAnalyze(mm, [P]);
+    rel('FEM incastrata, carico triangolare: M incastro lato zero = qL²/30', Math.abs(a2.reactions[0].M), q0 * L * L / 30, 1e-9);
+    rel('FEM incastrata, carico triangolare: M incastro lato q = qL²/20', Math.abs(a2.reactions[1].M), q0 * L * L / 20, 1e-9);
+    mm = one(SS, { q: 0, qm: -q0, q2: 0, shape: 'par' }); a2 = F.frameAnalyze(mm, [P]); s2 = F.frameMemberSummary(a2.members[0], mm);
+    rel('FEM appoggiata, carico parabolico simmetrico: R = qL/3 [N]', a2.reactions[0].Ry, q0 * L / 3, 1e-9);
+    rel('FEM appoggiata, carico parabolico: M max = 5qL²/48', s2.Mabs, 5 * q0 * L * L / 48, 1e-9);
+    rel('FEM appoggiata, carico parabolico: freccia = 61qL⁴/5760EI', s2.dmax, 61 * q0 * L ** 4 / (5760 * E * I), 1e-9);
+    mm = one(FF, { q: 0, qm: -q0, q2: 0, shape: 'par' }); a2 = F.frameAnalyze(mm, [P]);
+    rel('FEM incastrata, carico parabolico: M incastro = qL²/15', Math.abs(a2.reactions[0].M), q0 * L * L / 15, 1e-9);
+    mm = one([{ node: 0, type: 'fixed' }], { q: -4, q2: -10, shape: 'lin' }); a2 = F.frameAnalyze(mm, [P]);
+    rel('FEM mensola, carico trapezio 4→10: M incastro = L²(q1/2 + (q2−q1)/3)', Math.abs(a2.reactions[0].M), L * L * (4 / 2 + 6 / 3), 1e-9);
+  }
   // portale incastrato con forza orizzontale in sommità, ritti e traverso uguali: M base = 2/7·F·h... verifica di equilibrio globale
   m = { nodes: [{ x: 0, y: 0 }, { x: 0, y: 3000 }, { x: 4000, y: 3000 }, { x: 4000, y: 0 }], members: [{ n1: 0, n2: 1 }, { n1: 1, n2: 2 }, { n1: 2, n2: 3 }],
     supports: [{ node: 0, type: 'fixed' }, { node: 3, type: 'fixed' }], loads: [{ node: 1, Fx: 10000 }], dloads: [] };

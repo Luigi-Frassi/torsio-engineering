@@ -7,8 +7,12 @@
 
 const FR_TXT = {
   it: {
-    tools: { member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
+    sign: { title: 'Convenzione dei segni', V: 'T', tens: 'fibre tese in basso', n1: 'nodo 1', n2: 'nodo 2', axes: 'Assi locali di ogni trave: x dal nodo 1 al nodo 2, y ruotato di 90° in senso antiorario (a sinistra).',
+      N: 'N > 0 trazione.', Vt: 'T > 0: sulla faccia di sinistra verso +y, su quella di destra verso −y (coppia oraria).', M: 'M > 0 tende le fibre dal lato −y: sotto, per una trave orizzontale disegnata da sinistra a destra (trave appoggiata con carico verso il basso → M positivo).',
+      draw: 'Quindi dT/dx = q e dM/dx = T. Nei diagrammi N e T positivi sono disegnati dal lato +y, M dal lato delle fibre tese.' },
+    tools: { move: 'Sposta', member: 'Trave', bar: 'Asta', support: 'Vincolo', load: 'Forza', dload: 'Carico distribuito', hinge: 'Cerniera interna', del: 'Elimina' },
     toolHelp: {
+      move: 'Trascina un nodo per spostarlo, una trave per spostarla insieme ai suoi due nodi, lo sfondo per spostare la vista; con la rotellina ingrandisci. I risultati si aggiornano mentre trascini. Passo: un decimo della griglia (tieni premuto Maiusc per muovere al millimetro).',
       member: 'Trascina da un punto all\'altro (o clicca due punti) per creare una trave: lavora a sforzo normale, taglio e flessione. I nodi si agganciano alla griglia e ai nodi esistenti.',
       bar: 'Come la trave, ma con una cerniera a entrambi gli estremi: lavora solo a sforzo normale, come nei tralicci. Metti i carichi nei nodi: un carico distribuito la farebbe inflettere.',
       support: 'Clicca un nodo per cambiare vincolo: cerniera → carrello orizzontale → carrello verticale → incastro → pattino → nessuno.',
@@ -18,12 +22,14 @@ const FR_TXT = {
       del: 'Clicca un nodo o una trave per eliminarli.'
     },
     grid: 'Griglia', fit: 'Adatta vista', clear: 'Svuota', preset: 'Esempi', presetPick: 'Carica un esempio…',
-    presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
+    presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', wall: 'Montante incastrato, spinta triangolare (lineare)', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
     view: 'Mostra', views: { model: 'Modello', def: 'Deformata', N: 'Sforzo normale N', V: 'Taglio T', M: 'Momento flettente M', util: 'Utilizzo delle travi' },
     nodes: 'Nodi', members: 'Travi', supports: 'Vincoli', loads: 'Forze nei nodi', dloads: 'Carichi distribuiti', add: 'Aggiungi',
     node: 'Nodo', member: 'Trave', kinds: { beam: 'trave', bar: 'asta', half: 'trave, 1 cerniera' }, start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
     sup: { pin: 'Cerniera', rollerX: 'Carrello (scorre in x)', rollerY: 'Carrello (scorre in y)', fixed: 'Incastro', guide: 'Pattino (blocca y e rotazione)' },
     dirs: { gy: 'Verticale (globale y)', perp: 'Perpendicolare alla trave' },
+    shape: 'Forma', shapes: { u: 'Costante', lin: 'Lineare', par: 'Parabolica' }, qStart: 'q₁ inizio', qMid: 'q mezzeria', qEnd: 'q₂ fine',
+    dlNote: 'q in kN/m: in verticale negativo verso il basso; perpendicolare, positivo verso sinistra andando dal nodo 1 al nodo 2 della trave. Lineare: da q₁ al nodo iniziale della trave a q₂ al nodo finale (triangolare con uno dei due a 0). Parabolica: parabola per i tre valori di inizio, mezzeria e fine (0 · q · 0 = simmetrica, 0 · q/4 · q = crescente da zero).',
     matTitle: 'Materiale e criteri', material: 'Materiale', custom: 'Personalizzato',
     mats: { s235: 'Acciaio S235', s355: 'Acciaio S355', c40: 'C40 bonificato', al6061: 'Alluminio 6061-T6', al_nb: 'Alluminio (notebook: σamm 170 MPa)' },
     E: 'Modulo elastico E', sy: 'Snervamento σs', rho: 'Densità ρ', X: 'X statico', Xb: 'X instabilità', beta: 'Lunghezza libera β·L', defl: 'Freccia ammissibile', deflHint: '0 = nessun limite',
@@ -47,8 +53,12 @@ const FR_TXT = {
     scale: 'scala', drawHint: 'Trascina per disegnare'
   },
   en: {
-    tools: { member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
+    sign: { title: 'Sign convention', V: 'V', tens: 'tension at the bottom', n1: 'node 1', n2: 'node 2', axes: 'Local axes of each member: x from node 1 to node 2, y turned 90° counter-clockwise (to the left).',
+      N: 'N > 0 tension.', Vt: 'V > 0: on the left face towards +y, on the right face towards −y (clockwise couple).', M: 'M > 0 puts the −y side in tension: the bottom, for a horizontal member drawn from left to right (simply supported beam loaded downwards → positive M).',
+      draw: 'Hence dV/dx = q and dM/dx = V. In the diagrams positive N and V are drawn on the +y side, M on the tension side.' },
+    tools: { move: 'Move', member: 'Beam', bar: 'Bar', support: 'Support', load: 'Force', dload: 'Distributed load', hinge: 'Internal hinge', del: 'Delete' },
     toolHelp: {
+      move: 'Drag a node to move it, a member to move it with its two nodes, the background to pan; zoom with the mouse wheel. Results update while you drag. Step: a tenth of the grid (hold Shift to move by the millimetre).',
       member: 'Drag from one point to another (or click two points) to create a beam: it carries axial force, shear and bending. Nodes snap to the grid and to existing nodes.',
       bar: 'Like a beam, but hinged at both ends: it carries axial force only, as in a truss. Put the loads on the nodes: a distributed load would bend it.',
       support: 'Click a node to change its support: pin → horizontal roller → vertical roller → fixed → guide → none.',
@@ -58,12 +68,14 @@ const FR_TXT = {
       del: 'Click a node or a member to delete it.'
     },
     grid: 'Grid', fit: 'Fit view', clear: 'Clear', preset: 'Examples', presetPick: 'Load an example…',
-    presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
+    presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', wall: 'Fixed post, triangular pressure (linear)', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
     view: 'Show', views: { model: 'Model', def: 'Deformed shape', N: 'Axial force N', V: 'Shear V', M: 'Bending moment M', util: 'Member utilization' },
     nodes: 'Nodes', members: 'Members', supports: 'Supports', loads: 'Nodal forces', dloads: 'Distributed loads', add: 'Add',
     node: 'Node', member: 'Member', kinds: { beam: 'beam', bar: 'bar', half: 'beam, 1 hinge' }, start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
     sup: { pin: 'Pin', rollerX: 'Roller (slides in x)', rollerY: 'Roller (slides in y)', fixed: 'Fixed', guide: 'Guide (blocks y and rotation)' },
     dirs: { gy: 'Vertical (global y)', perp: 'Perpendicular to the member' },
+    shape: 'Shape', shapes: { u: 'Uniform', lin: 'Linear', par: 'Parabolic' }, qStart: 'q₁ start', qMid: 'q mid-span', qEnd: 'q₂ end',
+    dlNote: 'q in kN/m: vertical, negative = downwards; perpendicular, positive = to the left going from node 1 to node 2 of the member. Linear: from q₁ at the start node of the member to q₂ at the end node (triangular with one of them at 0). Parabolic: parabola through the start, mid-span and end values (0 · q · 0 = symmetric, 0 · q/4 · q = rising from zero).',
     matTitle: 'Material and criteria', material: 'Material', custom: 'Custom',
     mats: { s235: 'Steel S235', s355: 'Steel S355', c40: 'C40 Q&T', al6061: 'Aluminium 6061-T6', al_nb: 'Aluminium (notebook: σallow 170 MPa)' },
     E: 'Young\'s modulus E', sy: 'Yield strength σy', rho: 'Density ρ', X: 'Static X', Xb: 'Buckling X', beta: 'Effective length β·L', defl: 'Allowable deflection', deflHint: '0 = no limit',
@@ -102,6 +114,8 @@ let frView = { x0: -500, y0: -1500, x1: 8500, y1: 3500 };
 let frShow = 'M';
 let frPending = null;       // first point of a member drawn with two clicks
 let frDrag = null;          // { a: {x,y}, b: {x,y} } while dragging
+let frMove = null;          // Move tool: { kind: 'node' | 'member' | 'pan', ... } while dragging
+let frLiveRaf = 0;
 let frResults = null;       // { byFamily: {fam: sizing}, best, sel }
 let frSelFamily = null;
 let frCalcTimer = null;
@@ -117,6 +131,8 @@ function frPreset(key) {
   if (key === 'cant') return { nodes: [N(0, 0), N(2000, 0)], members: [{ n1: 0, n2: 1 }], supports: [{ node: 0, type: 'fixed' }], loads: [{ node: 1, Fx: 0, Fy: -5000, M: 0 }], dloads: [] };
   if (key === 'cont') return { nodes: [N(0, 0), N(4000, 0), N(8000, 0)], members: [{ n1: 0, n2: 1 }, { n1: 1, n2: 2 }],
     supports: [{ node: 0, type: 'pin' }, { node: 1, type: 'rollerX' }, { node: 2, type: 'rollerX' }], loads: [], dloads: [{ member: 0, q: -10, dir: 'gy' }, { member: 1, q: -10, dir: 'gy' }] };
+  if (key === 'wall') return { nodes: [N(0, 0), N(0, 2500)], members: [{ n1: 1, n2: 0 }], supports: [{ node: 0, type: 'fixed' }], loads: [],
+    dloads: [{ member: 0, q: 0, q2: 20, shape: 'lin', dir: 'perp' }] };   // like water pressure: 0 at the top, 20 kN/m at the base, pushing in +x
   if (key === 'portal') return { nodes: [N(0, 0), N(0, 3000), N(5000, 3000), N(5000, 0)], members: [{ n1: 0, n2: 1 }, { n1: 1, n2: 2 }, { n1: 2, n2: 3 }],
     supports: [{ node: 0, type: 'fixed' }, { node: 3, type: 'fixed' }], loads: [{ node: 1, Fx: 10000, Fy: 0, M: 0 }], dloads: [{ member: 1, q: -15, dir: 'gy' }] };
   if (key === 'truss') {
@@ -185,6 +201,7 @@ function frBuildStatic() {
       <button type="button" id="frFit" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200"></button>
       <button type="button" id="frClear" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200"></button>
     </div>
+    <details id="frSign" class="mt-3 text-xs border border-slate-700 rounded-lg px-3 py-2" open><summary class="cursor-pointer font-semibold text-slate-200" id="frSignT"></summary><div id="frSignBody" class="mt-2"></div></details>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -234,13 +251,36 @@ function frBuildStatic() {
   frInitCanvas();
 }
 
+// small drawing of the sign convention (also used in the report)
+function frSignSvg(t, print = false) {
+  const ink = print ? '#222' : '#22211f', mut = print ? '#555' : '#6f6a62', col = { N: '#2f66b3', V: '#21497f', M: '#c0392b' };
+  const box = cx => `<rect x="${cx - 20}" y="45" width="40" height="40" fill="none" stroke="${ink}" stroke-width="1.6"/><text x="${cx}" y="70" text-anchor="middle" font-size="13" fill="${ink}">+</text>`;
+  const arr = (x1, y1, x2, y2, c) => { const a = Math.atan2(y2 - y1, x2 - x1), h = 7; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="1.8"/><path d="M ${x2} ${y2} L ${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)} L ${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)} Z" fill="${c}"/>`; };
+  const head = (x, y, ang, c) => { const h = 7; return `<path d="M ${x} ${y} L ${x - h * Math.cos(ang - 0.45)} ${y - h * Math.sin(ang - 0.45)} L ${x - h * Math.cos(ang + 0.45)} ${y - h * Math.sin(ang + 0.45)} Z" fill="${c}"/>`; };
+  let g = '';
+  g += `<text x="85" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.N}">N</text>` + box(85) + arr(65, 65, 33, 65, col.N) + arr(105, 65, 137, 65, col.N);
+  g += `<text x="275" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.V}">${t.sign.V}</text>` + box(275) + arr(247, 88, 247, 42, col.V) + arr(303, 42, 303, 88, col.V);
+  g += `<text x="465" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="${col.M}">M</text>` + box(465);
+  g += `<path d="M 441 88 Q 418 65 441 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(447, 41, -0.25, col.M);    // left face: clockwise
+  g += `<path d="M 489 88 Q 512 65 489 42" fill="none" stroke="${col.M}" stroke-width="1.8"/>` + head(483, 41, Math.PI + 0.25, col.M);   // right face: counter-clockwise
+  g += `<text x="465" y="104" text-anchor="middle" font-size="10.5" fill="${mut}">${t.sign.tens}</text>`;
+  // local axes
+  // local axes on a member drawn from node 1 to node 2
+  g += `<line x1="560" y1="80" x2="620" y2="80" stroke="${ink}" stroke-width="3" stroke-linecap="round"/><circle cx="560" cy="80" r="3.5" fill="${ink}"/><circle cx="620" cy="80" r="3.5" fill="${ink}"/>` +
+    `<text x="560" y="100" text-anchor="middle" font-size="10" fill="${mut}">${t.sign.n1}</text><text x="620" y="100" text-anchor="middle" font-size="10" fill="${mut}">${t.sign.n2}</text>` +
+    arr(560, 80, 597, 80, col.N) + `<text x="600" y="72" font-size="11" fill="${col.N}">x</text>` + arr(560, 80, 560, 43, col.N) + `<text x="566" y="44" font-size="11" fill="${col.N}">y</text>`;
+  return `<svg viewBox="0 0 650 118" width="100%" style="max-width:640px;display:block" font-family="Archivo, Arial, sans-serif" role="img" aria-label="${t.sign.title}">${g}</svg>`;
+}
+
 function frRelabel() {
   const t = frT();
   if (!frEl('frTools')) return;
   frEl('frTools').innerHTML = Object.keys(t.tools).map(k =>
     `<button type="button" data-tool="${k}" class="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${k === frTool ? 'bg-blue-600/20 text-blue-300 border-blue-500/40' : 'text-slate-300 border-slate-700 hover:text-white hover:bg-slate-800'}">${t.tools[k]}</button>`).join('');
   frEl('frTools').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { frTool = b.dataset.tool; frPending = null; frRelabel(); frDraw(); }));
+  const cv = frEl('frCanvas'); if (cv) cv.style.cursor = frTool === 'move' ? 'grab' : 'crosshair';
   frEl('frToolHelp').textContent = t.toolHelp[frTool];
+  if (frEl('frSignT')) { frEl('frSignT').textContent = t.sign.title; frEl('frSignBody').innerHTML = frSignSvg(t) + `<p class="text-slate-400 mt-1">${t.sign.axes} ${t.sign.N} ${t.sign.Vt} ${t.sign.M} ${t.sign.draw}</p>`; }
   frEl('frEmpty').textContent = t.empty;
   frEl('frShowLbl').textContent = t.view;
   frEl('frShow').innerHTML = Object.entries(t.views).map(([k, v]) => `<option value="${k}" ${k === frShow ? 'selected' : ''}>${v}</option>`).join('');
@@ -298,9 +338,14 @@ function frRenderTables() {
     `<td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="Fx" data-s="1000" value="${+(l.Fx / 1000).toFixed(4)}"></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="Fy" data-s="1000" value="${+(l.Fy / 1000).toFixed(4)}"></td>` +
     `<td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="M" data-s="1000000" value="${+((l.M || 0) / 1e6).toFixed(4)}"></td><td>${FR_DEL}</td></tr>`)) +
     (m.nodes.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="loads">+ ${t.add}</button>` : '');
-  frEl('frDloadsTbl').innerHTML = frTable([t.member, 'q [kN/m]', t.dir, ''], m.dloads.map((d, i) =>
-    `<tr data-k="dloads" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="member">${memOpts(d.member)}</select></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="q" value="${d.q}"></td>` +
-    `<td class="pr-2"><select class="${FR_TSEL}" data-f="dir">${Object.entries(t.dirs).map(([k, v]) => `<option value="${k}" ${k === d.dir ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`)) +
+  const qIn = (d, f) => `<input class="${FR_TIN}" type="number" step="any" data-f="${f}" value="${+(+d[f] || 0).toFixed(4)}">`;
+  frEl('frDloadsTbl').innerHTML = '<div class="overflow-x-auto">' + frTable([t.member, t.shape, t.qStart, t.qMid, t.qEnd, t.dir, ''], m.dloads.map((d, i) => {
+    const sh = d.shape || 'u';
+    return `<tr data-k="dloads" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="member">${memOpts(d.member)}</select></td>` +
+      `<td class="pr-2"><select class="${FR_TSEL}" data-f="shape">${Object.entries(t.shapes).map(([k, v]) => `<option value="${k}" ${k === sh ? 'selected' : ''}>${v}</option>`).join('')}</select></td>` +
+      `<td class="pr-2">${qIn(d, 'q')}</td><td class="pr-2">${sh === 'par' ? qIn(d, 'qm') : '<span class="text-slate-400">—</span>'}</td><td class="pr-2">${sh === 'u' ? '<span class="text-slate-400">—</span>' : qIn(d, 'q2')}</td>` +
+      `<td class="pr-2"><select class="${FR_TSEL}" data-f="dir">${Object.entries(t.dirs).map(([k, v]) => `<option value="${k}" ${k === d.dir ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`;
+  })) + '</div>' + (m.dloads.length ? `<p class="text-[11px] text-slate-400 mt-1">${t.dlNote}</p>` : '') +
     (m.members.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="dloads">+ ${t.add}</button>` : '');
 }
 
@@ -326,7 +371,14 @@ function frTableEvent(ev) {
   if (!f || ev.type !== 'change') return;
   const obj = frModel[k][i];
   if (ev.target.type === 'checkbox') obj[f] = ev.target.checked;
-  else if (ev.target.tagName === 'SELECT') obj[f] = ['node', 'n1', 'n2', 'member'].includes(f) ? +ev.target.value : ev.target.value;
+  else if (ev.target.tagName === 'SELECT') {
+    obj[f] = ['node', 'n1', 'n2', 'member'].includes(f) ? +ev.target.value : ev.target.value;
+    if (f === 'shape') {   // the new shape starts as the uniform load it replaces; its columns appear
+      if (!Number.isFinite(+obj.q2) || obj.q2 === undefined) obj.q2 = obj.q;
+      if (obj.shape === 'par' && (obj.qm === undefined || !Number.isFinite(+obj.qm))) obj.qm = (obj.q + obj.q2) / 2;
+      frRenderTables();
+    }
+  }
   else { const v = parseFloat(ev.target.value); if (Number.isFinite(v)) obj[f] = v * (parseFloat(ev.target.dataset.s) || 1); }
   calculateFrames();
 }
@@ -412,6 +464,15 @@ function frInitCanvas() {
   const svg = frEl('frCanvas');
   svg.addEventListener('pointerdown', ev => {
     const { X, Y } = frEventPoint(ev);
+    if (frTool === 'move') {
+      const n = frNearestNode(X, Y), mi = n < 0 ? frNearestMember(X, Y).i : -1;
+      const idx = n >= 0 ? [n] : mi >= 0 ? [frModel.members[mi].n1, frModel.members[mi].n2] : [];
+      frMove = idx.length ? { kind: n >= 0 ? 'node' : 'member', idx, p0: frToModel(X, Y), orig: idx.map(k => ({ ...frModel.nodes[k] })), moved: false }
+        : { kind: 'pan', X0: X, Y0: Y, view: { ...frView } };
+      svg.setPointerCapture(ev.pointerId); svg.style.cursor = 'grabbing';
+      ev.preventDefault();
+      return;
+    }
     if (frTool === 'member' || frTool === 'bar') {
       frDrag = { a: frSnap(X, Y), b: frSnap(X, Y), moved: false };
       svg.setPointerCapture(ev.pointerId);
@@ -446,6 +507,33 @@ function frInitCanvas() {
   });
   svg.addEventListener('pointermove', ev => {
     const { X, Y } = frEventPoint(ev);
+    if (frMove) {
+      if (frMove.kind === 'pan') {
+        const sc = frScale(), dx = (X - frMove.X0) / sc, dy = (Y - frMove.Y0) / sc, v = frMove.view;
+        frView = { x0: v.x0 - dx, x1: v.x1 - dx, y0: v.y0 + dy, y1: v.y1 + dy };
+        frDraw();
+        return;
+      }
+      const p = frToModel(X, Y), step = ev.shiftKey ? 1 : Math.max(1, frGrid / 10);
+      const dx = p.x - frMove.p0.x, dy = p.y - frMove.p0.y;
+      const next = frMove.orig.map(o => ({ x: Math.round((o.x + dx) / step) * step, y: Math.round((o.y + dy) / step) * step }));
+      if (frMove.kind === 'member') {   // keep the member's shape: move both nodes by the same snapped offset
+        const ox = next[0].x - frMove.orig[0].x, oy = next[0].y - frMove.orig[0].y;
+        next[1] = { x: frMove.orig[1].x + ox, y: frMove.orig[1].y + oy };
+      }
+      const same = next.every((q, j) => q.x === frModel.nodes[frMove.idx[j]].x && q.y === frModel.nodes[frMove.idx[j]].y);
+      if (same) return;
+      const old = frMove.idx.map(k => ({ ...frModel.nodes[k] }));
+      frMove.idx.forEach((k, j) => { frModel.nodes[k] = { ...frModel.nodes[k], x: next[j].x, y: next[j].y }; });
+      // a member cannot collapse to zero length
+      if (frModel.members.some(mm => { const a = frModel.nodes[mm.n1], b = frModel.nodes[mm.n2]; return Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6; })) {
+        frMove.idx.forEach((k, j) => { frModel.nodes[k] = old[j]; });
+        return;
+      }
+      frMove.moved = true;
+      if (!frLiveRaf) frLiveRaf = requestAnimationFrame(() => { frLiveRaf = 0; calculateFrames(); });   // results follow the drag
+      return;
+    }
     if (frDrag) {
       const b = frSnap(X, Y);
       if (b.x !== frDrag.b.x || b.y !== frDrag.b.y) { frDrag.b = b; frDrag.moved = true; frDraw(); }
@@ -454,6 +542,11 @@ function frInitCanvas() {
     }
   });
   svg.addEventListener('pointerup', ev => {
+    if (frMove) {
+      const mv = frMove; frMove = null; svg.style.cursor = frTool === 'move' ? 'grab' : 'crosshair';
+      if (mv.kind !== 'pan' && mv.moved) { frRenderTables(); calculateFrames(); }
+      return;
+    }
     if (!frDrag) return;
     const d = frDrag; frDrag = null;
     const same = Math.abs(d.a.x - d.b.x) < 1e-6 && Math.abs(d.a.y - d.b.y) < 1e-6;
@@ -464,6 +557,15 @@ function frInitCanvas() {
     } else frPending = { ...d.a };
     frDraw();
   });
+  svg.addEventListener('pointercancel', () => { if (frMove) { frMove = null; frRenderTables(); calculateFrames(); } });
+  // zoom with the wheel around the pointer (Move tool only, so the page still scrolls with the other tools)
+  svg.addEventListener('wheel', ev => {
+    if (frTool !== 'move') return;
+    ev.preventDefault();
+    const { X, Y } = frEventPoint(ev), P = frToModel(X, Y), f = Math.exp(Math.max(-60, Math.min(60, ev.deltaY)) * 0.004), v = frView;
+    frView = { x0: P.x + (v.x0 - P.x) * f, x1: P.x + (v.x1 - P.x) * f, y0: P.y + (v.y0 - P.y) * f, y1: P.y + (v.y1 - P.y) * f };
+    frDraw();
+  }, { passive: false });
   const tbl = ['frNodesTbl', 'frMembersTbl', 'frSupportsTbl', 'frLoadsTbl', 'frDloadsTbl'];
   tbl.forEach(id => { frEl(id).addEventListener('change', frTableEvent); frEl(id).addEventListener('click', frTableEvent); });
 }
@@ -508,18 +610,23 @@ function frDraw(target = null, opts = {}) {
     const a = frToScreen(m.nodes[mm.n1]), b = frToScreen(m.nodes[mm.n2]);
     const L = Math.hypot(b.X - a.X, b.Y - a.Y) || 1, ux = (b.X - a.X) / L, uy = (b.Y - a.Y) / L;
     const P1 = m.nodes[mm.n1], P2 = m.nodes[mm.n2], Lm = Math.hypot(P2.x - P1.x, P2.y - P1.y) || 1;
-    const sg = Math.sign(d.q || -1);
-    const dm = d.dir === 'perp' ? { x: -sg * (P2.y - P1.y) / Lm, y: sg * (P2.x - P1.x) / Lm } : { x: 0, y: sg };   // model direction of the load
-    const dx = dm.x, dy = -dm.y;   // screen direction
-    const off = 26, n = Math.max(3, Math.round(L / 30));
+    const vals = frLoadVals(d), qmax = Math.max(...vals.map(Math.abs)) || 1;
+    const e = d.dir === 'perp' ? { x: -(P2.y - P1.y) / Lm, y: (P2.x - P1.x) / Lm } : { x: 0, y: 1 };   // model direction of a positive q
+    const ex = e.x, ey = -e.y;   // screen
+    const off = 26, n = Math.max(4, Math.round(L / 30));
+    const qAt = tt => { const a = frLoadPoly(vals, 1); return a[0] + a[1] * tt + a[2] * tt * tt; };
     let pts = '';
     for (let k = 0; k <= n; k++) {
-      const X = a.X + (b.X - a.X) * k / n, Y = a.Y + (b.Y - a.Y) * k / n;
-      g += frArrow(X - dx * off, Y - dy * off, X - dx * 3, Y - dy * 3, FRC.load, 1);
-      pts += `${X - dx * off},${Y - dy * off} `;
+      const tt = k / n, X = a.X + (b.X - a.X) * tt, Y = a.Y + (b.Y - a.Y) * tt, qk = qAt(tt), len = off * Math.abs(qk) / qmax;
+      const tx = X - ex * off * qk / qmax, ty = Y - ey * off * qk / qmax;   // tail: the arrow points along q, onto the member
+      if (len > 4) g += frArrow(tx, ty, X + (tx - X) * 3 / len, Y + (ty - Y) * 3 / len, FRC.load, 1);
+      pts += `${tx},${ty} `;
     }
     g += `<polyline points="${pts}" fill="none" stroke="${FRC.load}" stroke-width="1"/>`;
-    g += `<text x="${(a.X + b.X) / 2 - dx * (off + 8)}" y="${(a.Y + b.Y) / 2 - dy * (off + 8) + 4}" text-anchor="middle" font-size="11" fill="${FRC.load}">${frNum(Math.abs(d.q), 1)} kN/m</text>`;
+    const lab = (d.shape === 'lin' ? `${frNum(vals[0], 1)} → ${frNum(vals[2], 1)}` : d.shape === 'par' ? `${frNum(vals[0], 1)} · ${frNum(vals[1], 1)} · ${frNum(vals[2], 1)}` : frNum(Math.abs(d.q), 1)) + ' kN/m';
+    const sm = Math.sign(qAt(0.5) || vals[0] || vals[2] || -1);
+    const lx = -ex * sm, anc = lx < -0.5 ? 'end' : lx > 0.5 ? 'start' : 'middle';
+    g += `<text x="${(a.X + b.X) / 2 - ex * sm * (off + 10)}" y="${(a.Y + b.Y) / 2 - ey * sm * (off + 10) + 4}" text-anchor="${anc}" font-size="11" fill="${FRC.load}">${lab}</text>`;
   });
   // results overlay
   let note = '';
@@ -541,10 +648,12 @@ function frDraw(target = null, opts = {}) {
       note = `${t.views.def} · ${t.scale} ×${frNum(k, k < 10 ? 1 : 0)} · δmax = ${frNum(ev.dmax, 2)} mm`;
     } else if (['N', 'V', 'M'].includes(frShow)) {
       const key = frShow;
-      let vmax = 0;
-      ev.rows.forEach(r => r.sum.pts.forEach(p => { vmax = Math.max(vmax, Math.abs(p[key])); }));
+      let vmax = 0, ref = 0;
+      ev.rows.forEach(r => r.sum.pts.forEach(p => { vmax = Math.max(vmax, Math.abs(p[key])); ref = Math.max(ref, Math.abs(p.N), Math.abs(p.V), Math.abs(p.M) / span); }));
+      // round-off (e.g. shear and moment of a bar, ~1e-12) is zero, not a full-size diagram
+      if ((key === 'M' ? vmax / span : vmax) < 1e-9 * ref) vmax = 0;
       const k = vmax > 0 ? 0.09 * span / vmax : 0, col = FRC[key];
-      ev.an.members.forEach((mr, i) => {
+      if (vmax > 0) ev.an.members.forEach((mr, i) => {
         const mm = m.members[i], p1 = m.nodes[mm.n1], pts = ev.rows[i].sum.pts;
         const sgn = key === 'M' ? -1 : 1;   // moment drawn on the tension side
         const poly = pts.map(p => { const o = sgn * k * p[key], P = frToScreen({ x: p1.x + p.x * mr.c - o * mr.s, y: p1.y + p.x * mr.s + o * mr.c }); return `${P.X.toFixed(1)},${P.Y.toFixed(1)}`; });
@@ -770,7 +879,7 @@ function frEncodeModel() {
   if (!frModel) return '';
   const r = v => Math.round(v * 1000) / 1000;
   const o = { n: frModel.nodes.map(n => [r(n.x), r(n.y)]), m: frModel.members.map(mm => [mm.n1, mm.n2, (mm.relStart ? 1 : 0) + (mm.relEnd ? 2 : 0)]),
-    s: frModel.supports.map(s => [s.node, s.type]), l: frModel.loads.map(l => [l.node, r(l.Fx || 0), r(l.Fy || 0), r(l.M || 0)]), d: frModel.dloads.map(d => [d.member, r(d.q), d.dir === 'perp' ? 1 : 0]),
+    s: frModel.supports.map(s => [s.node, s.type]), l: frModel.loads.map(l => [l.node, r(l.Fx || 0), r(l.Fy || 0), r(l.M || 0)]), d: frModel.dloads.map(d => { const o = [d.member, r(d.q), d.dir === 'perp' ? 1 : 0]; if (d.shape === 'lin') o.push(1, r(+d.q2 || 0)); if (d.shape === 'par') o.push(2, r(+d.q2 || 0), r(+d.qm || 0)); return o; }),
     g: frGrid, v: frShow, f: frFamiliesChecked(true).join(',') };
   try { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
 }
@@ -784,7 +893,7 @@ function frDecodeModel(str) {
     const model = { nodes, members,
       supports: (o.s || []).filter(([n, tp]) => ok(n) && FR_SUPPORTS[tp]).map(([n, tp]) => ({ node: n, type: tp })),
       loads: (o.l || []).filter(([n]) => ok(n)).map(([n, fx, fy, mz]) => ({ node: n, Fx: num(fx), Fy: num(fy), M: num(mz) })),
-      dloads: (o.d || []).filter(([k]) => Number.isInteger(k) && k >= 0 && k < members.length).map(([k, q, p]) => ({ member: k, q: num(q), dir: p ? 'perp' : 'gy' })) };
+      dloads: (o.d || []).filter(([k]) => Number.isInteger(k) && k >= 0 && k < members.length).map(([k, q, p, sh, q2, qm]) => sh === 1 ? { member: k, q: num(q), dir: p ? 'perp' : 'gy', shape: 'lin', q2: num(q2) } : sh === 2 ? { member: k, q: num(q), dir: p ? 'perp' : 'gy', shape: 'par', q2: num(q2), qm: num(qm) } : { member: k, q: num(q), dir: p ? 'perp' : 'gy' }) };
     frModel = model;
     if (o.g > 0) frGrid = +o.g;
     if (o.v && FR_TXT.en.views[o.v]) frShow = o.v;
