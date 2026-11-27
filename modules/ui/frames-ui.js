@@ -18,12 +18,14 @@ const FR_TXT = {
       del: 'Clicca un nodo o una trave per eliminarli.'
     },
     grid: 'Griglia', fit: 'Adatta vista', clear: 'Svuota', preset: 'Esempi', presetPick: 'Carica un esempio…',
-    presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
+    presets: { beam: 'Trave appoggiata, carico distribuito', cant: 'Mensola con forza in punta', cont: 'Trave continua su 3 appoggi', wall: 'Montante incastrato, spinta triangolare (lineare)', portal: 'Portale incastrato', truss: 'Capriata reticolare', tower: 'Torre radio (notebook)' },
     view: 'Mostra', views: { model: 'Modello', def: 'Deformata', N: 'Sforzo normale N', V: 'Taglio T', M: 'Momento flettente M', util: 'Utilizzo delle travi' },
     nodes: 'Nodi', members: 'Travi', supports: 'Vincoli', loads: 'Forze nei nodi', dloads: 'Carichi distribuiti', add: 'Aggiungi',
     node: 'Nodo', member: 'Trave', kinds: { beam: 'trave', bar: 'asta', half: 'trave, 1 cerniera' }, start: 'inizio', end: 'fine', hingeAt: 'Cerniera', type: 'Tipo', dir: 'Direzione',
     sup: { pin: 'Cerniera', rollerX: 'Carrello (scorre in x)', rollerY: 'Carrello (scorre in y)', fixed: 'Incastro', guide: 'Pattino (blocca y e rotazione)' },
     dirs: { gy: 'Verticale (globale y)', perp: 'Perpendicolare alla trave' },
+    shape: 'Forma', shapes: { u: 'Costante', lin: 'Lineare', par: 'Parabolica' }, qStart: 'q₁ inizio', qMid: 'q mezzeria', qEnd: 'q₂ fine',
+    dlNote: 'q in kN/m: in verticale negativo verso il basso; perpendicolare, positivo verso sinistra andando dal nodo 1 al nodo 2 della trave. Lineare: da q₁ al nodo iniziale della trave a q₂ al nodo finale (triangolare con uno dei due a 0). Parabolica: parabola per i tre valori di inizio, mezzeria e fine (0 · q · 0 = simmetrica, 0 · q/4 · q = crescente da zero).',
     matTitle: 'Materiale e criteri', material: 'Materiale', custom: 'Personalizzato',
     mats: { s235: 'Acciaio S235', s355: 'Acciaio S355', c40: 'C40 bonificato', al6061: 'Alluminio 6061-T6', al_nb: 'Alluminio (notebook: σamm 170 MPa)' },
     E: 'Modulo elastico E', sy: 'Snervamento σs', rho: 'Densità ρ', X: 'X statico', Xb: 'X instabilità', beta: 'Lunghezza libera β·L', defl: 'Freccia ammissibile', deflHint: '0 = nessun limite',
@@ -58,12 +60,14 @@ const FR_TXT = {
       del: 'Click a node or a member to delete it.'
     },
     grid: 'Grid', fit: 'Fit view', clear: 'Clear', preset: 'Examples', presetPick: 'Load an example…',
-    presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
+    presets: { beam: 'Simply supported beam, distributed load', cant: 'Cantilever with tip force', cont: 'Continuous beam on 3 supports', wall: 'Fixed post, triangular pressure (linear)', portal: 'Fixed portal frame', truss: 'Roof truss', tower: 'Radio tower (notebook)' },
     view: 'Show', views: { model: 'Model', def: 'Deformed shape', N: 'Axial force N', V: 'Shear V', M: 'Bending moment M', util: 'Member utilization' },
     nodes: 'Nodes', members: 'Members', supports: 'Supports', loads: 'Nodal forces', dloads: 'Distributed loads', add: 'Add',
     node: 'Node', member: 'Member', kinds: { beam: 'beam', bar: 'bar', half: 'beam, 1 hinge' }, start: 'start', end: 'end', hingeAt: 'Hinge', type: 'Type', dir: 'Direction',
     sup: { pin: 'Pin', rollerX: 'Roller (slides in x)', rollerY: 'Roller (slides in y)', fixed: 'Fixed', guide: 'Guide (blocks y and rotation)' },
     dirs: { gy: 'Vertical (global y)', perp: 'Perpendicular to the member' },
+    shape: 'Shape', shapes: { u: 'Uniform', lin: 'Linear', par: 'Parabolic' }, qStart: 'q₁ start', qMid: 'q mid-span', qEnd: 'q₂ end',
+    dlNote: 'q in kN/m: vertical, negative = downwards; perpendicular, positive = to the left going from node 1 to node 2 of the member. Linear: from q₁ at the start node of the member to q₂ at the end node (triangular with one of them at 0). Parabolic: parabola through the start, mid-span and end values (0 · q · 0 = symmetric, 0 · q/4 · q = rising from zero).',
     matTitle: 'Material and criteria', material: 'Material', custom: 'Custom',
     mats: { s235: 'Steel S235', s355: 'Steel S355', c40: 'C40 Q&T', al6061: 'Aluminium 6061-T6', al_nb: 'Aluminium (notebook: σallow 170 MPa)' },
     E: 'Young\'s modulus E', sy: 'Yield strength σy', rho: 'Density ρ', X: 'Static X', Xb: 'Buckling X', beta: 'Effective length β·L', defl: 'Allowable deflection', deflHint: '0 = no limit',
@@ -117,6 +121,8 @@ function frPreset(key) {
   if (key === 'cant') return { nodes: [N(0, 0), N(2000, 0)], members: [{ n1: 0, n2: 1 }], supports: [{ node: 0, type: 'fixed' }], loads: [{ node: 1, Fx: 0, Fy: -5000, M: 0 }], dloads: [] };
   if (key === 'cont') return { nodes: [N(0, 0), N(4000, 0), N(8000, 0)], members: [{ n1: 0, n2: 1 }, { n1: 1, n2: 2 }],
     supports: [{ node: 0, type: 'pin' }, { node: 1, type: 'rollerX' }, { node: 2, type: 'rollerX' }], loads: [], dloads: [{ member: 0, q: -10, dir: 'gy' }, { member: 1, q: -10, dir: 'gy' }] };
+  if (key === 'wall') return { nodes: [N(0, 0), N(0, 2500)], members: [{ n1: 1, n2: 0 }], supports: [{ node: 0, type: 'fixed' }], loads: [],
+    dloads: [{ member: 0, q: 0, q2: 20, shape: 'lin', dir: 'perp' }] };   // like water pressure: 0 at the top, 20 kN/m at the base, pushing in +x
   if (key === 'portal') return { nodes: [N(0, 0), N(0, 3000), N(5000, 3000), N(5000, 0)], members: [{ n1: 0, n2: 1 }, { n1: 1, n2: 2 }, { n1: 2, n2: 3 }],
     supports: [{ node: 0, type: 'fixed' }, { node: 3, type: 'fixed' }], loads: [{ node: 1, Fx: 10000, Fy: 0, M: 0 }], dloads: [{ member: 1, q: -15, dir: 'gy' }] };
   if (key === 'truss') {
@@ -298,9 +304,14 @@ function frRenderTables() {
     `<td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="Fx" data-s="1000" value="${+(l.Fx / 1000).toFixed(4)}"></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="Fy" data-s="1000" value="${+(l.Fy / 1000).toFixed(4)}"></td>` +
     `<td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="M" data-s="1000000" value="${+((l.M || 0) / 1e6).toFixed(4)}"></td><td>${FR_DEL}</td></tr>`)) +
     (m.nodes.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="loads">+ ${t.add}</button>` : '');
-  frEl('frDloadsTbl').innerHTML = frTable([t.member, 'q [kN/m]', t.dir, ''], m.dloads.map((d, i) =>
-    `<tr data-k="dloads" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="member">${memOpts(d.member)}</select></td><td class="pr-2"><input class="${FR_TIN}" type="number" step="any" data-f="q" value="${d.q}"></td>` +
-    `<td class="pr-2"><select class="${FR_TSEL}" data-f="dir">${Object.entries(t.dirs).map(([k, v]) => `<option value="${k}" ${k === d.dir ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`)) +
+  const qIn = (d, f) => `<input class="${FR_TIN}" type="number" step="any" data-f="${f}" value="${+(+d[f] || 0).toFixed(4)}">`;
+  frEl('frDloadsTbl').innerHTML = '<div class="overflow-x-auto">' + frTable([t.member, t.shape, t.qStart, t.qMid, t.qEnd, t.dir, ''], m.dloads.map((d, i) => {
+    const sh = d.shape || 'u';
+    return `<tr data-k="dloads" data-i="${i}"><td class="pr-2"><select class="${FR_TSEL}" data-f="member">${memOpts(d.member)}</select></td>` +
+      `<td class="pr-2"><select class="${FR_TSEL}" data-f="shape">${Object.entries(t.shapes).map(([k, v]) => `<option value="${k}" ${k === sh ? 'selected' : ''}>${v}</option>`).join('')}</select></td>` +
+      `<td class="pr-2">${qIn(d, 'q')}</td><td class="pr-2">${sh === 'par' ? qIn(d, 'qm') : '<span class="text-slate-400">—</span>'}</td><td class="pr-2">${sh === 'u' ? '<span class="text-slate-400">—</span>' : qIn(d, 'q2')}</td>` +
+      `<td class="pr-2"><select class="${FR_TSEL}" data-f="dir">${Object.entries(t.dirs).map(([k, v]) => `<option value="${k}" ${k === d.dir ? 'selected' : ''}>${v}</option>`).join('')}</select></td><td>${FR_DEL}</td></tr>`;
+  })) + '</div>' + (m.dloads.length ? `<p class="text-[11px] text-slate-400 mt-1">${t.dlNote}</p>` : '') +
     (m.members.length ? `<button type="button" class="mt-2 text-xs text-blue-300 hover:text-blue-200" data-add="dloads">+ ${t.add}</button>` : '');
 }
 
@@ -326,7 +337,14 @@ function frTableEvent(ev) {
   if (!f || ev.type !== 'change') return;
   const obj = frModel[k][i];
   if (ev.target.type === 'checkbox') obj[f] = ev.target.checked;
-  else if (ev.target.tagName === 'SELECT') obj[f] = ['node', 'n1', 'n2', 'member'].includes(f) ? +ev.target.value : ev.target.value;
+  else if (ev.target.tagName === 'SELECT') {
+    obj[f] = ['node', 'n1', 'n2', 'member'].includes(f) ? +ev.target.value : ev.target.value;
+    if (f === 'shape') {   // the new shape starts as the uniform load it replaces; its columns appear
+      if (!Number.isFinite(+obj.q2) || obj.q2 === undefined) obj.q2 = obj.q;
+      if (obj.shape === 'par' && (obj.qm === undefined || !Number.isFinite(+obj.qm))) obj.qm = (obj.q + obj.q2) / 2;
+      frRenderTables();
+    }
+  }
   else { const v = parseFloat(ev.target.value); if (Number.isFinite(v)) obj[f] = v * (parseFloat(ev.target.dataset.s) || 1); }
   calculateFrames();
 }
@@ -508,18 +526,23 @@ function frDraw(target = null, opts = {}) {
     const a = frToScreen(m.nodes[mm.n1]), b = frToScreen(m.nodes[mm.n2]);
     const L = Math.hypot(b.X - a.X, b.Y - a.Y) || 1, ux = (b.X - a.X) / L, uy = (b.Y - a.Y) / L;
     const P1 = m.nodes[mm.n1], P2 = m.nodes[mm.n2], Lm = Math.hypot(P2.x - P1.x, P2.y - P1.y) || 1;
-    const sg = Math.sign(d.q || -1);
-    const dm = d.dir === 'perp' ? { x: -sg * (P2.y - P1.y) / Lm, y: sg * (P2.x - P1.x) / Lm } : { x: 0, y: sg };   // model direction of the load
-    const dx = dm.x, dy = -dm.y;   // screen direction
-    const off = 26, n = Math.max(3, Math.round(L / 30));
+    const vals = frLoadVals(d), qmax = Math.max(...vals.map(Math.abs)) || 1;
+    const e = d.dir === 'perp' ? { x: -(P2.y - P1.y) / Lm, y: (P2.x - P1.x) / Lm } : { x: 0, y: 1 };   // model direction of a positive q
+    const ex = e.x, ey = -e.y;   // screen
+    const off = 26, n = Math.max(4, Math.round(L / 30));
+    const qAt = tt => { const a = frLoadPoly(vals, 1); return a[0] + a[1] * tt + a[2] * tt * tt; };
     let pts = '';
     for (let k = 0; k <= n; k++) {
-      const X = a.X + (b.X - a.X) * k / n, Y = a.Y + (b.Y - a.Y) * k / n;
-      g += frArrow(X - dx * off, Y - dy * off, X - dx * 3, Y - dy * 3, FRC.load, 1);
-      pts += `${X - dx * off},${Y - dy * off} `;
+      const tt = k / n, X = a.X + (b.X - a.X) * tt, Y = a.Y + (b.Y - a.Y) * tt, qk = qAt(tt), len = off * Math.abs(qk) / qmax;
+      const tx = X - ex * off * qk / qmax, ty = Y - ey * off * qk / qmax;   // tail: the arrow points along q, onto the member
+      if (len > 4) g += frArrow(tx, ty, X + (tx - X) * 3 / len, Y + (ty - Y) * 3 / len, FRC.load, 1);
+      pts += `${tx},${ty} `;
     }
     g += `<polyline points="${pts}" fill="none" stroke="${FRC.load}" stroke-width="1"/>`;
-    g += `<text x="${(a.X + b.X) / 2 - dx * (off + 8)}" y="${(a.Y + b.Y) / 2 - dy * (off + 8) + 4}" text-anchor="middle" font-size="11" fill="${FRC.load}">${frNum(Math.abs(d.q), 1)} kN/m</text>`;
+    const lab = (d.shape === 'lin' ? `${frNum(vals[0], 1)} → ${frNum(vals[2], 1)}` : d.shape === 'par' ? `${frNum(vals[0], 1)} · ${frNum(vals[1], 1)} · ${frNum(vals[2], 1)}` : frNum(Math.abs(d.q), 1)) + ' kN/m';
+    const sm = Math.sign(qAt(0.5) || vals[0] || vals[2] || -1);
+    const lx = -ex * sm, anc = lx < -0.5 ? 'end' : lx > 0.5 ? 'start' : 'middle';
+    g += `<text x="${(a.X + b.X) / 2 - ex * sm * (off + 10)}" y="${(a.Y + b.Y) / 2 - ey * sm * (off + 10) + 4}" text-anchor="${anc}" font-size="11" fill="${FRC.load}">${lab}</text>`;
   });
   // results overlay
   let note = '';
@@ -770,7 +793,7 @@ function frEncodeModel() {
   if (!frModel) return '';
   const r = v => Math.round(v * 1000) / 1000;
   const o = { n: frModel.nodes.map(n => [r(n.x), r(n.y)]), m: frModel.members.map(mm => [mm.n1, mm.n2, (mm.relStart ? 1 : 0) + (mm.relEnd ? 2 : 0)]),
-    s: frModel.supports.map(s => [s.node, s.type]), l: frModel.loads.map(l => [l.node, r(l.Fx || 0), r(l.Fy || 0), r(l.M || 0)]), d: frModel.dloads.map(d => [d.member, r(d.q), d.dir === 'perp' ? 1 : 0]),
+    s: frModel.supports.map(s => [s.node, s.type]), l: frModel.loads.map(l => [l.node, r(l.Fx || 0), r(l.Fy || 0), r(l.M || 0)]), d: frModel.dloads.map(d => { const o = [d.member, r(d.q), d.dir === 'perp' ? 1 : 0]; if (d.shape === 'lin') o.push(1, r(+d.q2 || 0)); if (d.shape === 'par') o.push(2, r(+d.q2 || 0), r(+d.qm || 0)); return o; }),
     g: frGrid, v: frShow, f: frFamiliesChecked(true).join(',') };
   try { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); } catch (e) { return ''; }
 }
@@ -784,7 +807,7 @@ function frDecodeModel(str) {
     const model = { nodes, members,
       supports: (o.s || []).filter(([n, tp]) => ok(n) && FR_SUPPORTS[tp]).map(([n, tp]) => ({ node: n, type: tp })),
       loads: (o.l || []).filter(([n]) => ok(n)).map(([n, fx, fy, mz]) => ({ node: n, Fx: num(fx), Fy: num(fy), M: num(mz) })),
-      dloads: (o.d || []).filter(([k]) => Number.isInteger(k) && k >= 0 && k < members.length).map(([k, q, p]) => ({ member: k, q: num(q), dir: p ? 'perp' : 'gy' })) };
+      dloads: (o.d || []).filter(([k]) => Number.isInteger(k) && k >= 0 && k < members.length).map(([k, q, p, sh, q2, qm]) => sh === 1 ? { member: k, q: num(q), dir: p ? 'perp' : 'gy', shape: 'lin', q2: num(q2) } : sh === 2 ? { member: k, q: num(q), dir: p ? 'perp' : 'gy', shape: 'par', q2: num(q2), qm: num(qm) } : { member: k, q: num(q), dir: p ? 'perp' : 'gy' }) };
     frModel = model;
     if (o.g > 0) frGrid = +o.g;
     if (o.v && FR_TXT.en.views[o.v]) frShow = o.v;

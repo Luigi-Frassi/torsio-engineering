@@ -16,6 +16,7 @@ const REPORT_FR_TXT = {
     figModel: 'Schema statico con vincoli e carichi', figN: 'Sforzo normale N [kN] (trazione positiva)', figV: 'Taglio T [kN]', figM: 'Momento flettente M [kN·m] (disegnato dal lato teso)', figD: 'Deformata (amplificata)',
     reac: 'Reazioni vincolari', dmax: 'Spostamento massimo',
     m1: 'Rigidezza dell\'elemento trave nel riferimento locale (gradi di libertà u, v, θ ai due estremi):',
+    mVar: 'Carichi lineari e parabolici: forze nodali equivalenti con le funzioni di forma della trave (lineari per lo sforzo normale, cubiche di Hermite per taglio e momento); per il carico lineare, componenti trasversali (taglio e momento al nodo 1, al nodo 2):',
     m2: 'Rotazione nel riferimento globale e assemblaggio; i carichi distribuiti entrano come forze nodali equivalenti (reazioni di incastro perfetto cambiate di segno):',
     m3: 'Cerniere interne: le rotazioni rilasciate sono condensate staticamente (momento nullo all\'estremo). Una trave con due cerniere ha solo la rigidezza assiale EA/L: diventa un\'asta di traliccio, come quelle del notebook.',
     m4: 'Vincoli: si eliminano i gradi di libertà bloccati e si risolve il sistema; le reazioni si ricavano dalle forze di estremità delle travi.',
@@ -42,6 +43,7 @@ const REPORT_FR_TXT = {
     figModel: 'Structural scheme with supports and loads', figN: 'Axial force N [kN] (tension positive)', figV: 'Shear V [kN]', figM: 'Bending moment M [kN·m] (drawn on the tension side)', figD: 'Deformed shape (magnified)',
     reac: 'Support reactions', dmax: 'Maximum displacement',
     m1: 'Stiffness of the beam element in local axes (dofs u, v, θ at both ends):',
+    mVar: 'Linear and parabolic loads: equivalent nodal forces with the member\'s shape functions (linear for the axial force, Hermite cubics for shear and moment); for the linear load, transverse components (shear and moment at node 1, at node 2):',
     m2: 'Rotation to global axes and assembly; distributed loads enter as equivalent nodal forces (fixed-end reactions with opposite sign):',
     m3: 'Internal hinges: the released rotations are condensed statically (zero end moment). A member with two hinges keeps only the axial stiffness EA/L: the truss bar of the notebook.',
     m4: 'Supports: the blocked dofs are removed and the system is solved; reactions come from the member end forces.',
@@ -98,13 +100,15 @@ function buildFrameReportHtml() {
   }));
   body += `<h4>${F.supports} · ${F.loads}</h4>` + reportTable([t.node, t.type], m.supports.map(s => [s.node + 1, t.sup[s.type]]));
   const lrows = m.loads.map(l => [`${t.node} ${l.node + 1}`, `Fx = ${N((l.Fx || 0) / 1000, 2)} kN · Fy = ${N((l.Fy || 0) / 1000, 2)} kN` + (l.M ? ` · M = ${N(l.M / 1e6, 2)} kN·m` : '')])
-    .concat(m.dloads.map(d => [`${t.member} ${d.member + 1}`, `q = ${N(d.q, 2)} kN/m · ${t.dirs[d.dir]}`]));
+    .concat(m.dloads.map(d => [`${t.member} ${d.member + 1}`, (d.shape === 'lin' ? `${t.shapes.lin}: q₁ = ${N(d.q, 2)} → q₂ = ${N(+d.q2 || 0, 2)} kN/m` :
+      d.shape === 'par' ? `${t.shapes.par}: q₁ = ${N(d.q, 2)} · q<sub>m</sub> = ${N(+d.qm || 0, 2)} · q₂ = ${N(+d.q2 || 0, 2)} kN/m` : `q = ${N(d.q, 2)} kN/m`) + ` · ${t.dirs[d.dir]}`]));
   if (lrows.length) body += reportTable([F.loads, ''], lrows);
 
   // 3. method
   body += H(F.s3) + `<p>${F.m1}</p>` + reportEq([
     'k = \\begin{bmatrix} \\frac{EA}{L} & 0 & 0 & -\\frac{EA}{L} & 0 & 0 \\\\ 0 & \\frac{12EI}{L^3} & \\frac{6EI}{L^2} & 0 & -\\frac{12EI}{L^3} & \\frac{6EI}{L^2} \\\\ 0 & \\frac{6EI}{L^2} & \\frac{4EI}{L} & 0 & -\\frac{6EI}{L^2} & \\frac{2EI}{L} \\\\ -\\frac{EA}{L} & 0 & 0 & \\frac{EA}{L} & 0 & 0 \\\\ 0 & -\\frac{12EI}{L^3} & -\\frac{6EI}{L^2} & 0 & \\frac{12EI}{L^3} & -\\frac{6EI}{L^2} \\\\ 0 & \\frac{6EI}{L^2} & \\frac{2EI}{L} & 0 & -\\frac{6EI}{L^2} & \\frac{4EI}{L} \\end{bmatrix}'])
     + `<p>${F.m2}</p>` + reportEq(['K = \\sum_e T_e^{\\mathsf T}\\, k_e\\, T_e, \\qquad K\\,u = F, \\qquad f_{0} = \\left[\\,0,\\ -\\tfrac{qL}{2},\\ -\\tfrac{qL^2}{12},\\ 0,\\ -\\tfrac{qL}{2},\\ \\tfrac{qL^2}{12}\\,\\right]^{\\mathsf T}'])
+    + (m.dloads.some(d => d.shape === 'lin' || d.shape === 'par') ? `<p>${F.mVar}</p>` + reportEq(['f_{0,i} = -\\int_0^L N_i(x)\\, q(x)\\,dx,\\qquad q(x) = q_1 + (q_2 - q_1)\\tfrac{x}{L}', 'f_{0,\\perp} = -\\left[\\,\\tfrac{L(7q_1 + 3q_2)}{20},\\ \\tfrac{L^2(3q_1 + 2q_2)}{60},\\ \\tfrac{L(3q_1 + 7q_2)}{20},\\ -\\tfrac{L^2(2q_1 + 3q_2)}{60}\\,\\right]']) : '')
     + `<p>${F.m3}</p>` + reportEq(['k_c = k_{aa} - k_{ar}\\, k_{rr}^{-1}\\, k_{ra}']) + `<p>${F.m4}</p><p>${F.m5}</p>`
     + reportEq([`\\sigma = \\frac{|N|}{A} + \\frac{|M|}{W} \\le \\frac{\\sigma_s}{X},\\qquad N_{cr} = \\frac{\\pi^2 E\\, I_{min}}{(\\beta L)^2} \\ge X_{inst}\\, |N_c|`]) + `<p>${F.m6}</p>`;
 
